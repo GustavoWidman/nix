@@ -32,8 +32,9 @@ export-env {
 
 # Jump to a directory using only keywords.
 def --env --wrapped __zoxide_z [...rest: string] {
+  let $rest = $rest | str replace -a '~' $env.HOME
   let path = match $rest {
-    [] => {'~'},
+    [] => {$env.HOME},
     [ '-' ] => {'-'},
     [ $arg ] if ($arg | path type) == 'dir' => {$arg}
     _ => {

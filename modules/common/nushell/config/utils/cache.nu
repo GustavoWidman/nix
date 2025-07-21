@@ -76,7 +76,7 @@ export def --env brew_env [brew_cache_max_age_days: int] {
 	} else {
 		let new_env = (/opt/homebrew/bin/brew shellenv csh
 			| lines
-			| parse --regex 'setenv (\w+) "?(.+)"?;'
+			| parse --regex 'setenv (\w+) "?([^{}$"]+?)(?:"*)?;'
 			| transpose -r
 			| into record)
 

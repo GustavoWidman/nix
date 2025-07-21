@@ -16,9 +16,9 @@ in
           age
           awscli2
           bash
-          bat
           binwalk
-          coreutils
+          # coreutils
+          dig
           dosfstools
           e2fsprogs
           fastfetch
@@ -28,11 +28,12 @@ in
           hping
           htop
           httpie
+          jq
           nano
           netcat-gnu
           nmap
           openfortivpn
-          openssl_3
+          openssl
           openvpn
           p7zip
           python313
@@ -43,35 +44,10 @@ in
           sqlite
           stow # ! TODO maybe remove this if we fully port to nix
           util-linux
+          uutils-coreutils-noprefix
           wget
           wireguard-tools
-
-          # asciinema
-          # cowsay
-          # curlHTTP3
-          # dig
-          # doggo
-          # eza
-          # fastfetch
-          # fd
-          # hyperfine
-          # jc
-          # moreutils
-          # openssl
-          # p7zip
-          # pstree
-          # rsync
-          # sd
-          # timg
-          # tokei
-          # typos
-          # uutils-coreutils-noprefix
-          # xh
-          # yazi
-          # yt-dlp
           ;
-
-        # fortune = pkgs.fortune.override { withOffensive = true; };
       }
       // optionalAttrs config.isLinux {
         inherit (pkgs)
@@ -98,11 +74,9 @@ in
           abseil-cpp
           arduino-cli
           biome
-
           clang
           clang-tools
           cmake
-
           cyme
           dalfox
           dbeaver-bin
@@ -136,40 +110,6 @@ in
           wireshark
           yq
           yt-dlp
-
-          # claude-code
-
-          # clang_16
-          # clang-tools_16
-          # deno
-          # gh
-          # go
-          # lld
-          # zig
-
-          # qbittorrent
           ;
       };
-  # // optionalAttrs (config.isLinux && config.isDesktop) {
-  #   inherit (pkgs)
-  #     # thunderbird
-
-  #     # whatsapp-for-linux
-
-  #     # element-desktop
-  #     # zulip
-  #     # fractal
-
-  #     # obs-studio
-
-  #     # krita
-
-  #     # libreoffice
-  #   ;
-
-  #   # inherit (pkgs.hunspellDicts)
-  #   #   en_US
-  #   #   en_GB-ize
-  #   # ;
-  # };
 }

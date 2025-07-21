@@ -10,6 +10,7 @@ let
     getExe
     mkIf
     optionalAttrs
+    enabled
     ;
 in
 {
@@ -48,6 +49,12 @@ in
             recursive = true;
             force = true;
           };
+
+        programs.bat = enabled {
+          config.theme = "gruvbox-dark";
+
+          config.pager = "less --quit-if-one-screen --RAW-CONTROL-CHARS";
+        };
       }
     )
   ];

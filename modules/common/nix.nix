@@ -12,11 +12,11 @@ let
     ;
 in
 {
-  # allow nix-darwin with Determinate
-  nix.enable = false;
+  nix.enable = false; # allow nix-darwin with Determinate, means we have to manually configure nix things
 
   environment.systemPackages = attrValues {
     inherit (pkgs)
+      deploy-rs
       nh
       nix-index
       nix-output-monitor

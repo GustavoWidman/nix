@@ -1,5 +1,12 @@
+use ($nu.default-config-dir | path join config/main/absolute.nu)
+
 alias grun = go run
-alias cat = bat --style plain,header-filesize,header-filename --paging=never
+
+alias cat = bat --plain --paging=never
+alias cp = cp --recursive --verbose --progress
+alias mv = mv --verbose --progress
+alias less = bat --plain
+
 alias rsactftool = docker run -it --rm -v $"($env.PWD):/data" rsactftool/rsactftool
 alias jwt-tool = docker run -it --network "host" --rm -v $"($env.PWD):/tmp" -v $"($env.TRUE_HOME)/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool
 alias ubuntinho = docker run --rm -it -v $"($env.PWD):/home/shared" amd64/ubuntu:18.04 /bin/bash -c "cd /home/shared && HOME=/home/shared /bin/bash"
@@ -12,9 +19,7 @@ alias fg = job unfreeze
 
 alias multiplex = zellij options --default-shell nu
 
-def --wrapped ssh [...args] {
-	with-env { TERM: "xterm-256color" } { ^ssh ...$args }
-}
+alias "sudo su" = sudo (absolute nu)
 
 def psub [] {
   let tmp = (mktemp -t | str trim)
@@ -68,40 +73,3 @@ def --wrapped crun [...args] {
 
 	./dist/($base_name) ...$other_args
 }
-
-def --env activate [] {
-	use ($nu.default-config-dir | path join config/utils/hooks.nu)
-
-	if "VIRTUAL_ENV" in $env {
-		return "Already inside a virtual environment, deactivate first"
-	}
-
-    let venvs = ls -a
-		| where type == dir and name =~ "(?i)env"
-		| get name
-		| where (
-			$env.pwd
-				| path join $it bin activate.nu
-				| path exists
-		)
-
-    if ( $venvs | is-empty ) {
-		return "There are no python virtual environments in this folder"
-    }
-
-	if ( ($venvs | length) == 1 ) {
-		let venv_name = ($venvs | first)
-		let venv_activation_file = ($env.pwd | path join $venv_name bin activate.nu)
-
-		hooks run-hooked $"overlay use ($venv_activation_file)"
-	} else {
-		print "The following venvs are available, please choose one to activate:"
-
-		let choice = $venvs | input list
-		let venv_activation_file = ($env.pwd | path join $choice bin activate.nu)
-
-		hooks run-hooked $"overlay use ($venv_activation_file)"
-	}
-}
-
-alias "sudo su" = sudo (which nu | get path | first)

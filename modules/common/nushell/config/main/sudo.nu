@@ -1,4 +1,4 @@
-def completer_sudo [commandline: string] {
+def "nu-complete sudo" [commandline: string] {
 	let spans = ($commandline | split row " " | skip 1)
 
 	if ($spans | length) <= 1 {
@@ -47,7 +47,7 @@ def completer_sudo [commandline: string] {
 		| from json)
 }
 
-export def --wrapped --env main [...args: string@"completer_sudo"] {
+export def --wrapped --env main [...args: string@"nu-complete sudo"] {
 	if ($env.TERMINFO? | is-not-empty) {
 		^sudo --preserve-env TERMINFO=($env.TERMINFO) ...$args
 	} else {
