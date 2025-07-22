@@ -47,30 +47,6 @@ def --env init_mise () {
 }
 
 # REQUIRES RUST TOOLCHAIN
-def --env init_zoxide () {
-	if not (($"($env.TRUE_HOME)/.cargo/bin/zoxide" | path exists) or ((which zoxide | length) > 0)) {
-		try { cargo-binstall zoxide --locked --no-confirm } catch {
-			print $"(ansi light_gray)[(ansi reset)(ansi red_bold)!(ansi reset)(ansi light_gray)](ansi reset)(ansi red) Failed to install zoxide. Please install it manually.(ansi reset)\n"
-			return false
-		}
-	}
-
-	return true
-}
-
-# REQUIRES RUST TOOLCHAIN
-def --env init_bat () {
-	if not (($"($env.TRUE_HOME)/.cargo/bin/bat" | path exists) or ((which bat | length) > 0)) {
-		try { cargo-binstall bat --locked --no-confirm } catch {
-			print $"(ansi light_gray)[(ansi reset)(ansi red_bold)!(ansi reset)(ansi light_gray)](ansi reset)(ansi red) Failed to install bat. Please install it manually.(ansi reset)\n"
-			return false
-		}
-	}
-
-	return true
-}
-
-# REQUIRES RUST TOOLCHAIN
 def --env init_plugins () {
 	let plugins = plugin list;
 	mut restart_required = false
@@ -123,9 +99,7 @@ export def --env full_init () {
 	let ok_rust = init_rust_toolchain
 	let ok_uv = init_uv
 	let ok_mise = init_mise
-	let ok_zoxide = init_zoxide
-	let ok_bat = init_bat
 	let ok_plugins = init_plugins
 
-	return ($ok_rust and $ok_uv and $ok_mise and $ok_zoxide and $ok_bat and $ok_plugins)
+	return ($ok_rust and $ok_uv and $ok_mise and $ok_plugins)
 }
