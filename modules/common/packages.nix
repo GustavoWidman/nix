@@ -18,6 +18,7 @@ in
           bash
           binwalk
           # coreutils
+          curlHTTP3
           dig
           dosfstools
           e2fsprogs
@@ -45,6 +46,7 @@ in
           stow # ! TODO maybe remove this if we fully port to nix
           util-linux
           uutils-coreutils-noprefix
+          uutils-findutils
           wget
           wireguard-tools
           ;
@@ -95,6 +97,7 @@ in
           llvm
           lua
           maven
+          manix
           metasploit
           mitmproxy
           nuclei

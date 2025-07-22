@@ -18,6 +18,7 @@ in
     inherit (pkgs)
       deploy-rs
       nh
+      nil
       nix-index
       nix-output-monitor
       nixd

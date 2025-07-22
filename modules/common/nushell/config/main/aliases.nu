@@ -6,6 +6,7 @@ alias cat = bat --plain --paging=never
 alias cp = cp --recursive --verbose --progress
 alias mv = mv --verbose --progress
 alias less = bat --plain
+alias grep = rg
 
 alias rsactftool = docker run -it --rm -v $"($env.PWD):/data" rsactftool/rsactftool
 alias jwt-tool = docker run -it --network "host" --rm -v $"($env.PWD):/tmp" -v $"($env.TRUE_HOME)/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool
@@ -20,6 +21,16 @@ alias fg = job unfreeze
 alias multiplex = zellij options --default-shell nu
 
 alias "sudo su" = sudo (absolute nu)
+
+alias secrekey = ^sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key
+def secredit [path] {
+	^sudo agenix -i /etc/ssh/ssh_host_ed25519_key -e $path
+}
+
+
+def pubkey [path] {
+	ssh-keygen -f $path -y
+}
 
 def psub [] {
   let tmp = (mktemp -t | str trim)

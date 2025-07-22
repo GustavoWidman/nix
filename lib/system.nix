@@ -48,14 +48,13 @@ in
     super.nixosSystem {
       inherit specialArgs;
 
-      modules =
-        [
-          module
-          overlayModule
-        ]
-        ++ modulesCommon
-        ++ modulesLinux
-        ++ inputModulesLinux;
+      modules = [
+        module
+        overlayModule
+      ]
+      ++ modulesCommon
+      ++ modulesLinux
+      ++ inputModulesLinux;
     };
 
   darwinSystem' =
@@ -63,13 +62,12 @@ in
     super.darwinSystem {
       inherit specialArgs;
 
-      modules =
-        [
-          module
-          overlayModule
-        ]
-        ++ modulesCommon
-        ++ modulesDarwin
-        ++ inputModulesDarwin;
+      modules = [
+        module
+        overlayModule
+      ]
+      ++ modulesCommon
+      ++ modulesDarwin
+      ++ inputModulesDarwin;
     };
 }

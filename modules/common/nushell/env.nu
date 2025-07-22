@@ -9,7 +9,6 @@ $env.HOSTNAME = cache get_hostname
 $env.config.buffer_editor = "nano"
 $env.TRUE_HOME = cache true_home
 $env.USER_COLOR = init init_user_color
-$env.XDG_CONFIG_HOME = $"($env.TRUE_HOME)/.config"
 $env.HOME = if $env.USER == "root" {
   if $env.OS == "Darwin" {
     "/var/root"
@@ -122,8 +121,6 @@ let menus = [
 $env.config.menus = $env.config.menus
 	| where name not-in ($menus | get name)
 	| append $menus
-
-init init_gitconfig
 
 $env.BUN_INSTALL = $"($env.TRUE_HOME)/.bun"
 mut path = [
