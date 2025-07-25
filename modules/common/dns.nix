@@ -1,6 +1,5 @@
 {
   pkgs,
-  config,
   lib,
   ...
 }:
@@ -10,7 +9,7 @@ let
     ;
 in
 {
-  options.dns = mkDnsConfig {
+  options.dns = mkDnsConfig pkgs {
     servers = [
       "https://dns.r3dlust.com/dns-query"
     ];
@@ -19,7 +18,10 @@ in
       "https://cloudflare-dns.com/dns-query"
     ];
     bootstrap-servers = [
-      "129.148.24.25"
+      "1.1.1.1"
+      "1.0.0.1"
+      "8.8.8.8"
+      "8.8.4.4"
     ];
 
     tailscale = {
@@ -30,21 +32,5 @@ in
       "tail4a3ea.ts.net"
       "tailfae4d.ts.net"
     ];
-  };
-
-  config._module.args.dnsConfig = {
-    dnsproxy = pkgs.writeText "dnsproxy.yml" (
-      builtins.toJSON {
-        listen-addrs = [ "127.0.0.1" ];
-
-        upstream =
-          config.dns.servers
-          ++ lib.optional (config.dns.tailscale.enable) "[/ts.net/]${config.dns.tailscale.server}";
-        fallback = config.dns.fallback-servers;
-        bootstrap = config.dns.bootstrap-servers;
-      }
-    );
-
-    searchDomainsString = lib.concatStringsSep " " (map (domain: "\"${domain}\"") config.dns.search);
   };
 }

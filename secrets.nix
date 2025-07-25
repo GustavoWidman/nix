@@ -1,6 +1,9 @@
 let
   inherit (import ./keys.nix)
     laptop-mac
+    lab
+    linux
+    darwin
     admins
     all
     ;
@@ -31,4 +34,11 @@ in
   "modules/common/ssh/cfg/github/config.age".publicKeys = all;
   "modules/common/ssh/cfg/github/inteli.age".publicKeys = all;
   "modules/common/ssh/cfg/github/personal.age".publicKeys = all;
+
+  # Passwords
+  "hosts/lab/password.age".publicKeys = [ lab ] ++ admins;
+  "hosts/laptop-mac/pubkey.age".publicKeys = all;
+
+  # Tailscale
+  "modules/linux/tailscale/auth-key.age".publicKeys = linux ++ admins;
 }

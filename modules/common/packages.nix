@@ -23,8 +23,11 @@ in
           dosfstools
           e2fsprogs
           fastfetch
+          file
           fzf
+          gawk
           gcc
+          gnused
           go
           hping
           htop

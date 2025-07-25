@@ -1,70 +1,71 @@
 {
   self,
   config,
+  inputs,
   lib,
   pkgs,
   ...
 }:
 let
   inherit (lib)
-    attrValues
+    concatStringsSep
+    const
+    disabled
+    filterAttrs
+    flip
+    id
+    isType
+    mapAttrs
+    mapAttrsToList
+    merge
+    optionalAttrs
     optionals
     ;
+
+  registryMap = inputs |> filterAttrs (const <| isType "flake");
 in
 {
-  nix.enable = false; # allow nix-darwin with Determinate, means we have to manually configure nix things
+  nix.enable = true;
+  # nix.package = pkgs.nix;
 
-  environment.systemPackages = attrValues {
-    inherit (pkgs)
-      deploy-rs
-      nh
-      nil
-      nix-index
-      nix-output-monitor
-      nixd
-      nixfmt-rfc-style
-      ;
-  };
+  environment.systemPackages = with pkgs; [
+    deploy-rs
+    nh
+    nil
+    nix-index
+    nix-output-monitor
+    nixd
+    nixfmt-rfc-style
+  ];
 
-  environment.etc."nix/registry.json".text =
-    let
-      flakeInputs = (import <| self + /flake.nix).inputs;
+  nix.channel = disabled;
 
-      registryEntries = lib.mapAttrs (name: input: {
-        from = {
-          id = name;
-          type = "indirect";
-        };
-        to = {
-          type = "github";
-          owner = input.owner or (throw "Input ${name} missing owner");
-          repo = input.repo or (throw "Input ${name} missing repo");
-          ref = input.ref or input.branch or "main";
-        } // (lib.optionalAttrs (input ? rev) { inherit (input) rev; });
-      }) flakeInputs;
+  nix.gc =
+    merge {
+      automatic = true;
+      options = "--delete-older-than 3d";
+    }
+    <| optionalAttrs config.isLinux {
+      dates = "weekly";
+      persistent = true;
+    };
 
-      registry = {
-        flakes = registryEntries;
-        version = 2;
-      };
-    in
-    builtins.toJSON registry;
+  nix.nixPath =
+    registryMap
+    |> mapAttrsToList (name: value: "${name}=${value}")
+    |> (if config.isDarwin then concatStringsSep ":" else id);
 
-  environment.etc."nix/nix.custom.conf".text =
-    let
-      nixConfig = (import <| self + /flake.nix).nixConfig;
-      filteredConfig = removeAttrs nixConfig (optionals config.isDarwin [ "use-cgroups" ]);
+  nix.registry =
+    registryMap // { default = inputs.nixpkgs; } |> mapAttrs (_: flake: { inherit flake; });
 
-      mkNixValue =
-        value:
-        if lib.isList value then
-          lib.concatStringsSep " " value
-        else if lib.isBool value then
-          if value then "true" else "false"
-        else
-          toString value;
-    in
-    lib.generators.toKeyValue {
-      mkKeyValue = key: value: "${key} = ${mkNixValue value}";
-    } filteredConfig;
+  nix.settings =
+    (import <| self + /flake.nix).nixConfig
+    |> flip removeAttrs (
+      optionals config.isDarwin [
+        "use-cgroups"
+        "lazy-trees"
+      ]
+    );
+
+  nix.optimise.automatic = true;
 }

@@ -6,7 +6,6 @@
 }:
 let
   inherit (lib)
-    attrValues
     mkAliasOptionModule
     mkIf
     ;
@@ -19,10 +18,8 @@ in
   ];
 
   environment = mkIf config.isDesktop {
-    systemPackages = attrValues {
-      inherit (pkgs)
-        agenix
-        ;
-    };
+    systemPackages = with pkgs; [
+      agenix
+    ];
   };
 }

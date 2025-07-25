@@ -103,7 +103,7 @@ export def --env get_hostname [] {
 			if $env.OS == "Darwin" {
 				(do { hostname -s })
 			} else {
-				(do { /bin/cat /etc/hostname })
+				(do { cat /etc/hostname })
 			}
 		}
 

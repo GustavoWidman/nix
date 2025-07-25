@@ -7,6 +7,7 @@ let
     last
     mkConst
     mkValue
+    hasPrefix
     splitString
     ;
 in
@@ -23,7 +24,13 @@ in
     isServer = mkConst <| config.type == "server";
 
     mainUser =
-      mkConst <| head <| attrNames <| filterAttrs (_: value: value.home != null) config.users.users;
+      mkConst
+      <| head
+      <| attrNames
+      <| filterAttrs (
+        _: value:
+        value.home != null && hasPrefix (if config.isDarwin then "/Users/" else "/home/") value.home
+      ) config.users.users;
     homeDir = mkConst <| "${if config.isLinux then "/home" else "/Users"}/${config.mainUser}";
   };
 }

@@ -155,11 +155,11 @@ if $env.OS == "Darwin" {
 
 	$env.LDFLAGS = "-L/opt/homebrew/opt/llvm/lib"
   	$env.CPPFLAGS = "-I/opt/homebrew/opt/llvm/include"
+} else {
+  $path = $path | prepend "/run/wrappers/bin"
 }
 
 $env.PATH = ($path | append ($env.PATH | split row (char esep)))
-
-init full_init
 
 source config/main/aliases.nu
 source config/main/carapace.nu

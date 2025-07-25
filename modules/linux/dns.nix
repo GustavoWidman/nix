@@ -1,6 +1,5 @@
 {
   config,
-  dnsConfig,
   lib,
   ...
 }:
@@ -11,12 +10,12 @@ let
 in
 {
   networking.search = config.dns.search;
-  networking.nameservers = "127.0.0.1";
+  networking.nameservers = [ "127.0.0.1" ];
 
   services.dnsproxy = enabled {
     flags = [
       "--config-path"
-      dnsConfig.dnsproxy
+      "${config.dns.dnsproxy-config}"
     ];
   };
 }

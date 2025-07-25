@@ -76,11 +76,11 @@
       repo = "fenix";
     };
 
-    nix = {
-      type = "github";
-      owner = "DeterminateSystems";
-      repo = "nix-src";
-    };
+    # nix = {
+    #   type = "github";
+    #   owner = "DeterminateSystems";
+    #   repo = "nix-src";
+    # };
 
     # crash = {
     #   url = "github:RGBCube/crash";"
@@ -118,7 +118,7 @@
         |> mapAttrs (const listToAttrs);
 
       hostConfigs =
-        hostsByType.darwinConfigurations
+        hostsByType.darwinConfigurations // hostsByType.nixosConfigurations
         |> attrsToList
         |> map ({ name, value }: nameValuePair name value.config)
         |> listToAttrs;

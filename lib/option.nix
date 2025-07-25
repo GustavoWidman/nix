@@ -1,6 +1,6 @@
 _: _: super:
 let
-  inherit (super) mkOption types;
+  inherit (super) mkOption types optional;
 in
 {
   mkConst =
@@ -12,7 +12,7 @@ in
 
   mkValue = default: mkOption { inherit default; };
 
-  mkDnsConfig = value: {
+  mkDnsConfig = pkgs: value: {
     servers = mkOption {
       type = types.listOf types.str;
       default =
@@ -79,6 +79,21 @@ in
         "example.net"
       ];
       description = "DNS search domains";
+      readOnly = true;
+    };
+
+    dnsproxy-config = mkOption {
+      type = types.package;
+      description = "DNSProxy configuration package";
+      default = value.dnsproxy-config or pkgs.writeText "dnsproxy.yml" (
+        builtins.toJSON {
+          listen-addrs = [ "127.0.0.1" ];
+
+          upstream = value.servers ++ optional (value.tailscale.enable) "[/ts.net/]${value.tailscale.server}";
+          fallback = value.fallback-servers;
+          bootstrap = value.bootstrap-servers;
+        }
+      );
       readOnly = true;
     };
   };
