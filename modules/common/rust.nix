@@ -5,13 +5,12 @@
 
 {
   environment.systemPackages = with pkgs; [
-    (fenix.complete.withComponents [
-      "cargo"
-      "clippy"
-      "rust-src"
-      "rustc"
-      "rustfmt"
-    ])
-    rust-analyzer-nightly
+    rustc
+    cargo
+    clippy
+    rustfmt
+    rust-analyzer
+    # rust-src
+    sqlx-cli
   ];
 }

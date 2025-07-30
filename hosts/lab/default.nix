@@ -9,7 +9,7 @@ lib.nixosSystem' (
     ...
   }:
   let
-    inherit (lib) collectNix remove readFile;
+    inherit (lib) collectNix remove mkConst;
   in
   {
     imports = collectNix ./. |> remove ./default.nix;
@@ -27,15 +27,23 @@ lib.nixosSystem' (
       r3dlust = {
         hashedPasswordFile = config.secrets.password.path;
         shell = pkgs.nushell;
-        authorizedKey = config.secrets.ssh-cfg-main-lab.path;
-
+        authorizedKey = config.secrets.ssh-main-lab.path;
         name = "r3dlust";
         home = "/home/r3dlust";
+        isMainUser = true;
         isNormalUser = true;
         extraGroups = [ "wheel" ];
       };
+
+      build = {
+        hashedPasswordFile = config.secrets.password.path;
+        openssh.authorizedKeys.keys = keys.all;
+        isNormalUser = true;
+        extraGroups = [ "build" ];
+      };
     };
 
+    time.timeZone = "America/Sao_Paulo";
     home-manager.users = {
       root.home = {
         stateVersion = "25.05";
@@ -47,7 +55,7 @@ lib.nixosSystem' (
         homeDirectory = "/home/r3dlust";
       };
     };
-    system.stateVersion = "25.11";
+    system.stateVersion = "25.05";
 
     nixpkgs.hostPlatform = "x86_64-linux";
   }

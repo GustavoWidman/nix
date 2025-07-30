@@ -10,7 +10,16 @@ let
     mkIf
     optionalAttrs
     enabled
+    concatMapStringsSep
+    filter
     ;
+
+  devPackages = filter (pkg: builtins.pathExists "${pkg}/lib") config.environment.systemPackages;
+
+  # Get all packages with include directories
+  devPackagesWithHeaders = filter (
+    pkg: builtins.pathExists "${pkg}/include"
+  ) config.environment.systemPackages;
 in
 {
   environment =
@@ -29,6 +38,21 @@ in
         nushell
         zoxide
       ];
+
+      variables = {
+        NIX_LDFLAGS = concatMapStringsSep " " (pkg: "-L${pkg}/lib") devPackages;
+        NIX_CFLAGS_COMPILE = concatMapStringsSep " " (
+          pkg: "-isystem ${pkg}/include"
+        ) devPackagesWithHeaders;
+
+        LDFLAGS = concatMapStringsSep " " (pkg: "-L${pkg}/lib") devPackages;
+        CPPFLAGS = concatMapStringsSep " " (pkg: "-I${pkg}/include") devPackagesWithHeaders;
+
+        LIBRARY_PATH = concatMapStringsSep ":" (pkg: "${pkg}/lib") devPackages;
+        # PKG_CONFIG_PATH = concatMapStringsSep ":" (pkg: "${pkg}/lib/pkgconfig") (
+        #   filter (pkg: builtins.pathExists "${pkg}/lib/pkgconfig") devPackages
+        # );
+      };
     };
 
   home-manager.sharedModules = [
@@ -48,6 +72,17 @@ in
         ];
 
         package = pkgs.nushell;
+
+        configFile.text = ''
+          source ($nu.default-config-dir | path join _config.nu)
+        '';
+
+        envFile.text = ''
+          source ($nu.default-config-dir | path join _env.nu)
+        '';
+
+        # sometimes, even my own genius scares me
+        environmentVariables = config.environment.variables;
       };
 
       programs.bat = enabled {

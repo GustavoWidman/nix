@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 {
   # boot.kernelPackages =
   #   if config.isServer then pkgs.linuxPackages_latest else pkgs.linuxKernel.packages.linux_zen;

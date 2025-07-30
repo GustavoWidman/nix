@@ -20,13 +20,38 @@ let
     merge
     optionalAttrs
     optionals
+    attrsToList
+    filter
     ;
 
   registryMap = inputs |> filterAttrs (const <| isType "flake");
 in
 {
   nix.enable = true;
-  # nix.package = pkgs.nix;
+  nix.package = pkgs.nix;
+
+  nix.distributedBuilds = true;
+  nix.buildMachines =
+    self.nixosConfigurations
+    |> attrsToList
+    |> filter ({ name, value }: name != config.networking.hostName && value.config.users.users ? build)
+    |> map (
+      { name, value }:
+      {
+        hostName = name;
+        maxJobs = 20;
+        protocol = "ssh-ng";
+        sshUser = "build";
+        sshKey = "/etc/ssh/ssh_host_ed25519_key";
+        supportedFeatures = [
+          "benchmark"
+          "big-parallel"
+          "kvm"
+          "nixos-test"
+        ];
+        system = value.config.nixpkgs.hostPlatform.system;
+      }
+    );
 
   environment.systemPackages = with pkgs; [
     deploy-rs

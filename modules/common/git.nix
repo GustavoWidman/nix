@@ -43,7 +43,7 @@ in
           receive.fsckObjects = true;
           transfer.fsckobjects = true;
 
-          url."ssh://git@github.com/".insteadOf = "https://github.com/";
+          # url."ssh://git@github.com/".insteadOf = "https://github.com/";
 
           commit.gpgSign = true;
           tag.gpgSign = true;

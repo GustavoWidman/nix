@@ -1,0 +1,50 @@
+[service]
+log_level = "info"
+cache_enable = true
+leak_on_upstream_failure = false
+discover_refresh_interval = 0
+
+[network.0]
+cidrs = ["0.0.0.0/0"]
+name = "main"
+
+[upstream.0]
+endpoint = "https://dns.r3dlust.com/dns-query"
+bootstrap_ip = "144.22.211.110"
+name = "r3dlust"
+type = "doh"
+
+[upstream.1]
+endpoint = "100.100.100.100:53"
+name = "Tailscale DNS"
+type = "legacy"
+
+[upstream.2]
+endpoint = "10.200.0.1"
+name = "CamelSec Staging DNS"
+type = "legacy"
+
+[upstream.3]
+endpoint = "10.100.0.1"
+name = "CamelSec Production DNS"
+type = "legacy"
+
+[listener.0]
+ip = "127.0.0.1"
+port = 53
+
+[listener.0.policy]
+name = "Default Policy"
+failover_rcodes = ["NXDOMAIN", "SERVFAIL"]
+networks = [{ "network.0" = ["upstream.0", "upstream.1"] }]
+rules = [
+	{ "*.ts.net" = [
+		"upstream.1",
+	] },
+	{ "staging.*.camelsec.com" = [
+		"upstream.2",
+	] },
+	{ "*.internal.camelsec.com" = [
+		"upstream.3",
+	] },
+]

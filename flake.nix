@@ -5,13 +5,17 @@
     extra-substituters = [
       # "https://cache.r3dlust.com/"
       "https://cache.garnix.io/"
-      "https://nix-community.cachix.org/"
+      "https://cache.nixos.org"
+      "https://nix-community.cachix.org"
+      # "https://cache.flakehub.com"
     ];
 
     extra-trusted-public-keys = [
       # "cache.r3dlust.com:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      # "cache.flakehub.com-1:t6986ugxCA+d/ZF6IzeE2XmLZNMCfHdPIHPPkNF8cTQ="
     ];
 
     experimental-features = [
@@ -36,59 +40,41 @@
   };
 
   inputs = {
-    nixpkgs = {
-      type = "github";
-      owner = "NixOS";
-      repo = "nixpkgs";
-
-      ref = "nixos-unstable";
-    };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nix-darwin = {
-      type = "github";
-      owner = "LnL7";
-      repo = "nix-darwin";
+      url = "github:LnL7/nix-darwin";
 
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     home-manager = {
-      type = "github";
-      owner = "nix-community";
-      repo = "home-manager";
+      url = "github:nix-community/home-manager";
 
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     agenix = {
-      type = "github";
-      owner = "ryantm";
-      repo = "agenix";
+      url = "github:ryantm/agenix";
 
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.darwin.follows = "nix-darwin";
       inputs.home-manager.follows = "home-manager";
     };
 
-    fenix = {
-      type = "github";
-      owner = "nix-community";
-      repo = "fenix";
+    nix.url = "github:DeterminateSystems/nix-src";
+
+    dailybot = {
+      url = "git+ssh://git@github.com/camelsec/dailybot";
+
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # nix = {
-    #   type = "github";
-    #   owner = "DeterminateSystems";
-    #   repo = "nix-src";
-    # };
+    ctrld = {
+      url = "github:GustavoWidman/ctrld-nix";
 
-    # crash = {
-    #   url = "github:RGBCube/crash";"
-    #
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-
-    # themes.url = "github:RGBCube/ThemeNix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

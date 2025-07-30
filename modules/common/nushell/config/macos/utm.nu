@@ -1,20 +1,20 @@
-def kali [] {
+export def kali [] {
 	utm attach "602A8088-52AA-4C99-A962-FDF9D8C2D32E" "Kali"
 }
 
-def "kali status" [] {
+export def "kali status" [] {
 	utm status "602A8088-52AA-4C99-A962-FDF9D8C2D32E" "Kali"
 }
 
-def "kali stop" [] {
+export def "kali stop" [] {
 	utm stop "602A8088-52AA-4C99-A962-FDF9D8C2D32E" "Kali"
 }
 
-def "kali start" [] {
+export def "kali start" [] {
 	utm start "602A8088-52AA-4C99-A962-FDF9D8C2D32E" "Kali"
 }
 
-def "utm start" [id: string, name?: string] {
+export def start [id: string, name?: string] {
 	if (pgrep -lf UTM | is-empty) {
 		job spawn { ^utm }
 		sleep 1sec
@@ -63,7 +63,7 @@ def "utm start" [id: string, name?: string] {
 	}
 }
 
-def "utm stop" [id: string, name?: string] {
+export def stop [id: string, name?: string] {
 	if (pgrep -lf UTM | is-empty) {
 		job spawn { ^utm }
 		sleep 1sec
@@ -101,7 +101,7 @@ def "utm stop" [id: string, name?: string] {
 	}
 }
 
-def "utm attach" [id: string, name?: string] {
+export def attach [id: string, name?: string] {
 	if (pgrep -lf UTM | is-empty) {
 		job spawn { ^utm }
 		sleep 1sec
@@ -117,7 +117,7 @@ def "utm attach" [id: string, name?: string] {
 	}
 }
 
-def "utm status" [id: string, name?: string] {
+export def status [id: string, name?: string] {
 	if (pgrep -lf UTM | is-empty) {
 		job spawn { ^utm }
 		sleep 1sec

@@ -6,6 +6,7 @@
       programs.mise = {
         enable = true;
         # settings = {} # TODO
+        enableNushellIntegration = false;
       };
     }
   ];

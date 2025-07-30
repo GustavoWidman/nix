@@ -53,6 +53,13 @@ in
               generated and added to the user's authorized_keys file.
             '';
           };
+          options.isMainUser = mkOption {
+            type = types.bool;
+            default = false;
+            description = ''
+              If true, this user will be considered the main user of the system.
+            '';
+          };
         }
       );
     };

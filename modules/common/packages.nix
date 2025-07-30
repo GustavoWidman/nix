@@ -22,6 +22,7 @@ in
           dig
           dosfstools
           e2fsprogs
+          exfat
           fastfetch
           file
           fzf
@@ -41,12 +42,15 @@ in
           openvpn
           p7zip
           python313
+          q
           ripgrep
+          rsync
           rustscan
           socat
           sops
           sqlite
           stow # ! TODO maybe remove this if we fully port to nix
+          tree # ? TODO swap this for rgbcube's thing
           util-linux
           uutils-coreutils-noprefix
           uutils-findutils
@@ -56,22 +60,28 @@ in
       }
       // optionalAttrs config.isLinux {
         inherit (pkgs)
-          usbutils
+          inotify-tools
           tailscale
+          usbutils
+          xfsprogs
           ;
       }
       // optionalAttrs config.isDarwin {
         inherit (pkgs)
           alt-tab-macos
+          fuse-ext2
           iproute2mac
+          libiconv
           lima
           llama-cpp
           maccy
-          # macfuse # TODO
+          sshfs
           stats
           swift-quit
           unnaturalscrollwheels
           utm
+
+          pkg-config
           ;
       }
       // optionalAttrs config.isDesktop {
@@ -97,7 +107,6 @@ in
           # httpie-desktop #! TODO not compatible with macos
           jdk
           john
-          llvm
           lua
           maven
           manix
@@ -112,10 +121,12 @@ in
           sqlmap
           terraform
           # tldr # TODO do i use this?
-          tree # ? TODO swap this for rgbcube's thing
           wireshark
           yq
           yt-dlp
+          ;
+        inherit (pkgs.llvmPackages)
+          llvm
           ;
       };
 }

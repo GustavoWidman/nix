@@ -7,7 +7,6 @@
 let
   inherit (lib)
     enabled
-    optionalAttrs
     ;
 in
 {
@@ -16,5 +15,8 @@ in
     enable = true;
     package = pkgs.tailscale;
     authKeyFile = config.secrets.tailscale-key.path;
+    extraUpFlags = [
+      "--accept-dns=false"
+    ];
   };
 }

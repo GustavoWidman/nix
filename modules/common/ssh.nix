@@ -38,20 +38,12 @@ let
   controlPath = "~/.ssh/control";
 in
 {
-  secrets =
-    (
-      listFilesRecursive ./ssh
-      |> filter (p: hasSuffix ".age" (toString p))
-      |> filter (p: !hasSuffix "ssh/config.age" (toString p))
-      |> map mkSshSecret
-      |> listToAttrs
-    )
-    // ({
-      sshConfig = {
-        file = ./ssh/config.age;
-        mode = "444";
-      };
-    });
+  secrets = (
+    listFilesRecursive ./ssh
+    |> filter (p: hasSuffix ".age" (toString p))
+    |> map mkSshSecret
+    |> listToAttrs
+  );
 
   home-manager.sharedModules = [
     {
@@ -68,7 +60,11 @@ in
         serverAliveCountMax = 2;
         serverAliveInterval = 60;
 
-        includes = [ config.secrets.sshConfig.path ];
+        includes =
+          config.secrets
+          |> builtins.attrNames
+          |> builtins.filter (name: lib.hasPrefix "ssh" name && lib.hasSuffix "config" name)
+          |> map (name: config.secrets.${name}.path);
 
         matchBlocks = {
           "*" = {

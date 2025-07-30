@@ -1,19 +1,3 @@
-export-env {
-  $env.MISE_SHELL = "nu"
-  let mise_hook = {
-    condition: { "MISE_SHELL" in $env }
-    code: { mise_hook }
-  }
-  add-hook hooks.pre_prompt $mise_hook
-  add-hook hooks.env_change.PWD $mise_hook
-}
-
-def --env add-hook [field: cell-path new_hook: any] {
-  let old_config = $env.config? | default {}
-  let old_hooks = $old_config | get $field --ignore-errors | default []
-  $env.config = ($old_config | upsert $field ($old_hooks ++ [$new_hook]))
-}
-
 def "parse vars" [] {
   $in | from csv --noheaders --no-infer | rename 'op' 'name' 'value'
 }
@@ -48,7 +32,7 @@ def --env "update-env" [] {
   }
 }
 
-def --env mise_hook [] {
+export def --env hook [] {
   ^mise hook-env -s nu
     | parse vars
     | update-env

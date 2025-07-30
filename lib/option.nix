@@ -1,6 +1,6 @@
 _: _: super:
 let
-  inherit (super) mkOption types optional;
+  inherit (super) mkOption;
 in
 {
   mkConst =
@@ -11,90 +11,4 @@ in
     };
 
   mkValue = default: mkOption { inherit default; };
-
-  mkDnsConfig = pkgs: value: {
-    servers = mkOption {
-      type = types.listOf types.str;
-      default =
-        value.servers or [
-          "1.1.1.1"
-          "1.0.0.1"
-          "8.8.8.8"
-          "8.8.4.4"
-        ];
-      example = [
-        "https://one.one.one.one/dns-query"
-        "https://1.1.1.1/dns-query"
-        "tls://1.1.1.1@one.one.one.one"
-        "1.1.1.1"
-      ];
-      description = "Primary DNS servers to use.";
-      readOnly = true;
-    };
-    fallback-servers = mkOption {
-      type = types.listOf types.str;
-      default = value.fallback-servers or [ ];
-      example = [
-        "https://dns.google/dns-query"
-        "https://8.8.8.8/dns-query"
-        "tls://8.8.8.8@dns.google"
-        "8.8.8.8"
-      ];
-      description = "Fallback DNS servers to use if primary servers fail.";
-      readOnly = true;
-    };
-    bootstrap-servers = mkOption {
-      type = types.listOf types.str;
-      default = value.bootstrap-servers or [ ];
-      example = [
-        "8.8.8.8"
-        "1.1.1.1"
-      ];
-      description = "Bootstrap DNS servers to use for initial resolution of DoH or DoT servers.";
-      readOnly = true;
-    };
-
-    tailscale = {
-      enable = mkOption {
-        type = types.bool;
-        default = value.tailscale.enable or false;
-        description = "Enable Tailscale DNS routing (route *.ts.net to tailscale's server)";
-        readOnly = true;
-      };
-
-      server = mkOption {
-        type = types.str;
-        default = value.tailscale.server or "100.100.100.100";
-        description = "Tailscale DNS server";
-        readOnly = true;
-      };
-
-      readOnly = true;
-    };
-
-    search = mkOption {
-      type = types.listOf types.str;
-      default = value.search or [ ];
-      example = [
-        "example.net"
-      ];
-      description = "DNS search domains";
-      readOnly = true;
-    };
-
-    dnsproxy-config = mkOption {
-      type = types.package;
-      description = "DNSProxy configuration package";
-      default = value.dnsproxy-config or pkgs.writeText "dnsproxy.yml" (
-        builtins.toJSON {
-          listen-addrs = [ "127.0.0.1" ];
-
-          upstream = value.servers ++ optional (value.tailscale.enable) "[/ts.net/]${value.tailscale.server}";
-          fallback = value.fallback-servers;
-          bootstrap = value.bootstrap-servers;
-        }
-      );
-      readOnly = true;
-    };
-  };
 }

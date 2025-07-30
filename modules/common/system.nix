@@ -29,7 +29,9 @@ in
       <| attrNames
       <| filterAttrs (
         _: value:
-        value.home != null && hasPrefix (if config.isDarwin then "/Users/" else "/home/") value.home
+        value.home != null
+        && hasPrefix (if config.isDarwin then "/Users/" else "/home/") value.home
+        && value.isMainUser
       ) config.users.users;
     homeDir = mkConst <| "${if config.isLinux then "/home" else "/Users"}/${config.mainUser}";
   };

@@ -2,6 +2,7 @@ let
   inherit (import ./keys.nix)
     laptop-mac
     lab
+    oracle-2
     linux
     darwin
     admins
@@ -10,35 +11,43 @@ let
 in
 {
   # SSH Config
-  "modules/common/ssh/config.age".publicKeys = all;
   "modules/common/ssh/id_ed25519.age".publicKeys = all;
   "modules/common/ssh/id_ed25519.pub.age".publicKeys = all;
 
-  "modules/common/ssh/cfg/vms/config.age".publicKeys = all;
-  "modules/common/ssh/cfg/vms/mac-arch.age".publicKeys = all;
-  "modules/common/ssh/cfg/vms/vm.age".publicKeys = all;
+  "modules/common/ssh/vms/config.age".publicKeys = all;
+  "modules/common/ssh/vms/mac-arch.age".publicKeys = all;
+  "modules/common/ssh/vms/vm.age".publicKeys = all;
 
-  "modules/common/ssh/cfg/oracle/config.age".publicKeys = all;
-  "modules/common/ssh/cfg/oracle/oracle-1.age".publicKeys = all;
-  "modules/common/ssh/cfg/oracle/oracle-2.age".publicKeys = all;
+  "modules/common/ssh/oracle/config.age".publicKeys = all;
+  "modules/common/ssh/oracle/oracle-1.age".publicKeys = all;
+  "modules/common/ssh/oracle/oracle-2.age".publicKeys = all;
 
-  "modules/common/ssh/cfg/misc/config.age".publicKeys = all;
-  "modules/common/ssh/cfg/misc/aur.age".publicKeys = all;
-  "modules/common/ssh/cfg/misc/mwkey.age".publicKeys = all;
-  "modules/common/ssh/cfg/misc/toninho.age".publicKeys = all;
+  "modules/common/ssh/misc/config.age".publicKeys = all;
+  "modules/common/ssh/misc/aur.age".publicKeys = all;
+  "modules/common/ssh/misc/mwkey.age".publicKeys = all;
+  "modules/common/ssh/misc/toninho.age".publicKeys = all;
 
-  "modules/common/ssh/cfg/main/config.age".publicKeys = all;
-  "modules/common/ssh/cfg/main/desktop.age".publicKeys = all;
-  "modules/common/ssh/cfg/main/lab.age".publicKeys = all;
+  "modules/common/ssh/main/config.age".publicKeys = all;
+  "modules/common/ssh/main/desktop.age".publicKeys = all;
+  "modules/common/ssh/main/lab.age".publicKeys = all;
 
-  "modules/common/ssh/cfg/github/config.age".publicKeys = all;
-  "modules/common/ssh/cfg/github/inteli.age".publicKeys = all;
-  "modules/common/ssh/cfg/github/personal.age".publicKeys = all;
+  "modules/common/ssh/github/config.age".publicKeys = all;
+  "modules/common/ssh/github/inteli.age".publicKeys = all;
+  "modules/common/ssh/github/personal.age".publicKeys = all;
 
-  # Passwords
-  "hosts/lab/password.age".publicKeys = [ lab ] ++ admins;
-  "hosts/laptop-mac/pubkey.age".publicKeys = all;
+  # General
+  "modules/common/geminicommit/config.age".publicKeys = all;
 
-  # Tailscale
+  # Linux Specific
   "modules/linux/tailscale/auth-key.age".publicKeys = linux ++ admins;
+  "modules/linux/acme/environment.age".publicKeys = linux ++ admins;
+
+  # Lab Specific
+  "hosts/lab/password.age".publicKeys = [ lab ] ++ admins;
+
+  # Oracle-2 Specific
+  "hosts/oracle-2/dailybot/config.age".publicKeys = [ oracle-2 ] ++ admins;
+  "hosts/oracle-2/dailybot/creds.age".publicKeys = [ oracle-2 ] ++ admins;
+  "hosts/oracle-2/adguard/config.age".publicKeys = [ oracle-2 ] ++ admins;
+  "hosts/oracle-2/password.age".publicKeys = [ oracle-2 ] ++ admins;
 }

@@ -1,5 +1,4 @@
-
-def get_running_vpns [] {
+export def "status" [] {
 	ls /var/run/wireguard/
 		| where ($it.name | str ends-with ".name")
 		| get name
@@ -7,16 +6,16 @@ def get_running_vpns [] {
 		| str replace '.name' ''
 }
 
-export def "vpn camelsec" [environ: string, state: string] {
+export def "camelsec" [environ: string, state: string] {
 	let state = $state | str downcase | str trim
 	let environ = $environ | str downcase | str trim
 
-	if (($environ != "prod" and $environ != "staging") or ($state != "on" and $state != "off")) {
-		print "Usage: vpn camelsec <prod|staging> <on|off>"
+	if (($environ != "prod" and $environ != "stag") or ($state != "on" and $state != "off")) {
+		print "Usage: vpn camelsec <prod|stag> <on|off>"
 		return 1
 	}
 
-	let running_vpns = get_running_vpns
+	let running_vpns = status
 
 	if $state == "on" {
 		if ($running_vpns | where $it == $"camelsec-($environ)" | is-empty) {
@@ -37,5 +36,5 @@ export def "vpn camelsec" [environ: string, state: string] {
 
 
 export def "vpn mullvad on" [] {
-
+	# TODO
 }

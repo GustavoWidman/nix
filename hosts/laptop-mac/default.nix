@@ -18,6 +18,7 @@ lib.darwinSystem' (
     users.users.r3dlust = {
       name = "r3dlust";
       home = "/Users/r3dlust";
+      isMainUser = true;
       shell = pkgs.nushell;
     };
 
