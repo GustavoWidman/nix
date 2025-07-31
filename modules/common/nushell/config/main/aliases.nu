@@ -22,9 +22,9 @@ alias multiplex = zellij options --default-shell nu
 
 alias "sudo su" = sudo (absolute nu)
 
-alias secrekey = ^sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key
+alias secrekey = sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key
 def secredit [path] {
-	^sudo agenix -i /etc/ssh/ssh_host_ed25519_key -e $path
+	sudo agenix -i /etc/ssh/ssh_host_ed25519_key -e $path
 }
 
 def --env get-env [name] { $env | get $name }

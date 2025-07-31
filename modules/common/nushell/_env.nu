@@ -7,7 +7,7 @@ $env.config.show_banner = false
 $env.VIRTUAL_ENV_DISABLE_PROMPT = true
 $env.OS = uname | get operating-system
 $env.HOSTNAME = cache get_hostname
-$env.config.buffer_editor = "nano"
+$env.config.buffer_editor = "hx"
 $env.TRUE_HOME = cache true_home
 $env.USER_COLOR = init init_user_color
 $env.HOME = if $env.USER == "root" {
@@ -20,7 +20,7 @@ $env.HOME = if $env.USER == "root" {
   $env.TRUE_HOME
 }
 
-$env.EDITOR = "nano"
+$env.EDITOR = "hx"
 $env.PAGER = "bat --plain"
 $env.MANPAGER = "bat --plain"
 

@@ -58,7 +58,7 @@ def main --wrapped [
 
     # rekey secrets (see nushell config)
     nixfmt ./keys.nix
-    ^sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key
+    sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key
   }
 
   if $remote {

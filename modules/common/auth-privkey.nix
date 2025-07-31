@@ -13,24 +13,25 @@ let
   generateActivationScripts = mapAttrs' (
     username: user:
     nameValuePair "update-ssh-keys-${username}" {
-      text = ''
-        # Generate public key from private key for user ${username}
-        if [ -f "${user.authorizedKey}" ]; then
-          PUBLIC_KEY=$(${pkgs.openssh}/bin/ssh-keygen -y -f "${user.authorizedKey}")
+      text = # sh
+        ''
+          # Generate public key from private key for user ${username}
+          if [ -f "${user.authorizedKey}" ]; then
+            PUBLIC_KEY=$(${pkgs.openssh}/bin/ssh-keygen -y -f "${user.authorizedKey}")
 
-          # Ensure the .ssh directory exists
-          mkdir -p "${user.home}/.ssh"
+            # Ensure the .ssh directory exists
+            mkdir -p "${user.home}/.ssh"
 
-          # Update authorized_keys
-          echo "$PUBLIC_KEY" > "${user.home}/.ssh/authorized_keys"
-          chown ${username}:${user.group} "${user.home}/.ssh/authorized_keys"
-          chmod 600 "${user.home}/.ssh/authorized_keys"
+            # Update authorized_keys
+            echo "$PUBLIC_KEY" > "${user.home}/.ssh/authorized_keys"
+            chown ${username}:${user.group} "${user.home}/.ssh/authorized_keys"
+            chmod 600 "${user.home}/.ssh/authorized_keys"
 
-          # Also set correct permissions on .ssh directory
-          chown ${username}:${user.group} "${user.home}/.ssh"
-          chmod 700 "${user.home}/.ssh"
-        fi
-      '';
+            # Also set correct permissions on .ssh directory
+            chown ${username}:${user.group} "${user.home}/.ssh"
+            chmod 700 "${user.home}/.ssh"
+          fi
+        '';
       deps = [
         "agenix"
         "users"
@@ -53,6 +54,7 @@ in
               generated and added to the user's authorized_keys file.
             '';
           };
+          # TODO remove this from here
           options.isMainUser = mkOption {
             type = types.bool;
             default = false;

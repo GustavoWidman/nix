@@ -6,7 +6,7 @@
   ];
 
   secrets.geminicommit-config = {
-    file = ./config.age;
+    file = ./config.toml.age;
     path = "${config.homeDir}/${
       if config.isDarwin then "Library/Application Support/geminicommit" else ".config/geminicommit"
     }/config.toml";

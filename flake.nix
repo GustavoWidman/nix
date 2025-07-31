@@ -98,7 +98,7 @@
         |> mapAttrs (name: const <| import ./hosts/${name} lib)
         |> attrsToList
         |> groupBy (
-          { name, value }:
+          { value, ... }:
           if value ? class && value.class == "nixos" then "nixosConfigurations" else "darwinConfigurations"
         )
         |> mapAttrs (const listToAttrs);

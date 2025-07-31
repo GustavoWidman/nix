@@ -34,9 +34,7 @@
   #     4001
   #     4002
   #   ];
-  # };
 
-  # Ensure the export directory exists
   systemd.tmpfiles.rules = [
     "Z /mnt/encrypted 0755 root root - -"
   ];

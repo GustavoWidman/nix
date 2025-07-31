@@ -3,8 +3,10 @@ let
     laptop-mac
     lab
     oracle-2
+
     linux
     darwin
+
     admins
     all
     ;
@@ -36,18 +38,18 @@ in
   "modules/common/ssh/github/personal.age".publicKeys = all;
 
   # General
-  "modules/common/geminicommit/config.age".publicKeys = all;
+  "modules/common/geminicommit/config.toml.age".publicKeys = all;
 
   # Linux Specific
   "modules/linux/tailscale/auth-key.age".publicKeys = linux ++ admins;
-  "modules/linux/acme/environment.age".publicKeys = linux ++ admins;
+  "modules/linux/acme/environment.env.age".publicKeys = linux ++ admins;
 
   # Lab Specific
   "hosts/lab/password.age".publicKeys = [ lab ] ++ admins;
 
   # Oracle-2 Specific
-  "hosts/oracle-2/dailybot/config.age".publicKeys = [ oracle-2 ] ++ admins;
-  "hosts/oracle-2/dailybot/creds.age".publicKeys = [ oracle-2 ] ++ admins;
-  "hosts/oracle-2/adguard/config.age".publicKeys = [ oracle-2 ] ++ admins;
+  "hosts/oracle-2/dailybot/config.toml.age".publicKeys = [ oracle-2 ] ++ admins;
+  "hosts/oracle-2/dailybot/creds.json.age".publicKeys = [ oracle-2 ] ++ admins;
+  "hosts/oracle-2/adguard/config.yaml.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/password.age".publicKeys = [ oracle-2 ] ++ admins;
 }

@@ -7,11 +7,11 @@ let
 in
 {
   secrets.dailybot-config = {
-    file = ./config.age;
+    file = ./config.toml.age;
     owner = config.services.dailybot-free.user;
   };
   secrets.dailybot-creds = {
-    file = ./creds.age;
+    file = ./creds.json.age;
     owner = config.services.dailybot-free.user;
   };
 

@@ -142,7 +142,7 @@ in
   };
 
   config = {
-    secrets.acme-environment.file = ./environment.age;
+    secrets.acme-environment.file = ./environment.env.age;
 
     users.groups = genAttrs getCertificateGroups (group: { });
 

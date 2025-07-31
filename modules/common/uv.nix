@@ -1,9 +1,17 @@
-{ ... }:
-
+{ lib, ... }:
+let
+  inherit (lib)
+    enabled
+    ;
+in
 {
   home-manager.sharedModules = [
     {
-      programs.uv.enable = true;
+      programs.uv = enabled {
+        settings = {
+          python-preference = "only-system";
+        };
+      };
     }
   ];
 }
