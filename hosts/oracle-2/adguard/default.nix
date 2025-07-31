@@ -18,38 +18,36 @@ in
       "caddy"
     ];
 
-    postRun = # sh
-      ''
-        systemctl reload-or-restart adguardhome.service
-        systemctl reload-or-restart caddy.service
-      '';
+    postRun = ''
+      systemctl reload-or-restart adguardhome.service
+      systemctl reload-or-restart caddy.service
+    '';
   };
 
   services.caddy = {
     enable = true;
     virtualHosts."dns.r3dlust.com" = {
-      extraConfig = # caddyfile
-        ''
-          tls ${config.networking.certificates."dns.r3dlust.com".paths.fullchain} ${
-            config.networking.certificates."dns.r3dlust.com".paths.key
+      extraConfig = ''
+        tls ${config.networking.certificates."dns.r3dlust.com".paths.fullchain} ${
+          config.networking.certificates."dns.r3dlust.com".paths.key
+        }
+
+        reverse_proxy /* {
+          to https://127.0.0.1:3443
+
+          transport http {
+            tls_insecure_skip_verify
           }
 
-          reverse_proxy /* {
-            to https://127.0.0.1:3443
+          header_up Host {host}
+          header_up X-Real-IP {remote_host}
+          header_up X-Forwarded-For {remote_host}
+          header_up X-Forwarded-Proto {scheme}
 
-            transport http {
-              tls_insecure_skip_verify
-            }
-
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            header_up X-Forwarded-Proto {scheme}
-
-            header_up X-Original-IP {remote_host}
-            header_up CF-Connecting-IP {remote_host}
-          }
-        '';
+          header_up X-Original-IP {remote_host}
+          header_up CF-Connecting-IP {remote_host}
+        }
+      '';
     };
   };
 
@@ -102,8 +100,8 @@ in
 
         port_https = 3443;
         port_dns_over_tls = 853;
-        port_dns_over_quic = 0; # disabled
-        port_dnscrypt = 0; # disabled
+        port_dns_over_quic = 0;
+        port_dnscrypt = 0;
 
         allow_unencrypted_doh = true;
         force_https = false;
@@ -128,13 +126,11 @@ in
       #! Reference:
       # https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/services/networking/adguardhome.nix
 
-      preStart =
-        lib.mkForce # sh
-          ''
-            ${lib.getExe pkgs.yaml-merge} "${config.secrets.adguardhome-config.path}" "${baseConfig}" > "$STATE_DIRECTORY/AdGuardHome.yaml"
+      preStart = lib.mkForce ''
+        ${lib.getExe pkgs.yaml-merge} "${config.secrets.adguardhome-config.path}" "${baseConfig}" > "$STATE_DIRECTORY/AdGuardHome.yaml"
 
-            chmod 600 "$STATE_DIRECTORY/AdGuardHome.yaml"
-          '';
+        chmod 600 "$STATE_DIRECTORY/AdGuardHome.yaml"
+      '';
 
       serviceConfig = {
         User = "adguardhome";

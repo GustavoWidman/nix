@@ -17,13 +17,13 @@ def --wrapped sync [
 
 # Rebuild a NixOS / Darwin config.
 def main --wrapped [
-  host: string = ""         # The host to build.
-  --remote (-r)             # Whether if this is a remote host. The config will be built on this host if it is.
-  --addr (-a): string       # The IP address of the host to build.
-  --identity (-i): string   # The SSH identity to use for the remote host.
-  --first (-f)              # Whether if this is the first time building this host.
-  --dont-add-git-or-update-flake            # Whether to not add changes to git.
-  ...arguments              # The arguments to pass to `nh {os,darwin} switch` and `nix` (separated by --).
+  host: string = ""                 # The host to build.
+  --remote (-r)                     # Whether if this is a remote host. The config will be built on this host if it is.
+  --addr (-a): string               # The IP address of the host to build.
+  --identity (-i): string           # The SSH identity to use for the remote host.
+  --first (-f)                      # Whether if this is the first time building this host.
+  --dont-add-git-or-update-flake    # Whether to not add changes to git.
+  ...arguments                      # The arguments to pass to `nh {os,darwin} switch` and `nix` (separated by --).
 ]: nothing -> nothing {
   if not ($dont_add_git_or_update_flake) {
     nix flake update

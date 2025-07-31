@@ -74,10 +74,8 @@ in
           libiconv
           lima
           llama-cpp
-          maccy
           sshfs
           stats
-          swift-quit
           unnaturalscrollwheels
           utm
 

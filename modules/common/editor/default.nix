@@ -141,6 +141,15 @@ in
           { glob = "*.bash.*"; }
         ];
       }
+      {
+        name = "go";
+        auto-format = true;
+        file-types = [
+          "go"
+          { glob = "*.go.*"; }
+        ];
+        formatter.command = "gofmt";
+      }
     ]
   );
 
@@ -170,12 +179,6 @@ in
       config = {
         cargo.features = "all";
         check.command = "clippy";
-        completion.callable.snippets = "add_parentheses";
-        completion.excludeTraits = [ "yansi::Paint" ];
-        diagnostics.disabled = [
-          "inactive-code"
-          "unlinked-file"
-        ];
       };
     };
   };

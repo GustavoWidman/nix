@@ -21,7 +21,7 @@ in
 
         settings.editor = {
           auto-completion = true;
-          bufferline = "multiple";
+          bufferline = "always";
           color-modes = true;
           cursorline = true;
           file-picker.hidden = false;
@@ -61,12 +61,24 @@ in
               ":format"
               ":write"
             ];
+            "Cmd-x" = [
+              "extend_to_line_bounds"
+              "delete_selection"
+            ];
+            "Cmd-z" = "undo";
+            "Cmd-Z" = "redo";
           };
           select = {
             "Cmd-s" = [
               ":format"
               ":write"
             ];
+            "Cmd-x" = [
+              "extend_to_line_bounds"
+              "delete_selection"
+            ];
+            "Cmd-z" = "undo";
+            "Cmd-Z" = "redo";
           };
           insert = {
             "Cmd-s" = [
@@ -74,6 +86,12 @@ in
               ":format"
               ":write"
             ];
+            "Cmd-x" = [
+              "extend_to_line_bounds"
+              "delete_selection"
+            ];
+            "Cmd-z" = "undo";
+            "Cmd-Z" = "redo";
           };
         };
       };

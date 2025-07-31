@@ -1,7 +1,6 @@
 { ... }:
 
 {
-  # Enable NFS server
   services.nfs.server = {
     enable = true;
 
