@@ -20,6 +20,9 @@ alias fg = job unfreeze
 
 alias multiplex = zellij options --default-shell nu
 
+# let's give this a try, shall we?
+alias nano = hx
+
 alias "sudo su" = sudo (absolute nu)
 
 alias secrekey = sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key

@@ -99,12 +99,6 @@ def main --wrapped [
 
   if (uname | get kernel-name) == "Darwin" {
     nh darwin switch . ...$nh_flags -- ...$nix_flags
-
-    # if not (xcode-select --install e>| str contains "Command line tools are already installed") {
-    #   darwin-shadow-xcode-popup
-    # }
-
-    # darwin-set-zshrc
   } else {
     if $first {
       nh os boot . ...$nh_flags -- ...$nix_flags
