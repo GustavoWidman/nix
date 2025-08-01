@@ -4,12 +4,11 @@ lib.nixosSystem' (
     config,
     keys,
     lib,
-    modulesPath,
     pkgs,
     ...
   }:
   let
-    inherit (lib) collectNix remove mkConst;
+    inherit (lib) collectNix remove;
   in
   {
     imports = collectNix ./. |> remove ./default.nix;

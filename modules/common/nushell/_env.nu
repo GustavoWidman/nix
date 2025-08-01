@@ -139,23 +139,12 @@ mut path = [
 ]
 
 if $env.OS == "Darwin" {
-	# Cache Homebrew environment variables and only update weekly
-	let brew_env = cache brew_env 7
-
-	$brew_env | reject PATH | load-env
 
 	$env.PNPM_HOME = $env.TRUE_HOME + "/Library/pnpm"
 
 	$path ++= [
 		$env.PNPM_HOME
-		...($brew_env | get PATH | split row (char esep))
 	]
-
-	$env.HOMEBREW_NO_ENV_HINTS = true
-
-  # TODO no clue where the fuck Nix keeps LLVM libs
-	# $env.LDFLAGS = "-L/opt/homebrew/opt/llvm/lib"
-  # $env.CPPFLAGS = "-I/opt/homebrew/opt/llvm/include"
 }
 
 $env.PATH = ($path | append ($env.PATH | split row (char esep)))

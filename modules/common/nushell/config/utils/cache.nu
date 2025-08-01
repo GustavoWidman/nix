@@ -1,6 +1,5 @@
 const cache_file = ($nu.temp-path | path join "nushell_cache.nuon")
 const null_cache_records = {
-	brew: null,
 	true_home: null,
 	hostname: null,
 }
@@ -60,32 +59,6 @@ export def --env true_home [] {
 		save_to_cache true_home $true_home
 
 		$true_home
-	}
-}
-
-# Cache Homebrew environment variables and only update weekly
-export def --env brew_env [brew_cache_max_age_days: int] {
-	let cache =  get_cache
-
-	if (
-		$cache.brew != null
-	) and (
-		$cache.brew.modified > (date now) - ($brew_cache_max_age_days * 24 * 60 * 60sec)
-	) {
-		$cache.brew.env
-	} else {
-		let new_env = (/opt/homebrew/bin/brew shellenv csh
-			| lines
-			| parse --regex 'setenv (\w+) "?([^{}$"]+?)(?:"*)?;'
-			| transpose -r
-			| into record)
-
-		save_to_cache brew {
-			env: $new_env,
-			modified: (date now)
-		}
-
-		$new_env
 	}
 }
 
