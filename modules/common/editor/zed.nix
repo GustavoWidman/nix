@@ -16,6 +16,7 @@ merge
           autosave = "on_focus_change";
           theme = "Base16 Gruvbox dark, medium";
           buffer_font_family = "Fira Code";
+          buffer_font_size = 14;
           terminal.button = false;
           show_whitespaces = "selection";
           read_ssh_config = true;
@@ -23,10 +24,17 @@ merge
           close_on_file_delete = true;
           soft_wrap = "bounded";
           show_wrap_guides = false;
+          preferred_line_length = 105;
           telemetry = {
             metrics = false;
             diagnostics = false;
           };
+          project_panel.indent_size = 16;
+          tabs = {
+            file_icons = true;
+            git_status = true;
+          };
+          git.inline_blame.delay_ms = 300;
           tab_bar.show_nav_history_buttons = false;
           minimap = {
             show = "always";

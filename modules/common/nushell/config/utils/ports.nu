@@ -62,7 +62,7 @@ export def --env main [
             let protocol = $parts.7
                 | str downcase
             let state = $parts
-                | get -i 9
+                | get -o 9
                 | default "LISTEN"
                 | str replace --regex --all "[()]+" ""
 

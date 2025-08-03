@@ -24,8 +24,8 @@ $env.EDITOR = "hx"
 $env.PAGER = "bat --plain"
 $env.MANPAGER = "bat --plain"
 
-$env.config.history.isolation = true;
 $env.config.history.file_format = "sqlite";
+$env.config.history.isolation = true;
 $env.config.history.max_size = 10_000_000
 
 $env.config.recursion_limit = 100

@@ -1,8 +1,9 @@
-{ ... }:
-
+{ lib, ... }:
+let
+  inherit (lib) enabled;
+in
 {
-  services.openssh = {
-    enable = true;
+  services.openssh = enabled {
     settings = {
       PasswordAuthentication = false;
     };

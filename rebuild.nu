@@ -95,7 +95,7 @@ def main --wrapped [
       "--extra-experimental-features" "nix-command"
       "--extra-experimental-features" "flakes"
     ] } else { [] })
-    | append ($args_split | get --ignore-errors 1 | default [])
+    | append ($args_split | get -o 1 | default [])
 
   if (uname | get kernel-name) == "Darwin" {
     nh darwin switch . ...$nh_flags -- ...$nix_flags

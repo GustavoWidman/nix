@@ -34,6 +34,7 @@ in
           htop
           httpie
           jq
+          lsof
           nano
           netcat-gnu
           nmap

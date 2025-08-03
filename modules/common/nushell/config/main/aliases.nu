@@ -22,6 +22,7 @@ alias multiplex = zellij options --default-shell nu
 
 # let's give this a try, shall we?
 alias nano = hx
+alias code = zeditor
 
 alias "sudo su" = sudo (absolute nu)
 
