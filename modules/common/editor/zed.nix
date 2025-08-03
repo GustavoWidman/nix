@@ -53,9 +53,22 @@ merge
             show_user_picture = false;
           };
           agent.enabled = false;
-          languages."Nix".formatter."external" = {
-            command = "nixfmt";
-            arguments = [ "-q" ];
+          languages = {
+            "Nix".formatter."external" = {
+              command = "nixfmt";
+              arguments = [ "-q" ];
+            };
+            "Python" = {
+              language_servers = [
+                "ruff"
+                "pyright"
+              ];
+              formatter = [
+                {
+                  language_server.name = "ruff";
+                }
+              ];
+            };
           };
           diagnostics.inline.enabled = true;
           features.edit_prediction_provider = "copilot";
@@ -146,6 +159,8 @@ merge
           "git-firefly"
           "material-icon-theme"
           "xml"
+          "ruff"
+          "python-requirements"
         ];
       };
     }

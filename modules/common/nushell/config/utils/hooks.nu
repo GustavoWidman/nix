@@ -10,7 +10,7 @@ export def self-erasing-hook [...hook_lines: string] {
 	# credits to https://github.com/dgroomes
 	let ERASE_SNIPPET = $"let hooks = $env.config.hooks.pre_prompt; let filtered = $hooks | where not \( \($it | describe\) == \"string\" and \($it | str starts-with \"# ERASE ME ($hook_id)\")); $env.config.hooks.pre_prompt = $filtered"
 
-	let snippet = [$"# ERASE ME ($hook_id)" ...$hook_lines $ERASE_SNIPPET] | str join (char newline)
+	let snippet = [$"# ERASE ME ($hook_id)" $ERASE_SNIPPET ...$hook_lines] | str join (char newline)
 
 	return $snippet
 }

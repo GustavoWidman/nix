@@ -4,7 +4,6 @@ lib.nixosSystem' (
     config,
     keys,
     lib,
-    modulesPath,
     pkgs,
     ...
   }:

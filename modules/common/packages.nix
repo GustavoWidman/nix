@@ -79,8 +79,6 @@ in
           stats
           unnaturalscrollwheels
           utm
-
-          pkg-config
           ;
       }
       // optionalAttrs config.isDesktop {
@@ -98,7 +96,6 @@ in
           exploitdb
           feroxbuster # TODO make own config of this
           ffuf
-          freetds
           gdb
           # ghostty-bin # TODO make own config of this
           gradle
