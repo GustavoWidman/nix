@@ -16,8 +16,6 @@ let
     ;
 in
 {
-  options.editor.defaultAlias = mkValue "nano";
-
   options.editor.languageConfigsHelix = mkValue (
     let
       formattedLanguages =

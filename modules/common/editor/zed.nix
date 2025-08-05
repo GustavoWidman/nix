@@ -69,6 +69,33 @@ merge
                 }
               ];
             };
+            JSON = {
+              formatter = [
+                {
+                  language_server = {
+                    name = "biome";
+                  };
+                }
+              ];
+            };
+            JavaScript = {
+              formatter = [
+                {
+                  language_server = {
+                    name = "biome";
+                  };
+                }
+              ];
+            };
+            TypeScript = {
+              formatter = [
+                {
+                  language_server = {
+                    name = "biome";
+                  };
+                }
+              ];
+            };
           };
           diagnostics.inline.enabled = true;
           features.edit_prediction_provider = "copilot";

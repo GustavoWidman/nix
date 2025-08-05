@@ -9,7 +9,9 @@ let
     ;
 in
 {
-  editor.defaultAlias = "hx";
+  environment.variables = {
+    EDITOR = "hx";
+  };
 
   home-manager.sharedModules = [
     {
