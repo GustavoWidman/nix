@@ -22,10 +22,10 @@ def main --wrapped [
   --addr (-a): string               # The IP address of the host to build.
   --identity (-i): string           # The SSH identity to use for the remote host.
   --first (-f)                      # Whether if this is the first time building this host.
-  --dont-add-git-or-update-flake    # Whether to not add changes to git.
+  --dont-update (-d)                # Whether to not add changes to git.
   ...arguments                      # The arguments to pass to `nh {os,darwin} switch` and `nix` (separated by --).
 ]: nothing -> nothing {
-  if not ($dont_add_git_or_update_flake) {
+  if not ($dont_update) {
     nix flake update
     git add -A
   }
@@ -68,9 +68,9 @@ def main --wrapped [
       | sync --files-from - ./ $"($remote_ip):.nix"
 
     let cmd = (if $first {
-      $'NIX_CONFIG="experimental-features = nix-command flakes" NH_BYPASS_ROOT_CHECK=true nix-shell -p nushell -p nh --run "./rebuild.nu ($host) --dont-add-git-or-update-flake --first"'
+      $'NIX_CONFIG="experimental-features = nix-command flakes" NH_BYPASS_ROOT_CHECK=true nix-shell -p nushell -p nh --run "./rebuild.nu ($host) -d --first"'
     } else {
-      $'./rebuild.nu ($host) --dont-add-git-or-update-flake ($arguments | str join " ")'
+      $'./rebuild.nu ($host) -d ($arguments | str join " ")'
     })
     ssh -tt $remote_ip $"
       cd .nix

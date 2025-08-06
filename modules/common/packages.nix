@@ -92,12 +92,11 @@ in
           cyme
           dalfox
           dbeaver-bin
-          discord # TODO make own config of this maybe?
+          # discord # TODO make own config of this maybe? #! THIS IS BROKEN ON MAC FOR SOME REASON
           exploitdb
           feroxbuster # TODO make own config of this
           ffuf
           gdb
-          # ghostty-bin # TODO make own config of this
           gradle
           hashcat
           # httpie-desktop #! TODO not compatible with macos
