@@ -67,10 +67,6 @@ in
         };
 
       programs.nushell = enabled {
-        plugins = [
-          pkgs.nushellPlugins.gstat
-        ];
-
         package = pkgs.nushell;
 
         configFile.text = ''

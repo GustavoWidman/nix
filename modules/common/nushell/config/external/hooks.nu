@@ -1,6 +1,29 @@
 use ($nu.default-config-dir | path join "config/external/mise.nu")
 use ($nu.default-config-dir | path join "config/external/zoxide.nu")
 
+def find-git-dir [pwd?: string] {
+    mut current_dir = if ($pwd | is-empty) {
+        pwd
+    } else {
+        $pwd
+    }
+
+    loop {
+        let git_path = ($current_dir | path join ".git")
+
+        if ($git_path | path exists) {
+            return $git_path
+        }
+
+        let parent = ($current_dir | path dirname)
+        if $parent == $current_dir {
+            # reached filesystem root
+            return ""
+        }
+        $current_dir = $parent
+    }
+}
+
 $env.config.hooks.env_change.PWD = [
 	# Zoxide
 	{
@@ -12,6 +35,18 @@ $env.config.hooks.env_change.PWD = [
 		condition: { "MISE_SHELL" in $env }
 		code: { mise hook }
 	}
+	# Git status cache
+	{
+        code: {|_, dir|
+            let _ = job list
+                | where {|job|
+                    let tag = $job | get -o tag
+                    let gitdir = find-git-dir $dir | str trim
+
+                    return (($tag | str starts-with "git-status-cache") and ($tag != $"git-status-cache($gitdir | str replace -a "/" "-" | str downcase)")) }
+                | each {|job| job kill $job.id}
+        }
+    },
 ];
 
 $env.config.hooks.pre_prompt = [

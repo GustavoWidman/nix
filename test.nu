@@ -2,12 +2,8 @@ def get-cwd [] {
     $" in (ansi blue)((do { pwd }) | str replace $env.HOME '~')(ansi reset)"
 }
 
-def find-git-dir [pwd?: string] {
-    mut current_dir = if ($pwd | is-empty) {
-        pwd
-    } else {
-        $pwd
-    }
+def find-git-dir [] {
+    mut current_dir = (pwd)
 
     loop {
         let git_path = ($current_dir | path join ".git")
@@ -18,13 +14,28 @@ def find-git-dir [pwd?: string] {
 
         let parent = ($current_dir | path dirname)
         if $parent == $current_dir {
+            # Reached filesystem root
             return ""
         }
         $current_dir = $parent
     }
 }
 
-def update_git_status_cache [gitdir: string cachepath: string] {
+def update_git_status_cache [gitdir: string] {
+    # check if we should spawn our "perma" job to update the cache
+    if not (job list
+        | any {|job|
+            ($job | get -o tag) == $"git-status-cache($gitdir | str replace -a "/" "-" | str downcase)"
+        }
+    ) {
+        job spawn {
+            update_git_status_cache_until_leave_gitdir $gitdir
+        } -t $"git-status-cache($gitdir | str replace -a "/" "-" | str downcase)"
+    }
+
+    let $cachepath = $nu.temp-path
+        | path join $"git-status-cache($gitdir | str replace -a "/" "-" | str downcase)"
+
     let status_lines = (git status --porcelain | lines)
 
     if ($status_lines | is-empty) {
@@ -51,9 +62,15 @@ def update_git_status_cache [gitdir: string cachepath: string] {
     return "green"
 }
 
-def update_git_status_cache_forever [gitdir: string cachepath: string] {
+def update_git_status_cache_until_leave_gitdir [main_gitdir: string] {
     loop {
-        update_git_status_cache $gitdir $cachepath
+        # exit loop if we've left our git directory
+        let gitdir = find-git-dir
+        if (($gitdir == "") or ($gitdir != $main_gitdir)) {
+            return
+        }
+
+        update_git_status_cache $gitdir
 
         sleep 10sec
     }
@@ -63,25 +80,17 @@ def git_status_color [gitdir: string] {
     let $cachepath = $nu.temp-path
         | path join $"git-status-cache(pwd | path expand | str replace -a "/" "-" | str downcase)"
 
-    if not (job list
-        | any {|job|
-            ($job | get -o tag) == $"git-status-cache($gitdir | str replace -a "/" "-" | str downcase)"
-        }
-    ) {
-        job spawn {
-            update_git_status_cache_forever $gitdir $cachepath
-        } -t $"git-status-cache($gitdir | str replace -a "/" "-" | str downcase)"
-    }
-
+    # try to get cached git status
     if ($cachepath | path exists) {
-        job spawn { update_git_status_cache $gitdir $cachepath }
+        # spawns a background job to "quickly" update the cache
+        job spawn { update_git_status_cache $gitdir }
         return (open --raw $cachepath)
     } else {
-        return (update_git_status_cache $gitdir $cachepath)
+        return (update_git_status_cache $gitdir)
     }
 }
 
-def git_branch [] {
+export def git_branch [] {
     let gitdir = find-git-dir | str trim
     if $gitdir == "" {
         return ""
@@ -109,11 +118,12 @@ def venv_prompt [] {
 }
 
 export-env {
-    let USER_COLOR = if (is-admin) { $'(ansi red)' } else { $'(ansi $env.USER_COLOR)' }
-    let user_host = $"($USER_COLOR)(whoami)(ansi reset)@($USER_COLOR)($env.HOSTNAME)(ansi reset)"
+	let USER_COLOR = if (is-admin) { $'(ansi red)' } else { $'(ansi $env.USER_COLOR)' }
+	let user_host = $"($USER_COLOR)(whoami)(ansi reset)@($USER_COLOR)($env.HOSTNAME)(ansi reset)"
 
-    $env.PROMPT_COMMAND_RIGHT = ""
-    $env.PROMPT_COMMAND = {|| $"(ansi reset)╭─ ($user_host)(get-cwd)(git_branch)(venv_prompt)
+	$env.PROMPT_COMMAND_RIGHT = ""
+	$env.PROMPT_COMMAND = {|| $"(ansi reset)╭─ ($user_host)(get-cwd)(git_branch)(venv_prompt)
 ╰─"}
-    $env.PROMPT_INDICATOR = $"(ansi reset)(ansi white_bold)(if (is-admin) { "#" } else { "$" })(ansi reset) "
+	$env.PROMPT_INDICATOR = $"(ansi reset)(ansi white_bold)(if (is-admin) { "#" } else { "$" })(ansi reset) "
 }
+
