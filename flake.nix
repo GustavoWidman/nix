@@ -69,12 +69,6 @@
 
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    ctrld = {
-      url = "github:GustavoWidman/ctrld-nix";
-
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
