@@ -5,14 +5,17 @@
   ...
 }:
 let
+  # inherit (config)
+  #   mkIfDesktop
+  #   ;
+
   inherit (lib)
     enabled
-    merge
     mkIf
+    mergeIf
     ;
 in
-merge
-<| mkIf config.isDesktop {
+mergeIf config.isDesktop {
   environment.variables = {
     TERMINAL = mkIf config.isLinux "ghostty";
     TERM_PROGRAM = mkIf config.isDarwin "ghostty";

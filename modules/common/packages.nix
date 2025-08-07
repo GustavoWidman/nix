@@ -51,7 +51,7 @@ in
           sops
           sqlite
           stow # ! TODO maybe remove this if we fully port to nix
-          tree # ? TODO swap this for rgbcube's thing
+          tree # ? TODO swap this for rgbcube's eza thing
           util-linux
           uutils-coreutils-noprefix
           uutils-findutils

@@ -6,7 +6,7 @@ let
     head
     last
     mkConst
-    mkValue
+    mkEnum
     hasPrefix
     splitString
     ;
@@ -14,14 +14,26 @@ in
 {
   options = {
     os = mkConst <| last <| splitString "-" config.nixpkgs.hostPlatform.system;
+    type = mkEnum "server" [
+      "desktop"
+      "server"
+      "dev-server"
+    ];
 
     isLinux = mkConst <| config.os == "linux";
     isDarwin = mkConst <| config.os == "darwin";
 
-    type = mkValue "server";
-
     isDesktop = mkConst <| config.type == "desktop";
     isServer = mkConst <| config.type == "server";
+    isDevServer = mkConst <| config.type == "dev-server";
+
+    isLinuxServer = mkConst <| config.os == "linux" && config.type == "server";
+    isLinuxDesktop = mkConst <| config.os == "linux" && config.type == "desktop";
+    isLinuxDevServer = mkConst <| config.os == "linux" && config.type == "dev-server";
+
+    isDarwinServer = mkConst <| config.os == "darwin" && config.type == "server";
+    isDarwinDesktop = mkConst <| config.os == "darwin" && config.type == "desktop";
+    isDarwinDevServer = mkConst <| config.os == "darwin" && config.type == "dev-server";
 
     mainUser =
       mkConst
