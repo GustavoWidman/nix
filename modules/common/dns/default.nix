@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   lib,
   ...
 }:
@@ -9,20 +10,14 @@ let
     mkForce
     concatStringsSep
     concatMapStringsSep
-    enabled
     ;
 
   searchDomains = [
     "tail4a3ea.ts.net"
     "tailfae4d.ts.net"
   ];
-
 in
 {
-  services.ctrld = enabled {
-    settings = ./config.toml;
-  };
-
   networking =
     optionalAttrs config.isDarwin {
       dns = [ "127.0.0.1" ];
