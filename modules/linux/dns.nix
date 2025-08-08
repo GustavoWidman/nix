@@ -1,7 +1,5 @@
 {
   pkgs,
-  lib,
-  config,
   ...
 }:
 let
@@ -17,7 +15,7 @@ let
   };
 in
 {
-  services.coredns = lib.mkIf config.isLinux {
+  services.coredns = {
     enable = true;
     package = coredns;
     config = builtins.readFile ../common/dns/Corefile;

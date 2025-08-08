@@ -1,7 +1,5 @@
 {
   pkgs,
-  lib,
-  config,
   ...
 }:
 let
@@ -17,13 +15,13 @@ let
   };
 in
 {
-  launchd.daemons.coredns = lib.mkIf config.isDarwin {
+  launchd.daemons.coredns = {
     command = "${coredns}/bin/coredns -conf ${../common/dns/Corefile}";
     serviceConfig = {
       KeepAlive = true;
       RunAtLoad = true;
-      StandardOutPath = "/var/log/ctrld.log";
-      StandardErrorPath = "/var/log/ctrld.log";
+      StandardOutPath = "/var/log/coredns.log";
+      StandardErrorPath = "/var/log/coredns.log";
     };
   };
 }

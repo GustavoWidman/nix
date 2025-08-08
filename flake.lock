@@ -27,26 +27,6 @@
         "type": "github"
       }
     },
-    "ctrld": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1753856936,
-        "narHash": "sha256-CE4hcd8b5Ts1jSUirX89G+MLGGkZ5qFGBiiufNhNJIQ=",
-        "owner": "GustavoWidman",
-        "repo": "ctrld-nix",
-        "rev": "4354c04a64dc483e74bcc39765f0cafdc01d779b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "GustavoWidman",
-        "repo": "ctrld-nix",
-        "type": "github"
-      }
-    },
     "dailybot": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -290,7 +270,6 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
-        "ctrld": "ctrld",
         "dailybot": "dailybot",
         "home-manager": "home-manager",
         "nix": "nix",
