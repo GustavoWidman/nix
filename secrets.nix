@@ -38,7 +38,7 @@ in
   "modules/common/ssh/github/personal.age".publicKeys = all;
 
   # General
-  "modules/common/aic/config.toml.age".publicKeys = all;
+  "modules/desktop/aic/config.toml.age".publicKeys = all;
 
   # Linux Specific
   "modules/linux/tailscale/auth-key.age".publicKeys = linux ++ admins;

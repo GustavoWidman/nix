@@ -1,4 +1,8 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  ...
+}:
 let
   aic = pkgs.rustPlatform.buildRustPackage {
     name = "aic";

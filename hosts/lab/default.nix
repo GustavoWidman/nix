@@ -1,5 +1,5 @@
 lib:
-lib.nixosSystem' (
+lib.linuxServerSystem (
   {
     config,
     keys,

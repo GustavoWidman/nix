@@ -11,6 +11,8 @@ let
   modulesCommon = collectNix ../modules/common;
   modulesLinux = collectNix ../modules/linux;
   modulesDarwin = collectNix ../modules/darwin;
+  modulesDesktop = collectNix ../modules/desktop;
+  modulesServer = collectNix ../modules/server;
 
   collectInputs =
     let
@@ -43,7 +45,7 @@ let
   };
 in
 {
-  nixosSystem' =
+  linuxDesktopSystem =
     module:
     super.nixosSystem {
       inherit specialArgs;
@@ -54,10 +56,26 @@ in
       ]
       ++ modulesCommon
       ++ modulesLinux
+      ++ modulesDesktop
       ++ inputModulesLinux;
     };
 
-  darwinSystem' =
+  linuxServerSystem =
+    module:
+    super.nixosSystem {
+      inherit specialArgs;
+
+      modules = [
+        module
+        overlayModule
+      ]
+      ++ modulesCommon
+      ++ modulesLinux
+      ++ modulesServer
+      ++ inputModulesLinux;
+    };
+
+  darwinDesktopSystem =
     module:
     super.darwinSystem {
       inherit specialArgs;
@@ -68,6 +86,21 @@ in
       ]
       ++ modulesCommon
       ++ modulesDarwin
+      ++ modulesDesktop
+      ++ inputModulesDarwin;
+    };
+
+  darwinServerSystem =
+    module:
+    super.darwinSystem {
+      inherit specialArgs;
+      modules = [
+        module
+        overlayModule
+      ]
+      ++ modulesCommon
+      ++ modulesDarwin
+      ++ modulesServer
       ++ inputModulesDarwin;
     };
 }

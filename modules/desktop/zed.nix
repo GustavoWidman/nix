@@ -1,16 +1,18 @@
-{ lib, config, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 let
   inherit (lib)
     enabled
-    merge
-    mkIf
     ;
 in
-merge
-<| mkIf config.isDesktop {
+{
   home-manager.sharedModules = [
     {
       programs.zed-editor = enabled {
+        package = pkgs.zed-editor;
         userSettings = {
           icon_theme = "Material Icon Theme";
           autosave = "on_focus_change";
