@@ -126,16 +126,18 @@ $env.config.menus = $env.config.menus
 $env.BUN_INSTALL = $"($env.TRUE_HOME)/.bun"
 mut path = [
     "/run/wrappers/bin"
-	"/nix/var/nix/profiles/default/bin/",
+	"/nix/var/nix/profiles/default/bin",
 	"/run/current-system/sw/bin",
 	$"/etc/profiles/per-user/($env.USER)/bin",
 	$"($env.BUN_INSTALL)/bin",
 	$"($env.TRUE_HOME)/.local/bin",
 	$"($env.TRUE_HOME)/.cargo/bin"
 	$"($env.TRUE_HOME)/go/bin",
+	"/usr/sbin",
+	"/sbin",
 	"/usr/local/bin",
-	$"($env.TRUE_HOME)/.cabal/bin",
-	$"($env.TRUE_HOME)/.ghcup/bin",
+	"/usr/bin",
+	"/bin",
 ]
 
 if $env.OS == "Darwin" {
@@ -146,7 +148,7 @@ if $env.OS == "Darwin" {
 	]
 }
 
-$env.PATH = ($path | append ($env.PATH | split row (char esep)))
+$env.PATH = $env.PATH | split row (char esep) | where not ($it in $path) | append $path
 
 source config/main/aliases.nu
 source config/main/carapace.nu
