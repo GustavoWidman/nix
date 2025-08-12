@@ -190,6 +190,7 @@ in
           "xml"
           "ruff"
           "python-requirements"
+          "neocmake"
         ];
       };
     }

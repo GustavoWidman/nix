@@ -51,9 +51,10 @@ export def --env true_home [] {
 				| ^awk '{ print $2 }'
 				| str trim
 		} else {
-			^grep -m1 '/home/' /etc/passwd
-				| ^cut -d: -f6
-				| str trim
+			^grep '/home/' /etc/passwd
+				| each {|str| $str | ^cut -d: -f6 | str trim}
+				| where {|str| not ($str =~ "build")}
+				| first
 		}
 
 		save_to_cache true_home $true_home

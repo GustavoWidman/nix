@@ -125,7 +125,7 @@ $env.config.menus = $env.config.menus
 
 $env.BUN_INSTALL = $"($env.TRUE_HOME)/.bun"
 mut path = [
-  "/run/wrappers/bin"
+    "/run/wrappers/bin"
 	"/nix/var/nix/profiles/default/bin/",
 	"/run/current-system/sw/bin",
 	$"/etc/profiles/per-user/($env.USER)/bin",
@@ -139,7 +139,6 @@ mut path = [
 ]
 
 if $env.OS == "Darwin" {
-
 	$env.PNPM_HOME = $env.TRUE_HOME + "/Library/pnpm"
 
 	$path ++= [

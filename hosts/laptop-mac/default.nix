@@ -10,7 +10,6 @@ lib.darwinDesktopSystem (
   in
   {
     imports = collectNix ./. |> remove ./default.nix;
-
     type = "desktop";
 
     networking.hostName = "laptop-mac";

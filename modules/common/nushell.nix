@@ -39,7 +39,7 @@ in
         zoxide
       ];
 
-      variables = {
+      variables = mkIf config.isDev {
         NIX_LDFLAGS = concatMapStringsSep " " (pkg: "-L${pkg}/lib") devPackages;
         NIX_CFLAGS_COMPILE = concatMapStringsSep " " (
           pkg: "-isystem ${pkg}/include"

@@ -1,5 +1,5 @@
 lib:
-lib.linuxServerSystem (
+lib.linuxDevServerSystem (
   {
     config,
     lib,
@@ -10,12 +10,12 @@ lib.linuxServerSystem (
   in
   {
     imports = collectNix ./. |> remove ./default.nix;
-    type = "server";
+    type = "dev-server";
 
-    networking.hostName = "lab";
+    networking.hostName = "vm";
 
+    users.users.r3dlust.authorizedKey = config.secrets.ssh-vms-vm.path;
     secrets.password.file = ./password.age;
-    users.users.r3dlust.authorizedKey = config.secrets.ssh-main-lab.path;
 
     time.timeZone = "America/Sao_Paulo";
     system.stateVersion = "25.05";

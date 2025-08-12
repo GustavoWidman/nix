@@ -1,4 +1,8 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  ...
+}:
 
 let
   inherit (lib)
@@ -8,14 +12,14 @@ in
 {
   secrets.dailybot-config = {
     file = ./config.toml.age;
-    owner = config.services.dailybot-free.user;
+    owner = config.services.dailybot.user;
   };
   secrets.dailybot-creds = {
     file = ./creds.json.age;
-    owner = config.services.dailybot-free.user;
+    owner = config.services.dailybot.user;
   };
 
-  services.dailybot-free = enabled {
+  services.dailybot = enabled {
     configFile = config.secrets.dailybot-config.path;
     googleCredentialsFile = config.secrets.dailybot-creds.path;
   };

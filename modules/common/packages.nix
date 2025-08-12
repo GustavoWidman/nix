@@ -81,7 +81,7 @@ in
           utm
           ;
       }
-      // optionalAttrs config.isDesktop {
+      // optionalAttrs config.isDev {
         inherit (pkgs)
           abseil-cpp
           arduino-cli

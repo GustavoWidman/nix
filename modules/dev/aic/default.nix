@@ -1,11 +1,12 @@
 {
   config,
   pkgs,
+  naersk,
   ...
 }:
 let
-  aic = pkgs.rustPlatform.buildRustPackage {
-    name = "aic";
+  naerskLib = pkgs.callPackage naersk { };
+  aic = naerskLib.buildPackage {
     src = pkgs.fetchFromGitHub {
       owner = "shenxiangzhuang";
       repo = "aic";
@@ -13,10 +14,14 @@ let
       sha256 = "sha256-SpQblp/F0B523Y2MLDf1uyaX5snxVinZEmb+Gc8CnCU=";
     };
     doCheck = false;
-    cargoHash = "sha256-K3k9FvTz9crx40Enr35YzYJXFqD3vhZyKUDOzxxAOgI=";
+    buildInputs = with pkgs; [
+      openssl
+    ];
+    nativeBuildInputs = with pkgs; [
+      pkg-config
+    ];
   };
 in
-
 {
   environment.systemPackages = [
     aic

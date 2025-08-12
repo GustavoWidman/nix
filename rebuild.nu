@@ -68,7 +68,7 @@ def main --wrapped [
       | sync --files-from - ./ $"($remote_ip):.nix"
 
     let cmd = (if $first {
-      $'NIX_CONFIG="experimental-features = nix-command flakes" NH_BYPASS_ROOT_CHECK=true nix-shell -p nushell -p nh --run "./rebuild.nu ($host) -d --first"'
+      $'nix-channel --add https://nixos.org/channels/nixpkgs-unstable && nix-channel --update && NIX_CONFIG="experimental-features = nix-command flakes" NH_BYPASS_ROOT_CHECK=true nix-shell -p nushell -p nh --run "./rebuild.nu ($host) -d --first"'
     } else {
       $'./rebuild.nu ($host) -d ($arguments | str join " ")'
     })

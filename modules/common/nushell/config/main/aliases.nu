@@ -20,6 +20,8 @@ alias fg = job unfreeze
 
 alias multiplex = zellij options --default-shell nu
 
+alias "submodule pull" = git submodule update --recursive --remote
+
 # let's give this a try, shall we?
 alias nano = hx
 alias code = zeditor

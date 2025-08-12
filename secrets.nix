@@ -1,8 +1,9 @@
 let
   inherit (import ./keys.nix)
-    laptop-mac
+    vm
     lab
     oracle-2
+    laptop-mac
 
     linux
     darwin
@@ -38,11 +39,14 @@ in
   "modules/common/ssh/github/personal.age".publicKeys = all;
 
   # General
-  "modules/desktop/aic/config.toml.age".publicKeys = all;
+  "modules/dev/aic/config.toml.age".publicKeys = all;
 
   # Linux Specific
   "modules/linux/tailscale/auth-key.age".publicKeys = linux ++ admins;
-  "modules/linux/acme/environment.env.age".publicKeys = linux ++ admins;
+  "modules/server/acme/environment.env.age".publicKeys = linux ++ admins;
+
+  # VM Specific
+  "hosts/vm/password.age".publicKeys = [ vm ] ++ admins;
 
   # Lab Specific
   "hosts/lab/password.age".publicKeys = [ lab ] ++ admins;

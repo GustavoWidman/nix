@@ -26,14 +26,19 @@ in
     isDesktop = mkConst <| config.type == "desktop";
     isServer = mkConst <| config.type == "server";
     isDevServer = mkConst <| config.type == "dev-server";
+    isDev = mkConst <| (config.type == "dev-server" || config.type == "desktop");
 
-    isLinuxServer = mkConst <| config.os == "linux" && config.type == "server";
-    isLinuxDesktop = mkConst <| config.os == "linux" && config.type == "desktop";
-    isLinuxDevServer = mkConst <| config.os == "linux" && config.type == "dev-server";
+    isLinuxServer = mkConst <| (config.os == "linux" && config.type == "server");
+    isLinuxDesktop = mkConst <| (config.os == "linux" && config.type == "desktop");
+    isLinuxDevServer = mkConst <| (config.os == "linux" && config.type == "dev-server");
+    isLinuxDev =
+      mkConst <| (config.os == "linux" && (config.type == "dev-server" || config.type == "desktop"));
 
-    isDarwinServer = mkConst <| config.os == "darwin" && config.type == "server";
-    isDarwinDesktop = mkConst <| config.os == "darwin" && config.type == "desktop";
-    isDarwinDevServer = mkConst <| config.os == "darwin" && config.type == "dev-server";
+    isDarwinServer = mkConst <| (config.os == "darwin" && config.type == "server");
+    isDarwinDesktop = mkConst <| (config.os == "darwin" && config.type == "desktop");
+    isDarwinDevServer = mkConst <| (config.os == "darwin" && config.type == "dev-server");
+    isDarwinDev =
+      mkConst <| (config.os == "darwin" && (config.type == "dev-server" || config.type == "desktop"));
 
     mainUser =
       mkConst

@@ -31,6 +31,7 @@
     keep-outputs = true;
     flake-registry = "";
     http-connections = 50;
+    max-substitution-jobs = 50;
     lazy-trees = true;
     show-trace = true;
     trusted-users = [
@@ -43,6 +44,8 @@
   };
 
   inputs = {
+    self.submodules = true;
+
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     nix-darwin = {
@@ -69,10 +72,11 @@
     nh.url = "github:nix-community/nh";
 
     dailybot = {
-      url = "git+ssh://git@github.com/camelsec/dailybot";
+      url = ./.inputs/dailybot;
 
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    naersk.url = "github:nix-community/naersk";
   };
 
   outputs =

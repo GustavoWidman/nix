@@ -53,15 +53,19 @@ in
       }
     );
 
-  environment.systemPackages = with pkgs; [
-    deploy-rs
-    nh
-    nil
-    nix-index
-    nix-output-monitor
-    nixd
-    nixfmt-rfc-style
-  ];
+  environment.systemPackages =
+    with pkgs;
+    [
+      deploy-rs
+      nh
+      nix-index
+      nix-output-monitor
+      nixfmt-rfc-style
+    ]
+    ++ lib.lists.optionals config.isDev [
+      nil
+      nixd
+    ];
 
   nix.channel = disabled;
 

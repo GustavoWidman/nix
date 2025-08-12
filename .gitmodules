@@ -1,0 +1,3 @@
+[submodule ".inputs/dailybot"]
+	path = .inputs/dailybot
+	url = git@github.com:camelsec/dailybot

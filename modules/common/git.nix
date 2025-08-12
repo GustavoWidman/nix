@@ -54,7 +54,7 @@ in
       };
     }
 
-    (mkIf config.isDesktop {
+    (mkIf config.isDev {
       programs.gh = enabled {
         settings.git_protocol = "ssh";
       };

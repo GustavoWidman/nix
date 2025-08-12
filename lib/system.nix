@@ -12,6 +12,7 @@ let
   modulesLinux = collectNix ../modules/linux;
   modulesDarwin = collectNix ../modules/darwin;
   modulesDesktop = collectNix ../modules/desktop;
+  modulesDev = collectNix ../modules/dev;
   modulesServer = collectNix ../modules/server;
 
   collectInputs =
@@ -57,6 +58,22 @@ in
       ++ modulesCommon
       ++ modulesLinux
       ++ modulesDesktop
+      ++ modulesDev # desktop is considered a dev environment
+      ++ inputModulesLinux;
+    };
+
+  linuxDevServerSystem =
+    module:
+    super.nixosSystem {
+      inherit specialArgs;
+
+      modules = [
+        module
+        overlayModule
+      ]
+      ++ modulesCommon
+      ++ modulesLinux
+      ++ modulesDev
       ++ inputModulesLinux;
     };
 
@@ -87,6 +104,7 @@ in
       ++ modulesCommon
       ++ modulesDarwin
       ++ modulesDesktop
+      ++ modulesDev # desktop is considered a dev environment
       ++ inputModulesDarwin;
     };
 
