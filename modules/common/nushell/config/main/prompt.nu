@@ -13,7 +13,7 @@ def find-git-dir [pwd?: string] {
         let git_path = ($current_dir | path join ".git")
 
         if ($git_path | path exists) {
-            return $git_path
+            return ($git_path | path dirname)
         }
 
         let parent = ($current_dir | path dirname)
@@ -25,7 +25,7 @@ def find-git-dir [pwd?: string] {
 }
 
 def update_git_status_cache [gitdir: string cachepath: string] {
-    let status_lines = (git status --porcelain | lines)
+    let status_lines = (git -C $"($gitdir)" status --porcelain | lines)
 
     if ($status_lines | is-empty) {
         "green" | save -f $cachepath
@@ -61,7 +61,7 @@ def update_git_status_cache_forever [gitdir: string cachepath: string] {
 
 def git_status_color [gitdir: string] {
     let $cachepath = $nu.temp-path
-        | path join $"git-status-cache(pwd | path expand | str replace -a "/" "-" | str downcase)"
+        | path join $"git-status-cache($gitdir | path expand | str replace -a "/" "-" | str downcase)"
 
     if not (job list
         | any {|job|
@@ -87,7 +87,7 @@ def git_branch [] {
         return ""
     }
 
-	let head = open $"($gitdir)/HEAD"
+	let head = open $"($gitdir)/.git/HEAD"
 
 	let branch = if ($head | str starts-with "ref: refs/heads/") {
         ($head | str substring 16..)

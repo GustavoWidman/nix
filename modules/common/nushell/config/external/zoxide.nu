@@ -4,7 +4,7 @@ export def --env --wrapped z [...rest: string] {
   let path = match $rest {
     [] => {$env.HOME},
     [ '-' ] => {'-'},
-    [ $arg ] if ($arg | path type) == 'dir' => {$arg}
+    [ $arg ] if ($arg | path expand | path type) == 'dir' => {$arg}
     _ => {
       zoxide query --exclude $env.PWD -- ...$rest | str trim -r -c "\n"
     }

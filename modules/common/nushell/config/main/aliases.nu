@@ -21,6 +21,15 @@ alias fg = job unfreeze
 alias multiplex = zellij options --default-shell nu
 
 alias "submodule pull" = git submodule update --recursive --remote
+alias devshell = nom develop -c (absolute nu)
+def --env quit [] {
+    job list
+        | where {|job| (($job | get -o tag) | str starts-with "git-status-cache")}
+        | each {|job| job kill $job.id}
+
+    exit
+}
+alias bye = quit
 
 # let's give this a try, shall we?
 alias nano = hx
