@@ -47,6 +47,29 @@ $env.config.hooks.env_change.PWD = [
                 | each {|job| job kill $job.id}
         }
     },
+    # Rust Environment (add and remove debug and release builds to PATH)
+    {
+		condition: {|_, after| ($after | path join 'Cargo.lock' | path exists) }
+		code: {|_, after|
+			$env.PATH = (
+				$env.PATH
+					| prepend ($after | path join 'target' 'debug')
+					| prepend ($after | path join 'target' 'release')
+					| uniq
+			)
+		}
+	},
+	{
+		condition: {|before, _| ($before | default '' | path join 'Cargo.lock' | path exists) and ($before | is-not-empty)}
+		code: {|before, _|
+			$env.PATH = (
+				$env.PATH
+					| where $it != ($before | path join 'target' 'debug')
+					| where $it != ($before | path join 'target' 'release')
+					| uniq
+			)
+		}
+	}
 ];
 
 $env.config.hooks.pre_prompt = [

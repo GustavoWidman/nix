@@ -53,6 +53,13 @@ in
         #   filter (pkg: builtins.pathExists "${pkg}/lib/pkgconfig") devPackages
         # );
       };
+
+      etc."environment" = {
+        text =
+          config.environment.variables
+          |> pkgs.lib.mapAttrsToList (key: value: "${key}=\"${value}\"")
+          |> pkgs.lib.concatStringsSep "\n";
+      };
     };
 
   home-manager.sharedModules = [
@@ -74,11 +81,12 @@ in
         '';
 
         envFile.text = ''
+          open /etc/environment | from toml | load-env
           source ($nu.default-config-dir | path join _env.nu)
         '';
 
         # sometimes, even my own genius scares me
-        environmentVariables = config.environment.variables;
+        # environmentVariables = config.environment.variables;
       };
 
       programs.bat = enabled {

@@ -50,33 +50,40 @@
 
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
-
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     home-manager = {
       url = "github:nix-community/home-manager";
-
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     agenix = {
       url = "github:ryantm/agenix";
-
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.darwin.follows = "nix-darwin";
       inputs.home-manager.follows = "home-manager";
     };
 
-    nix.url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
-    nh.url = "github:nix-community/nh";
+    nix = {
+      url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nh = {
+      url = "github:nix-community/nh";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     dailybot = {
       url = ./.inputs/dailybot;
-
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    naersk.url = "github:nix-community/naersk";
+
+    naersk = {
+      url = "github:nix-community/naersk";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
