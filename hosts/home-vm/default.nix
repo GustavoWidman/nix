@@ -21,5 +21,8 @@ lib.linuxDevServerSystem (
     system.stateVersion = "25.05";
 
     nixpkgs.hostPlatform = "x86_64-linux";
+
+    nix.settings.extra-platforms = [ "aarch64-linux" ];
+    boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   }
 )

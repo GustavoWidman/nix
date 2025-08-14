@@ -14,6 +14,7 @@ in
 {
   options = {
     os = mkConst <| last <| splitString "-" config.nixpkgs.hostPlatform.system;
+    arch = mkConst config.nixpkgs.hostPlatform.system;
     type = mkEnum "server" [
       "desktop"
       "server"

@@ -22,7 +22,10 @@
       home = "/home/r3dlust";
       isMainUser = true;
       isNormalUser = true;
-      extraGroups = [ "wheel" ];
+      extraGroups = [
+        "wheel"
+        "docker"
+      ];
     };
 
     build = {

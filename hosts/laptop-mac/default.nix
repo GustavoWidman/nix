@@ -27,5 +27,7 @@ lib.darwinDesktopSystem (
     };
 
     system.stateVersion = 5;
+
+    nix.settings.extra-platforms = [ "x86_64-darwin" ];
   }
 )
