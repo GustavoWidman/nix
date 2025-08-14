@@ -1,11 +1,18 @@
 {
+  config,
+  self,
   pkgs,
   lib,
   ...
 }:
 let
   inherit (lib)
+    attrsToList
+    subtractLists
+    optionals
     enabled
+    filter
+    mkIf
     ;
 in
 {
@@ -14,6 +21,17 @@ in
       programs.zed-editor = enabled {
         package = pkgs.zed-editor;
         userSettings = {
+          ssh_connections =
+            self.nixosConfigurations
+            |> attrsToList
+            |> filter ({ name, value }: name != config.networking.hostName && value.config.isDevServer)
+            |> map (
+              { name, ... }:
+              {
+                host = name;
+                projects = [ ];
+              }
+            );
           icon_theme = "Material Icon Theme";
           autosave = "on_focus_change";
           theme = "Base16 Gruvbox dark, medium";
@@ -166,33 +184,38 @@ in
             };
           }
         ];
-        extensions = [
-          "base16"
-          "basher"
-          "biome"
-          "caddyfile"
-          "cargo-tom"
-          "discord-presence"
-          "env"
-          "http"
-          "ini"
-          "make"
-          "dockerfile"
-          "docker-compose"
-          "sql"
-          "nix"
-          "nu"
-          "log"
-          "tombi"
-          "nginx"
-          "git-firefly"
-          "material-icon-theme"
-          "xml"
-          "ruff"
-          "python-requirements"
-          "neocmake"
-        ];
+        extensions =
+          [
+            "base16"
+            "basher"
+            "biome"
+            "caddyfile"
+            "cargo-tom"
+            "discord-presence"
+            "env"
+            "http"
+            "ini"
+            "make"
+            "dockerfile"
+            "docker-compose"
+            "sql"
+            "nix"
+            "nu"
+            "log"
+            "tombi"
+            "nginx"
+            "git-firefly"
+            "material-icon-theme"
+            "xml"
+            "ruff"
+            "python-requirements"
+            "neocmake"
+          ]
+          |> subtractLists (optionals config.isDevServer [ "discord-presence" ]);
       };
     }
+    (mkIf config.isDevServer {
+      programs.zed-editor.installRemoteServer = true;
+    })
   ];
 }

@@ -2,5 +2,5 @@
 
 {
   virtualisation.docker.enable = true;
-  users.users.r3dlust.extraGroups = [ "docker" ];
+  users.users.${config.mainUser}.extraGroups = [ "docker" ];
 }

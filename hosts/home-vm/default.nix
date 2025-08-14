@@ -12,7 +12,7 @@ lib.linuxDevServerSystem (
     imports = collectNix ./. |> remove ./default.nix;
     type = "dev-server";
 
-    networking.hostName = "vm";
+    networking.hostName = "home-vm";
 
     users.users.r3dlust.authorizedKey = config.secrets.ssh-vms-vm.path;
     secrets.password.file = ./password.age;
