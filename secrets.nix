@@ -29,6 +29,7 @@ in
   "modules/common/ssh/misc/aur.age".publicKeys = all;
   "modules/common/ssh/misc/mwkey.age".publicKeys = all;
   "modules/common/ssh/misc/toninho.age".publicKeys = all;
+  "modules/common/ssh/misc/build.age".publicKeys = all;
 
   "modules/common/ssh/main/config.age".publicKeys = all;
   "modules/common/ssh/main/desktop.age".publicKeys = all;

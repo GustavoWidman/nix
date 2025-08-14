@@ -30,7 +30,7 @@
 
     build = {
       hashedPasswordFile = config.secrets.password.path;
-      openssh.authorizedKeys.keys = keys.all;
+      authorizedKey = config.secrets.ssh-misc-build.path;
       home = "/var/lib/build";
       isNormalUser = true;
       extraGroups = [ "build" ];

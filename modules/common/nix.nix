@@ -42,7 +42,7 @@ in
         maxJobs = 20;
         protocol = "ssh-ng";
         sshUser = "build";
-        sshKey = "/etc/ssh/ssh_host_ed25519_key";
+        sshKey = config.secrets.ssh-misc-build.path;
         supportedFeatures = [
           "benchmark"
           "big-parallel"
