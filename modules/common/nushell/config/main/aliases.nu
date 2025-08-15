@@ -39,17 +39,9 @@ def --env quit [] {
     exit
 }
 alias bye = quit
+alias ":q" = quit # le vim enjoyer
 alias q = quit
-alias dns = /run/current-system/sw/bin/q
-def --env redev [] {
-    if ("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env) {
-        quit; devshell
-    } else {
-        error make -u {
-			msg: $"(ansi red)nix_shell::not_activated(ansi reset)\nYou are not inside a nix shell\nPlease activate a nix shell first \(using \"dev\" or \"devshell\"\), then try again"
-		}
-    }
-}
+alias dns = /usr/bin/env q # re-alias "q" (the DNS query tool) to something else
 
 # let's give this a try, shall we?
 alias nano = hx
