@@ -18,9 +18,8 @@ camelsec.staging:53 {
     forward internal.camelsec.com 10.100.0.1
 
     forward dns.r3dlust.com 1.1.1.1
-    forward one.one.one.one 1.1.1.1
-    https . dns.r3dlust.com/dns-query one.one.one.one/dns-query {
-        except dns.r3dlust.com one.one.one.one
+    https . dns.r3dlust.com/dns-query 1.1.1.1/dns-query {
+        except dns.r3dlust.com
         policy sequential
     }
 
