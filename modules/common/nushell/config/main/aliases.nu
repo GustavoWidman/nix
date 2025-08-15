@@ -43,6 +43,9 @@ alias ":q" = quit # le vim enjoyer
 alias q = quit
 alias dns = /usr/bin/env q # re-alias "q" (the DNS query tool) to something else
 
+alias c = clear
+alias ":c" = clear # le vim enjoyer part 2
+
 # let's give this a try, shall we?
 alias nano = hx
 alias code = zeditor
