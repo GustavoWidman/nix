@@ -114,3 +114,13 @@ def --wrapped crun [...args] {
 
 	./dist/($base_name) ...$other_args
 }
+
+def "from env" []: string -> record {
+  lines
+    | split column '#'
+    | get column1
+    | where {($in | str length) > 0}
+    | parse "{key}={value}"
+    | update value {str trim -c '"'}
+    | transpose -r -d
+}
