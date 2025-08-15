@@ -70,6 +70,27 @@ $env.config.hooks.env_change.PWD = [
 			)
 		}
 	}
+	# Nix Environment (add and remove result/bin to PATH)
+    {
+        condition: {|_, after| ($after | path join 'flake.lock' | path exists) }
+        code: {|_, after|
+            $env.PATH = (
+           	$env.PATH
+          		| prepend ($after | path join 'result' 'bin')
+          		| uniq
+            )
+        }
+    },
+    {
+        condition: {|before, _| ($before | default '' | path join 'flake.lock' | path exists) and ($before | is-not-empty)}
+        code: {|before, _|
+            $env.PATH = (
+           	$env.PATH
+          		| where $it != ($before | path join 'result' 'bin')
+          		| uniq
+            )
+        }
+    }
 ];
 
 $env.config.hooks.pre_prompt = [

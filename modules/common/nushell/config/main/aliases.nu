@@ -21,7 +21,16 @@ alias fg = job unfreeze
 alias multiplex = zellij options --default-shell nu
 
 alias "submodule pull" = git submodule update --recursive --remote
-alias devshell = nom develop -c (absolute nu)
+def --env devshell [] {
+    if ("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env) {
+        error make -u {
+			msg: $"(ansi red)nix_shell::already_activated(ansi reset)\nAlready inside a nix shell\nExit the current nix shell first \(using \"bye\", \"quit\" or \"q\"\), then try again"
+		}
+    } else {
+        nom develop -c (absolute nu)
+    }
+}
+alias dev = devshell
 def --env quit [] {
     job list
         | where {|job| (($job | get -o tag) | str starts-with "git-status-cache")}
@@ -30,6 +39,17 @@ def --env quit [] {
     exit
 }
 alias bye = quit
+alias q = quit
+alias dns = /run/current-system/sw/bin/q
+def --env redev [] {
+    if ("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env) {
+        quit; devshell
+    } else {
+        error make -u {
+			msg: $"(ansi red)nix_shell::not_activated(ansi reset)\nYou are not inside a nix shell\nPlease activate a nix shell first \(using \"dev\" or \"devshell\"\), then try again"
+		}
+    }
+}
 
 # let's give this a try, shall we?
 alias nano = hx

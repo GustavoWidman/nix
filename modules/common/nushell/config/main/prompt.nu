@@ -108,12 +108,20 @@ def venv_prompt [] {
     }
 }
 
+def nix_shell_prompt [] {
+    if ("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env) {
+        $" in (ansi cyan)nix-shell(ansi reset)"
+    } else {
+        ""
+    }
+}
+
 export-env {
     let USER_COLOR = if (is-admin) { $'(ansi red)' } else { $'(ansi $env.USER_COLOR)' }
     let user_host = $"($USER_COLOR)(whoami)(ansi reset)@($USER_COLOR)($env.HOSTNAME)(ansi reset)"
 
     $env.PROMPT_COMMAND_RIGHT = ""
-    $env.PROMPT_COMMAND = {|| $"(ansi reset)╭─ ($user_host)(get-cwd)(git_branch)(venv_prompt)
+    $env.PROMPT_COMMAND = {|| $"(ansi reset)╭─ ($user_host)(get-cwd)(git_branch)(venv_prompt)(nix_shell_prompt)
 ╰─"}
     $env.PROMPT_INDICATOR = $"(ansi reset)(ansi white_bold)(if (is-admin) { "#" } else { "$" })(ansi reset) "
 }
