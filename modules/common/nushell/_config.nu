@@ -1,5 +1,6 @@
 use ($nu.default-config-dir | path join config/main/prompt.nu)
 use ($nu.default-config-dir | path join config/main/absolute.nu)
+use ($nu.default-config-dir | path join config/main/mkdevshell.nu)
 use ($nu.default-config-dir | path join config/main/activate.nu)
 use ($nu.default-config-dir | path join config/main/env.nu)
 
