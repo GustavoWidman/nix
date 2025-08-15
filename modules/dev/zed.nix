@@ -98,6 +98,15 @@ in
                 }
               ];
             };
+            "Assembly" = {
+              formatter = [
+                {
+                  language_server = {
+                    name = "nasmfmt";
+                  };
+                }
+              ];
+            };
             JavaScript = {
               formatter = [
                 {
@@ -186,6 +195,7 @@ in
         ];
         extensions =
           [
+            "assembly"
             "base16"
             "basher"
             "biome"
