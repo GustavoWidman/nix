@@ -101,8 +101,15 @@ in
             "Assembly" = {
               formatter = [
                 {
-                  language_server = {
-                    name = "nasmfmt";
+                  external = {
+                    command = "nasmfmt";
+                    arguments = [
+                      "-ii"
+                      "4"
+                      "-ci"
+                      "70"
+                      "-"
+                    ];
                   };
                 }
               ];
