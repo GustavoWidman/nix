@@ -65,6 +65,7 @@ in
           tailscale
           usbutils
           xfsprogs
+          wol
           ;
       }
       // optionalAttrs config.isDarwin {
@@ -103,6 +104,8 @@ in
           jdk
           john
           lua
+          nasm
+          nasmfmt
           maven
           manix
           metasploit
