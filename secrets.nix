@@ -3,6 +3,7 @@ let
     lab
     home-vm
     oracle-2
+    oracle-xray
     laptop-mac
 
     linux
@@ -27,6 +28,7 @@ in
   "modules/common/ssh/oracle/config.age".publicKeys = all;
   "modules/common/ssh/oracle/oracle-1.age".publicKeys = all;
   "modules/common/ssh/oracle/oracle-2.age".publicKeys = all;
+  "modules/common/ssh/oracle/oracle-xray.age".publicKeys = all;
 
   "modules/common/ssh/misc/config.age".publicKeys = all;
   "modules/common/ssh/misc/aur.age".publicKeys = all;
@@ -60,4 +62,6 @@ in
   "hosts/oracle-2/adguard/config.yaml.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/xray/config.json.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/password.age".publicKeys = [ oracle-2 ] ++ admins;
+  # Oracle-Xray Specific
+  "hosts/oracle-xray/password.age".publicKeys = [ oracle-xray ] ++ admins;
 }

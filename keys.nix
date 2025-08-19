@@ -1,5 +1,6 @@
 let
   keys = {
+    oracle-xray = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILa5bzp16gMJGQtRt1WnCHX24KwPTS05W88VkMRg4zsL";
     home-vm = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOhOFxXLG0mwiEQb9L8JcJpA6YL2Io2ACxst4ZutR3cS root@nixos";
     oracle-2 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE/dj27jlY8FgNflMPk91Wza8M/Gjm+2c4A2hopshHl5 root@nixos";
     lab = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICDAYlV/keQmXqAEVP+2ozD3ILSpySY6EUAD3dMqU5Bk root@nixos";
@@ -12,6 +13,7 @@ keys
     keys.laptop-mac
   ];
   linux = [
+    keys.oracle-xray
     keys.lab
     keys.home-vm
     keys.oracle-2
@@ -21,6 +23,7 @@ keys
     keys.laptop-mac
   ];
   server = [
+    keys.oracle-xray
     keys.oracle-2
     keys.lab
   ];
