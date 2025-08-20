@@ -268,6 +268,8 @@ def rebuild-local [
             "--extra-experimental-features" "pipe-operators"
             "--extra-experimental-features" "nix-command"
         ])
+
+        $env.NIXOS_INSTALL_BOOTLOADER = 1
     }
 
     if $dry_run {
