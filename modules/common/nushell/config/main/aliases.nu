@@ -31,16 +31,10 @@ def --env devshell [] {
     }
 }
 alias dev = devshell
-def --env quit [] {
-    job list
-        | where {|job| (($job | get -o tag) | str starts-with "git-status-cache")}
-        | each {|job| job kill $job.id}
-
-    exit
-}
-alias bye = quit
-alias ":q" = quit # le vim enjoyer
-alias q = quit
+alias quit = exit
+alias bye = exit
+alias ":q" = exit # le vim enjoyer
+alias q = exit
 alias dns = /usr/bin/env q # re-alias "q" (the DNS query tool) to something else
 
 alias c = clear

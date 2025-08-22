@@ -36,17 +36,17 @@ $env.config.hooks.env_change.PWD = [
 		code: { mise hook }
 	}
 	# Git status cache
-	{
-        code: {|_, dir|
-            let _ = job list
-                | where {|job|
-                    let tag = $job | get -o tag
-                    let gitdir = find-git-dir $dir | str trim
+	# {
+ #        code: {|_, dir|
+ #            let _ = job list
+ #                | where {|job|
+ #                    let tag = $job | get -o tag
+ #                    let gitdir = find-git-dir $dir | str trim
 
-                    return (($tag | str starts-with "git-status-cache") and ($tag != $"git-status-cache($gitdir | str replace -a "/" "-" | str downcase)")) }
-                | each {|job| job kill $job.id}
-        }
-    },
+ #                    return (($tag | str starts-with "git-status-cache") and ($tag != $"git-status-cache($gitdir | str replace -a "/" "-" | str downcase)")) }
+ #                | each {|job| job kill $job.id}
+ #        }
+ #    },
     # Rust Environment (add and remove debug and release builds to PATH)
     {
 		condition: {|_, after| ($after | path join 'Cargo.lock' | path exists) }
