@@ -28,7 +28,7 @@ let
 in
 {
   nix.enable = true;
-  nix.package = pkgs.nix;
+  # nix.package = pkgs.nix;
 
   nix.distributedBuilds = true;
   nix.buildMachines =
@@ -92,7 +92,6 @@ in
     |> flip removeAttrs (
       optionals config.isDarwin [
         "use-cgroups"
-        "lazy-trees"
       ]
     );
 

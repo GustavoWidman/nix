@@ -3,21 +3,17 @@
 
   nixConfig = {
     extra-substituters = [
-      # "https://cache.r3dlust.com/"
       "https://cache.garnix.io/"
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
       "https://install.determinate.systems"
-      # "https://cache.flakehub.com"
     ];
 
     extra-trusted-public-keys = [
-      # "cache.r3dlust.com:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      # "cache.flakehub.com-1:t6986ugxCA+d/ZF6IzeE2XmLZNMCfHdPIHPPkNF8cTQ="
     ];
 
     experimental-features = [
@@ -32,7 +28,6 @@
     flake-registry = "";
     http-connections = 50;
     max-substitution-jobs = 50;
-    lazy-trees = true;
     show-trace = true;
     trusted-users = [
       "root"
@@ -63,11 +58,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.darwin.follows = "nix-darwin";
       inputs.home-manager.follows = "home-manager";
-    };
-
-    nix = {
-      url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nh = {
