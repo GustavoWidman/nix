@@ -126,8 +126,8 @@ $env.config.menus = $env.config.menus
 $env.BUN_INSTALL = $"($env.TRUE_HOME)/.bun"
 mut path = [
     "/run/wrappers/bin"
-	"/nix/var/nix/profiles/default/bin",
 	"/run/current-system/sw/bin",
+	"/nix/var/nix/profiles/default/bin",
 	$"/etc/profiles/per-user/($env.USER)/bin",
 	$"($env.BUN_INSTALL)/bin",
 	$"($env.TRUE_HOME)/.local/bin",

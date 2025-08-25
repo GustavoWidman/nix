@@ -31,9 +31,11 @@
     show-trace = true;
     trusted-users = [
       "root"
+      "@build"
       "@wheel"
       "@admin"
     ];
+    lazy-trees = true;
     use-cgroups = true;
     warn-dirty = false;
   };
@@ -58,6 +60,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.darwin.follows = "nix-darwin";
       inputs.home-manager.follows = "home-manager";
+    };
+
+    nix = {
+      # url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
+      url = "github:DeterminateSystems/nix-src";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nh = {
