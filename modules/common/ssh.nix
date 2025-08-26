@@ -54,11 +54,7 @@ in
       };
 
       programs.ssh = enabled {
-        controlMaster = "auto";
-        controlPath = "${controlPath}/%r@%n:%p";
-        controlPersist = "60m";
-        serverAliveCountMax = 2;
-        serverAliveInterval = 60;
+        enableDefaultConfig = false;
 
         includes =
           config.secrets
@@ -70,6 +66,19 @@ in
           "*" = {
             setEnv.COLORTERM = "truecolor";
             setEnv.TERM = "xterm-256color";
+
+            forwardAgent = false;
+            compression = false;
+            addKeysToAgent = "no";
+            userKnownHostsFile = "~/.ssh/known_hosts";
+            hashKnownHosts = false;
+
+            controlMaster = "auto";
+            controlPath = "${controlPath}/%r@%n:%p";
+            controlPersist = "60m";
+
+            serverAliveCountMax = 2;
+            serverAliveInterval = 60;
           };
         };
       };
