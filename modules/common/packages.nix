@@ -100,7 +100,6 @@ in
           gdb
           gradle
           hashcat
-          # httpie-desktop #! TODO not compatible with macos
           jdk
           john
           lua
@@ -111,14 +110,13 @@ in
           metasploit
           mitmproxy
           nuclei
-          oha # ! TODO maybe remove this
           postgresql
           qemu
           radare2
           # retdec #! TODO not compatible with macos
           sqlmap
           terraform
-          # tldr # TODO do i use this?
+          tldr
           wireshark
           yq
           yt-dlp
