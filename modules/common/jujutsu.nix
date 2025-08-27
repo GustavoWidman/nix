@@ -71,6 +71,12 @@ in
               "commit"
               "--interactive"
             ];
+            aliases.bring = [
+              "bookmark"
+              "set"
+              "-r"
+              "@-"
+            ];
 
             git.auto-local-bookmark = true;
 
