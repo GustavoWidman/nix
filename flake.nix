@@ -21,6 +21,7 @@
       "flakes"
       "nix-command"
       "pipe-operators"
+      "build-time-fetch-tree"
     ];
 
     builders-use-substitutes = true;
@@ -68,11 +69,12 @@
     };
 
     nh = {
-      url = "github:nix-community/nh";
+      url = "github:nix-community/nh/v4.2.0-beta2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     dailybot = {
+      # url = "git+ssh://git@github.com/camelsec/dailybot";
       url = ./.inputs/dailybot;
       inputs.nixpkgs.follows = "nixpkgs";
     };
