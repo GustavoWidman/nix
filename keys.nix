@@ -14,6 +14,14 @@ keys
     keys.home-vm
     keys.oracle-2
   ];
+  dev = [
+    keys.home-vm
+    keys.laptop-mac
+  ];
+  server = [
+    keys.oracle-2
+    keys.lab
+  ];
   darwin = [ keys.laptop-mac ];
   all = builtins.attrValues keys;
 }

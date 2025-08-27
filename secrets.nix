@@ -8,6 +8,9 @@ let
     linux
     darwin
 
+    server
+    dev
+
     admins
     all
     ;
@@ -39,12 +42,14 @@ in
   "modules/common/ssh/github/inteli.age".publicKeys = all;
   "modules/common/ssh/github/personal.age".publicKeys = all;
 
-  # General
-  "modules/dev/ai-commit/config.yaml.age".publicKeys = all;
+  # Dev Specific
+  "modules/dev/ai-commit/config.yaml.age".publicKeys = dev ++ admins;
+
+  # Server Specific
+  "modules/server/acme/environment.env.age".publicKeys = server ++ admins;
 
   # Linux Specific
   "modules/linux/tailscale/auth-key.age".publicKeys = linux ++ admins;
-  "modules/server/acme/environment.env.age".publicKeys = linux ++ admins;
 
   # Home VM Specific
   "hosts/home-vm/password.age".publicKeys = [ home-vm ] ++ admins;
