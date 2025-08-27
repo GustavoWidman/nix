@@ -67,15 +67,70 @@ in
               "--colocate"
             ];
 
+            aliases.s = [ "squash" ];
+            aliases.si = [
+              "squash"
+              "--interactive"
+            ];
+
+            aliases."squash!" = [
+              "squash"
+              "--ignore-immutable"
+            ];
+            aliases."s!" = [
+              "squash"
+              "--ignore-immutable"
+            ];
+            aliases."si!" = [
+              "squash"
+              "--interactive"
+              "--ignore-immutable"
+            ];
+
+            aliases.c = [ "commit" ];
+            aliases.ci = [
+              "commit"
+              "--interactive"
+            ];
             aliases.comi = [
               "commit"
               "--interactive"
             ];
-            aliases.bring = [
-              "bookmark"
-              "set"
+
+            aliases.e = [ "edit" ];
+            aliases."edit!" = [
+              "edit"
+              "--ignore-immutable"
+            ];
+            aliases."e!" = [
+              "edit"
+              "--ignore-immutable"
+            ];
+
+            aliases."describe!" = [
+              "describe"
+              "--ignore-immutable"
+            ];
+
+            aliases.history = [
+              "log"
               "-r"
+              "all()"
+            ];
+
+            aliases.tug = [
+              "bookmark"
+              "move"
+              "--from"
+              "heads(::@- & bookmarks())"
+              "--to"
               "@-"
+            ];
+            aliases.t = [ "tug" ];
+
+            aliases.back = [
+              "edit"
+              "main+"
             ];
 
             git.auto-local-bookmark = true;
