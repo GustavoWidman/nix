@@ -135,6 +135,7 @@ in
           };
           diagnostics.inline.enabled = true;
           features.edit_prediction_provider = "copilot";
+          show_edit_predictions = false;
           lsp.discord_presence.initialization_options = {
             application_id = "1263505205522337886";
             base_icons_url = "https://raw.githubusercontent.com/xhyrom/zed-discord-presence/main/assets/icons/";
