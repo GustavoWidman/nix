@@ -63,8 +63,7 @@
     };
 
     nix = {
-      # url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
-      url = "github:DeterminateSystems/nix-src";
+      url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
