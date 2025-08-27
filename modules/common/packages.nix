@@ -23,6 +23,7 @@ in
           dosfstools
           e2fsprogs
           exfat
+          eza
           fastfetch
           file
           fzf
@@ -51,7 +52,6 @@ in
           sops
           sqlite
           stow # ! TODO maybe remove this if we fully port to nix
-          tree # ? TODO swap this for rgbcube's eza thing
           util-linux
           uutils-coreutils-noprefix
           uutils-findutils
