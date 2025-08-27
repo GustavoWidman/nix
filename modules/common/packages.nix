@@ -109,7 +109,7 @@ in
           maven
           manix
           metasploit
-          # mitmproxy #! TODO re-enable, build is broken
+          mitmproxy
           nuclei
           oha # ! TODO maybe remove this
           postgresql
