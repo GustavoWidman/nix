@@ -67,6 +67,11 @@ in
               "--colocate"
             ];
 
+            aliases.comi = [
+              "commit"
+              "--interactive"
+            ];
+
             git.auto-local-bookmark = true;
 
             git.fetch = [
