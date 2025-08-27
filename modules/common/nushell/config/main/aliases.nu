@@ -7,6 +7,7 @@ alias cp = cp --recursive --verbose --progress
 alias mv = mv --verbose --progress
 alias less = bat --plain
 alias grep = rg
+alias todo = rg "todo|fixme" --colors match:fg:yellow --colors match:style:bold -i
 
 alias rsactftool = docker run -it --rm -v $"($env.PWD):/data" rsactftool/rsactftool
 alias jwt-tool = docker run -it --network "host" --rm -v $"($env.PWD):/tmp" -v $"($env.TRUE_HOME)/.jwt_tool:/root/.jwt_tool" ticarpi/jwt_tool
