@@ -63,7 +63,9 @@ in
       nixfmt-rfc-style
     ]
     ++ lib.lists.optionals config.isDev [
-      nil
+      (nil.override {
+        nix = inputs.nixpkgs.legacyPackages.${system}.nix;
+      })
       nixd
     ];
 
