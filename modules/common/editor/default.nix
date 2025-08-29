@@ -190,7 +190,7 @@ in
       pkgs.caddy
 
       # CMAKE
-      # pkgs.cmake-language-server  #! TODO re-enable, build is broken
+      pkgs.cmake-language-server
 
       # GO
       pkgs.gopls
