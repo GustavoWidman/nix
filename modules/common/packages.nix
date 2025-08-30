@@ -69,12 +69,17 @@ in
           ;
       }
       // optionalAttrs config.isDarwin {
+        lima = (
+          pkgs.lima.override {
+            withAdditionalGuestAgents = true;
+          }
+        );
         inherit (pkgs)
           alt-tab-macos
           fuse-ext2
           iproute2mac
           libiconv
-          lima
+          lima-additional-guestagents
           llama-cpp
           sshfs
           stats
@@ -111,7 +116,7 @@ in
           mitmproxy
           nuclei
           postgresql
-          qemu
+          qemu_full
           radare2
           # retdec #! TODO not compatible with macos
           sqlmap
