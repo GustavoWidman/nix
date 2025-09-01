@@ -226,6 +226,7 @@ in
             "material-icon-theme"
             "xml"
             "ruff"
+            "prisma"
             "python-requirements"
             "neocmake"
           ]
