@@ -133,6 +133,11 @@ in
               "main+"
             ];
 
+            aliases.remote = [
+              "git"
+              "remote"
+            ];
+
             git.auto-local-bookmark = true;
 
             git.fetch = [
