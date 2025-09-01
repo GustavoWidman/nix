@@ -24,29 +24,31 @@ def find-jj-dir [pwd?: string] {
     }
 }
 
-def get_branch [jj_out: list<string>] {
-    let current_branch = $jj_out | get 3 | from json
+def get_branch [commit_list: list<list<string>>] {
+    let branches = $commit_list | last | get 3 | from json
+    let current_branch = $branches | where remote == "origin"
 
     if ($current_branch | is-empty) {
-        let fallback_branch = $jj_out | get 7 | from json
-        if ($fallback_branch | is-empty) {
-            $jj_out | get 2 # commit ID
-        } else {
-            $fallback_branch | first | get name
+        # try to get any remote (not just origin)
+        if ($branches | is-not-empty) {
+            return ($branches | first | get name)
         }
+
+        # if all else fails, fallback to current commit ID instead
+        return ($commit_list | first | get 2)
     } else {
-        $current_branch | first | get name
+        return ($current_branch | first | get name)
     }
 }
 
-def get_status [jj_out: list<string>] {
-    let is_empty = $jj_out | get 0 | into bool
+def get_status [commit_list: list<list<string>>] {
+    let is_empty = $commit_list | first | get 0 | into bool
 
     if $is_empty {
         return "green" # clean
     }
 
-    let has_commit_msg = $jj_out | get 1 | is-not-empty
+    let has_commit_msg = $commit_list | first | get 1 | is-not-empty
 
     if $has_commit_msg {
         return "yellow" # staged
@@ -61,14 +63,51 @@ def jj_stats [] {
         return ""
     }
 
-    let jj_out = try {
-        jj --quiet -R $jjdir --color never --ignore-working-copy log --no-graph -r @ -r 'heads(::@- & bookmarks())' -T 'empty ++ "\n" ++ description.first_line() ++ "\n" ++ commit_id.short(8) ++ "\n" ++ json(bookmarks) ++ "\n"' err> /dev/null | lines
+    let commit_list: list<list<string>> = try {
+        jj --quiet -R $jjdir --color never --ignore-working-copy log --no-graph -r 'heads(::@- & remote_bookmarks()-+)::@' -r 'children(heads(::@- & remote_bookmarks()-)) & remote_bookmarks()' -T 'empty ++ "\n" ++ description.first_line() ++ "\n" ++ commit_id.short(8) ++ "\n" ++ json(remote_bookmarks) ++ "\n"' err> /dev/null
+            | lines
+            | chunks 4
+            | where {|e| $e.2 != "00000000"} # ignore root commit/empty commits
     }
 
-    let branch = get_branch $jj_out
-    let status = get_status $jj_out
+    if ($commit_list | is-empty) {
+        return $" in (ansi red)???(ansi reset) (ansi green)(ansi reset)"
+    }
 
-	return $" in (ansi red)($branch)(ansi reset) (ansi $status)(ansi reset)"
+    let branch = get_branch $commit_list
+    let status = get_status $commit_list
+    let unpushed_commits = $commit_list
+        | where {|e| $e.1 | is-not-empty}
+        | each {|e| $e.3 | from json | any {|e| $e.remote == "origin"}}
+        | where $it == false
+        | length
+    let unpushed_commits_str = if ($unpushed_commits > 0) {
+        let superscript = $unpushed_commits
+            | into string
+            | str replace "0" "⁰"
+            | str replace "1" "¹"
+            | str replace "2" "²"
+            | str replace "3" "³"
+            | str replace "4" "⁴"
+            | str replace "5" "⁵"
+            | str replace "6" "⁶"
+            | str replace "7" "⁷"
+            | str replace "8" "⁸"
+            | str replace "9" "⁹"
+        let tugged = $commit_list
+            | each {|e| $e.3 | from json}
+            | reverse
+            | skip 2
+            | each {|e| $e | where remote == "git"}
+            | each {|e| $e | is-empty}
+            | any {|e| $e == false}
+
+        let unpushed_color = if ($tugged) {"blue"} else {"yellow"}
+
+        $"(ansi $unpushed_color)($superscript)(ansi reset)"
+    } else { "" }
+
+	return $" in (ansi red)($branch)(ansi reset)($unpushed_commits_str) (ansi $status)(ansi reset)"
 }
 
 def venv_prompt [] {
