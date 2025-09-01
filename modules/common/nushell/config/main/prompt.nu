@@ -62,7 +62,7 @@ def jj_stats [] {
     }
 
     let jj_out = try {
-        jj --quiet -R $jjdir --color never --ignore-working-copy log --no-graph -r @ -r @- -T 'empty ++ "\n" ++ description.first_line() ++ "\n" ++ commit_id.short(8) ++ "\n" ++ json(bookmarks) ++ "\n"' err> /dev/null | lines
+        jj --quiet -R $jjdir --color never --ignore-working-copy log --no-graph -r @ -r 'heads(::@- & bookmarks())' -T 'empty ++ "\n" ++ description.first_line() ++ "\n" ++ commit_id.short(8) ++ "\n" ++ json(bookmarks) ++ "\n"' err> /dev/null | lines
     }
 
     let branch = get_branch $jj_out
