@@ -151,8 +151,6 @@ in
 
             git.fetch = [
               "origin"
-              "upstream"
-              "rad"
             ];
             git.push = "origin";
 
