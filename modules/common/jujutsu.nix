@@ -72,20 +72,25 @@ in
             ];
 
             aliases.s = [ "squash" ];
-            aliases.si = [
-              "squash"
-              "--interactive"
-            ];
-
-            aliases."squash!" = [
-              "squash"
-              "--ignore-immutable"
-            ];
             aliases."s!" = [
               "squash"
               "--ignore-immutable"
             ];
+            aliases."squash!" = [
+              "squash"
+              "--ignore-immutable"
+            ];
+
+            aliases.si = [
+              "squash"
+              "--interactive"
+            ];
             aliases."si!" = [
+              "squash"
+              "--interactive"
+              "--ignore-immutable"
+            ];
+            aliases."squashi!" = [
               "squash"
               "--interactive"
               "--ignore-immutable"
@@ -102,15 +107,20 @@ in
             ];
 
             aliases.e = [ "edit" ];
-            aliases."edit!" = [
-              "edit"
-              "--ignore-immutable"
-            ];
             aliases."e!" = [
               "edit"
               "--ignore-immutable"
             ];
+            aliases."edit!" = [
+              "edit"
+              "--ignore-immutable"
+            ];
 
+            aliases.d = [ "describe" ];
+            aliases."d!" = [
+              "describe"
+              "--ignore-immutable"
+            ];
             aliases."describe!" = [
               "describe"
               "--ignore-immutable"
@@ -131,11 +141,6 @@ in
               "@-"
             ];
             aliases.t = [ "tug" ];
-
-            aliases.back = [
-              "edit"
-              "main+"
-            ];
 
             aliases.remote = [
               "git"
