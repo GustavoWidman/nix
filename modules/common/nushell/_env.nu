@@ -24,9 +24,10 @@ $env.EDITOR = "hx"
 $env.PAGER = "bat --plain"
 $env.MANPAGER = "bat --plain"
 
-$env.config.history.file_format = "sqlite";
-$env.config.history.isolation = false;
+$env.config.history.file_format = "sqlite"
+$env.config.history.isolation = false
 $env.config.history.max_size = 10_000_000
+$env.config.history.sync_on_enter = true
 
 $env.config.recursion_limit = 100
 
@@ -50,19 +51,6 @@ $env.config.display_errors.termination_signal = true
 
 $env.config.footer_mode = 25
 
-$env.config.table.mode = "single"
-$env.config.table.index_mode = "always"
-$env.config.table.show_empty = true
-$env.config.table.padding.left = 1
-$env.config.table.padding.right = 1
-$env.config.table.trim.methodology = "wrapping"
-$env.config.table.trim.wrapping_try_keep_words = true
-$env.config.table.trim.truncating_suffix =  "..."
-$env.config.table.header_on_separator = true
-$env.config.table.abbreviated_row_count = null
-$env.config.table.footer_inheritance = true
-$env.config.table.missing_value_symbol = $"(ansi magenta_bold)nope(ansi reset)"
-
 $env.config.datetime_format.table = null
 $env.config.datetime_format.normal = $"(ansi blue_bold)%Y(ansi reset)(ansi yellow)-(ansi blue_bold)%m(ansi reset)(ansi yellow)-(ansi blue_bold)%d(ansi reset)(ansi black)T(ansi magenta_bold)%H(ansi reset)(ansi yellow):(ansi magenta_bold)%M(ansi reset)(ansi yellow):(ansi magenta_bold)%S(ansi reset)"
 
@@ -75,6 +63,23 @@ $env.config.render_right_prompt_on_last_line = false
 $env.config.float_precision = 2
 
 $env.config.ls.use_ls_colors = true
+
+$env.config.color_config.bool = {||
+  if $in {
+    "light_green_bold"
+  } else {
+    "light_red_bold"
+  }
+}
+$env.config.color_config.string = {||
+  if $in =~ "^(#|0x)[a-fA-F0-9]+$" {
+    $in | str replace "0x" "#"
+  } else {
+    "white"
+  }
+}
+$env.config.color_config.row_index = "light_yellow_bold"
+$env.config.color_config.header = "light_yellow_bold"
 
 let menus = [
   {
