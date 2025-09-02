@@ -1,6 +1,28 @@
 use ($nu.default-config-dir | path join "config/external/mise.nu")
 use ($nu.default-config-dir | path join "config/external/zoxide.nu")
 
+def find-jj-dir [pwd?: string] {
+    mut current_dir = if ($pwd | is-empty) {
+        pwd
+    } else {
+        $pwd
+    }
+
+    loop {
+        let jj_path = ($current_dir | path join ".jj")
+
+        if ($jj_path | path exists) {
+            return ($jj_path | path dirname)
+        }
+
+        let parent = ($current_dir | path dirname)
+        if $parent == $current_dir {
+            return ""
+        }
+        $current_dir = $parent
+    }
+}
+
 $env.config.hooks.env_change.PWD = [
 	# Zoxide
 	{
@@ -40,9 +62,9 @@ $env.config.hooks.env_change.PWD = [
         condition: {|_, after| ($after | path join 'flake.lock' | path exists) }
         code: {|_, after|
             $env.PATH = (
-           	$env.PATH
-          		| prepend ($after | path join 'result' 'bin')
-          		| uniq
+               	$env.PATH
+              		| prepend ($after | path join 'result' 'bin')
+              		| uniq
             )
         }
     },
@@ -50,9 +72,88 @@ $env.config.hooks.env_change.PWD = [
         condition: {|before, _| ($before | default '' | path join 'flake.lock' | path exists) and ($before | is-not-empty)}
         code: {|before, _|
             $env.PATH = (
-           	$env.PATH
-          		| where $it != ($before | path join 'result' 'bin')
-          		| uniq
+               	$env.PATH
+              		| where $it != ($before | path join 'result' 'bin')
+              		| uniq
+            )
+        }
+    }
+    # Nu Environment (add and create symlinks for any local nu files to PATH)
+    {
+        condition: {|_, after| (ls $after err> /dev/null | where { get name | str ends-with ".nu" } | is-not-empty) }
+        code: {|_, after|
+            # Create symlinks to all nu files so we can reference "x.nu" as "x"
+            let nudir = ($after | path join ".nu")
+            if not ($nudir | path exists) {
+                mkdir ($nudir | path join "bin")
+            }
+
+            ls $after err> /dev/null
+                | where { get name | str ends-with ".nu" }
+                | par-each {|el|
+                    let file = ($el | get name | path expand)
+                    let symlink = ($nudir | path join "bin" | path join ($el | get name | path parse | get stem))
+                    if ((not ($symlink | path exists)) or ((readlink $symlink) != $file)) {
+                        ln -s $file ($symlink | path expand)
+                    }
+                }
+
+            let jjdir = find-jj-dir
+            let dontgit = ($nudir | path join ".dontgit")
+            if (($jjdir | is-not-empty) and not ($dontgit | path exists)) {
+                let gitignore = $jjdir | path join ".gitignore"
+
+                let gitignore_segment = "\n# Ignore nushell symlink dirs\n.nu\n"
+                if ($gitignore | path exists) {
+                    let gitignore_contents = open $gitignore
+                    if not ($gitignore_contents | str contains $gitignore_segment) {
+                  	     let choice = input -n 1 -s $"[(ansi yellow)nushell::autopath(ansi reset)] Append \"(ansi purple).nu(ansi reset)\" entry to this repository's gitignore? \((ansi green)y(ansi reset)/(ansi red)n(ansi reset)\): "
+                        print "" # newline
+                        if ($choice | str downcase) != "y" {
+                            if ($choice | str downcase) != "n" {
+                                print $"[(ansi red)nushell:autopath::invalid_choice(ansi reset)] Invalid choice, exiting..."
+                            } else {
+                                touch $dontgit
+                                print $"[(ansi red)nushell::autopath::exit(ansi reset)] Opting out of altering gitignore for this repository..."
+                            }
+                        } else {
+                            ($gitignore_contents + $gitignore_segment) | save -f $gitignore
+                            print $"[(ansi green)nushell:autopath::done(ansi reset)] Succesfully written \"(ansi purple).nu(ansi reset)\" entry to (ansi purple)($gitignore)(ansi reset)."
+                        }
+                    }
+                } else {
+                    let choice = input -n 1 -s $"[(ansi yellow)nushell::autopath(ansi reset)] This repository does not seem to contain a gitignore, should i create one and append \"(ansi purple).nu(ansi reset)\" entry to it? \((ansi green)y(ansi reset)/(ansi red)n(ansi reset)\): "
+                    print "" # newline
+                    if ($choice | str downcase) != "y" {
+                        if ($choice | str downcase) != "n" {
+                            print $"[(ansi red)nushell:autopath::invalid_choice(ansi reset)] Invalid choice, exiting..."
+                        } else {
+                            touch $dontgit
+                            print $"[(ansi red)nushell::autopath::exit(ansi reset)] Opting out of altering gitignore for this repository..."
+                        }
+                    } else {
+                        (($gitignore_segment | str trim) + "\n") | save -f $gitignore
+                        print $"[(ansi green)nushell:autopath::done(ansi reset)] Succesfully creted and written \"(ansi purple).nu(ansi reset)\" entry to (ansi purple)($gitignore)(ansi reset)."
+                    }
+                }
+            }
+
+            $env.PATH = (
+               	$env.PATH
+              		| prepend ($nudir | path join "bin")
+              		| uniq
+            )
+        }
+    },
+    {
+        condition: {|before, _|
+            (($before | is-not-empty) and (ls $before err> /dev/null | where { get name | str ends-with ".nu" } | is-not-empty))
+        }
+        code: {|before, _|
+            $env.PATH = (
+               	$env.PATH
+              		| where $it != ($before | path join ".nu" "bin")
+              		| uniq
             )
         }
     }
