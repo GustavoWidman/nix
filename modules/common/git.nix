@@ -50,7 +50,64 @@ in
 
           gpg.format = "ssh";
           user.signingKey = "~/.ssh/id_ed25519";
+
         };
+
+        ignores = [
+          # macOS
+          ".DS_Store"
+          ".AppleDouble"
+          ".LSOverride"
+
+          # The usual culprits
+          ".env"
+
+          # IDEs
+          ".vscode/"
+          ".idea/"
+          "*.swp"
+          "*.swo"
+          "*~"
+
+          # Mise
+          "mise.toml"
+
+          # NodeJS
+          "node_modules/"
+          ".docusaurus"
+          ".cache-loader"
+
+          # Nix
+          "result"
+          "result-*"
+
+          # Nushell Hook
+          ".nu"
+
+          # Python
+          "*.pyc"
+          "__pypackages__/"
+          "__pycache__/"
+          ".ruff_cache/"
+          ".ropeproject"
+          ".venv"
+          "env/"
+          "venv/"
+          "ENV"
+          "env.bak/"
+          "venv.bak/"
+          ".python-version"
+          "Pipfile.lock"
+          "uv.lock"
+          "poetry.lock"
+          "pdm.lock"
+          ".pdm.toml"
+          ".pdm-python"
+          ".pdm-build/"
+
+          # Rust
+          "target/"
+        ];
       };
     }
 

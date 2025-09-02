@@ -98,46 +98,6 @@ $env.config.hooks.env_change.PWD = [
                     }
                 }
 
-            let jjdir = find-jj-dir
-            let dontgit = ($nudir | path join ".dontgit")
-            if (($jjdir | is-not-empty) and not ($dontgit | path exists)) {
-                let gitignore = $jjdir | path join ".gitignore"
-
-                let gitignore_segment = "\n# Ignore nushell symlink dirs\n.nu\n"
-                if ($gitignore | path exists) {
-                    let gitignore_contents = open $gitignore
-                    if not ($gitignore_contents | str contains $gitignore_segment) {
-                  	     let choice = input -n 1 -s $"[(ansi yellow)nushell::autopath(ansi reset)] Append \"(ansi purple).nu(ansi reset)\" entry to this repository's gitignore? \((ansi green)y(ansi reset)/(ansi red)n(ansi reset)\): "
-                        print "" # newline
-                        if ($choice | str downcase) != "y" {
-                            if ($choice | str downcase) != "n" {
-                                print $"[(ansi red)nushell:autopath::invalid_choice(ansi reset)] Invalid choice, exiting..."
-                            } else {
-                                touch $dontgit
-                                print $"[(ansi red)nushell::autopath::exit(ansi reset)] Opting out of altering gitignore for this repository..."
-                            }
-                        } else {
-                            ($gitignore_contents + $gitignore_segment) | save -f $gitignore
-                            print $"[(ansi green)nushell:autopath::done(ansi reset)] Succesfully written \"(ansi purple).nu(ansi reset)\" entry to (ansi purple)($gitignore)(ansi reset)."
-                        }
-                    }
-                } else {
-                    let choice = input -n 1 -s $"[(ansi yellow)nushell::autopath(ansi reset)] This repository does not seem to contain a gitignore, should i create one and append \"(ansi purple).nu(ansi reset)\" entry to it? \((ansi green)y(ansi reset)/(ansi red)n(ansi reset)\): "
-                    print "" # newline
-                    if ($choice | str downcase) != "y" {
-                        if ($choice | str downcase) != "n" {
-                            print $"[(ansi red)nushell:autopath::invalid_choice(ansi reset)] Invalid choice, exiting..."
-                        } else {
-                            touch $dontgit
-                            print $"[(ansi red)nushell::autopath::exit(ansi reset)] Opting out of altering gitignore for this repository..."
-                        }
-                    } else {
-                        (($gitignore_segment | str trim) + "\n") | save -f $gitignore
-                        print $"[(ansi green)nushell:autopath::done(ansi reset)] Succesfully creted and written \"(ansi purple).nu(ansi reset)\" entry to (ansi purple)($gitignore)(ansi reset)."
-                    }
-                }
-            }
-
             $env.PATH = (
                	$env.PATH
               		| prepend ($nudir | path join "bin")
