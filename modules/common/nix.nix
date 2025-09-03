@@ -32,9 +32,9 @@ in
 
   nix.distributedBuilds = true;
   nix.buildMachines =
-    self.nixosConfigurations
+    self.machineMetadata
     |> attrsToList
-    |> filter ({ name, value }: name != config.networking.hostName && value.config.users.users ? build)
+    |> filter ({ name, ... }: name != config.networking.hostName)
     |> map (
       { name, value }:
       {
@@ -49,7 +49,7 @@ in
           "kvm"
           "nixos-test"
         ];
-        system = value.config.nixpkgs.hostPlatform.system;
+        system = value.architecture;
       }
     );
 

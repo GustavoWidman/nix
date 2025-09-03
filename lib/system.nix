@@ -1,4 +1,4 @@
-inputs: self: super:
+_: self: super:
 let
   inherit (self)
     attrValues
@@ -15,39 +15,35 @@ let
   modulesDev = collectNix ../modules/dev;
   modulesServer = collectNix ../modules/server;
 
-  collectInputs =
+  collectInputsFrom =
+    inputSet:
     let
-      inputs' = attrValues inputs;
+      inputs' = attrValues inputSet;
     in
     path: inputs' |> filter (hasAttrByPath path) |> map (getAttrFromPath path);
-
-  inputModulesLinux = collectInputs [
-    "nixosModules"
-    "default"
-  ];
-  inputModulesDarwin = collectInputs [
-    "darwinModules"
-    "default"
-  ];
-
-  inputOverlays = collectInputs [
-    "overlays"
-    "default"
-  ];
-  overlayModule = {
-    nixpkgs.overlays = inputOverlays;
-  };
-
-  specialArgs = inputs // {
-    inherit inputs;
-
-    keys = import ../keys.nix;
-    lib = self;
-  };
 in
 {
   linuxDesktopSystem =
-    module:
+    inputs: module:
+    let
+      inputModulesLinux = collectInputsFrom inputs [
+        "nixosModules"
+        "default"
+      ];
+      inputOverlays = collectInputsFrom inputs [
+        "overlays"
+        "default"
+      ];
+      overlayModule = {
+        nixpkgs.overlays = inputOverlays;
+      };
+
+      specialArgs = inputs // {
+        inherit inputs;
+        keys = import ../keys.nix;
+        lib = self;
+      };
+    in
     super.nixosSystem {
       inherit specialArgs;
 
@@ -63,7 +59,26 @@ in
     };
 
   linuxDevServerSystem =
-    module:
+    inputs: module:
+    let
+      inputModulesLinux = collectInputsFrom inputs [
+        "nixosModules"
+        "default"
+      ];
+      inputOverlays = collectInputsFrom inputs [
+        "overlays"
+        "default"
+      ];
+      overlayModule = {
+        nixpkgs.overlays = inputOverlays;
+      };
+
+      specialArgs = inputs // {
+        inherit inputs;
+        keys = import ../keys.nix;
+        lib = self;
+      };
+    in
     super.nixosSystem {
       inherit specialArgs;
 
@@ -78,7 +93,26 @@ in
     };
 
   linuxServerSystem =
-    module:
+    inputs: module:
+    let
+      inputModulesLinux = collectInputsFrom inputs [
+        "nixosModules"
+        "default"
+      ];
+      inputOverlays = collectInputsFrom inputs [
+        "overlays"
+        "default"
+      ];
+      overlayModule = {
+        nixpkgs.overlays = inputOverlays;
+      };
+
+      specialArgs = inputs // {
+        inherit inputs;
+        keys = import ../keys.nix;
+        lib = self;
+      };
+    in
     super.nixosSystem {
       inherit specialArgs;
 
@@ -93,7 +127,26 @@ in
     };
 
   darwinDesktopSystem =
-    module:
+    inputs: module:
+    let
+      inputModulesDarwin = collectInputsFrom inputs [
+        "darwinModules"
+        "default"
+      ];
+      inputOverlays = collectInputsFrom inputs [
+        "overlays"
+        "default"
+      ];
+      overlayModule = {
+        nixpkgs.overlays = inputOverlays;
+      };
+
+      specialArgs = inputs // {
+        inherit inputs;
+        keys = import ../keys.nix;
+        lib = self;
+      };
+    in
     super.darwinSystem {
       inherit specialArgs;
 
@@ -109,7 +162,26 @@ in
     };
 
   darwinServerSystem =
-    module:
+    inputs: module:
+    let
+      inputModulesDarwin = collectInputsFrom inputs [
+        "darwinModules"
+        "default"
+      ];
+      inputOverlays = collectInputsFrom inputs [
+        "overlays"
+        "default"
+      ];
+      overlayModule = {
+        nixpkgs.overlays = inputOverlays;
+      };
+
+      specialArgs = inputs // {
+        inherit inputs;
+        keys = import ../keys.nix;
+        lib = self;
+      };
+    in
     super.darwinSystem {
       inherit specialArgs;
       modules = [

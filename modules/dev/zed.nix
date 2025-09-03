@@ -22,9 +22,9 @@ in
         package = pkgs.zed-editor;
         userSettings = {
           ssh_connections =
-            self.nixosConfigurations
+            self.machineMetadata
             |> attrsToList
-            |> filter ({ name, value }: name != config.networking.hostName && value.config.isDevServer)
+            |> filter ({ name, value }: (name != config.networking.hostName) && (value.type == "dev-server"))
             |> map (
               { name, ... }:
               {

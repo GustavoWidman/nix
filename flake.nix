@@ -74,12 +74,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    dailybot = {
-      # url = "git+ssh://git@github.com/camelsec/dailybot";
-      url = ./.inputs/dailybot;
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     naersk = {
       url = "github:nix-community/naersk";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -99,16 +93,27 @@
         nameValuePair
         ;
 
-      lib' = nixpkgs.lib.extend (const <| const <| nix-darwin.lib);
-      lib = lib'.extend <| import ./lib inputs;
+      lib = (nixpkgs.lib.extend (const <| const <| nix-darwin.lib)).extend <| import ./lib inputs;
+
+      machineFlakes =
+        readDir ./hosts
+        |> mapAttrs (name: const <| (import ./hosts/${name}/flake.nix (inputs // { inherit lib; })));
+
+      machineMetadata = machineFlakes |> mapAttrs (name: flake: flake.outputs.metadata);
 
       hostsByType =
-        readDir ./hosts
-        |> mapAttrs (name: const <| import ./hosts/${name} lib)
+        machineFlakes
+        |> mapAttrs (
+          name: flake:
+          (flake.outputs.config flake.inputs)
+          // {
+            inherit (flake.outputs) metadata;
+          }
+        )
         |> attrsToList
         |> groupBy (
           { value, ... }:
-          if value ? class && value.class == "nixos" then "nixosConfigurations" else "darwinConfigurations"
+          if value.metadata.class == "nixos" then "nixosConfigurations" else "darwinConfigurations"
         )
         |> mapAttrs (const listToAttrs);
 
@@ -121,10 +126,6 @@
     hostsByType
     // hostConfigs
     // {
-      inherit lib;
-
-      # herculesCI = { ... }: {
-      #   ciSystems = [ "aarch64-linux" "x86_64-linux" ];
-      # };
+      inherit lib machineMetadata machineFlakes;
     };
 }
