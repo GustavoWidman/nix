@@ -142,6 +142,13 @@ in
             ];
             aliases.t = [ "tug" ];
 
+            aliases.bring = [
+              "rebase"
+              "-b"
+              "@"
+              "-d"
+            ];
+
             aliases.remote = [
               "git"
               "remote"
