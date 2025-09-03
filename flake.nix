@@ -64,10 +64,7 @@
       inputs.home-manager.follows = "home-manager";
     };
 
-    nix = {
-      url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nix.url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
 
     nh = {
       url = "github:nix-community/nh/v4.2.0-beta2";
