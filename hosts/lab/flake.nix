@@ -1,22 +1,20 @@
 parent:
 let
-  hostname = "lab";
-  class = "nixos";
-  type = "server";
-  architecture = "x86_64-linux";
+  metadata = {
+    hostname = "lab";
+    class = "nixos";
+    type = "server";
+    architecture = "x86_64-linux";
+    build-architectures = [
+      metadata.architecture
+    ];
+  };
 in
 {
   inputs = parent;
 
   outputs = {
-    metadata = {
-      inherit
-        hostname
-        class
-        type
-        architecture
-        ;
-    };
+    inherit metadata;
 
     config =
       inputs@{
@@ -32,11 +30,12 @@ in
           inherit (lib) collectNix remove;
         in
         {
-          inherit type;
+          inherit metadata;
 
           imports = collectNix ./. |> remove ./flake.nix;
 
-          networking.hostName = hostname;
+          networking.hostName = metadata.hostname;
+          nixpkgs.hostPlatform = metadata.architecture;
 
           secrets.password.file = ./password.age;
           users.users.r3dlust.authorizedKey = config.secrets.ssh-main-lab.path;
@@ -44,7 +43,6 @@ in
           time.timeZone = "America/Sao_Paulo";
           system.stateVersion = "25.05";
 
-          nixpkgs.hostPlatform = architecture;
         }
       );
   };

@@ -1,22 +1,21 @@
 parent:
 let
-  hostname = "laptop-mac";
-  class = "darwin";
-  type = "desktop";
-  architecture = "aarch64-darwin";
+  metadata = {
+    hostname = "laptop-mac";
+    class = "darwin";
+    type = "desktop";
+    architecture = "aarch64-darwin";
+    build-architectures = [
+      metadata.architecture
+      "x86_64-darwin"
+    ];
+  };
 in
 {
   inputs = parent;
 
   outputs = {
-    metadata = {
-      inherit
-        hostname
-        class
-        type
-        architecture
-        ;
-    };
+    inherit metadata;
 
     config =
       inputs@{
@@ -24,12 +23,21 @@ in
       }:
       inputs.lib.darwinDesktopSystem inputs (
         { lib, pkgs, ... }:
+        let
+          inherit (lib)
+            collectNix
+            remove
+            ;
+
+          extra-platforms = metadata.build-architectures |> remove metadata.architecture;
+        in
         {
-          inherit type;
+          inherit metadata;
 
-          imports = lib.collectNix ./. |> lib.remove ./flake.nix;
+          imports = collectNix ./. |> remove ./flake.nix;
 
-          networking.hostName = hostname;
+          networking.hostName = metadata.hostname;
+          nixpkgs.hostPlatform = metadata.architecture;
 
           users.users.r3dlust = {
             name = "r3dlust";
@@ -44,8 +52,8 @@ in
           };
 
           system.stateVersion = 5;
-          nix.settings.extra-platforms = [ "x86_64-darwin" ];
-          nixpkgs.hostPlatform = architecture;
+
+          nix.settings.extra-platforms = extra-platforms;
         }
       );
   };

@@ -1,22 +1,21 @@
 parent:
 let
-  hostname = "home-vm";
-  class = "nixos";
-  type = "dev-server";
-  architecture = "x86_64-linux";
+  metadata = {
+    hostname = "home-vm";
+    class = "nixos";
+    type = "dev-server";
+    architecture = "x86_64-linux";
+    build-architectures = [
+      metadata.architecture
+      "aarch64-linux"
+    ];
+  };
 in
 {
   inputs = parent;
 
   outputs = {
-    metadata = {
-      inherit
-        hostname
-        class
-        type
-        architecture
-        ;
-    };
+    inherit metadata;
 
     config =
       inputs@{
@@ -30,13 +29,16 @@ in
         }:
         let
           inherit (lib) collectNix remove;
+
+          extra-platforms = metadata.build-architectures |> remove metadata.architecture;
         in
         {
-          inherit type;
+          inherit metadata;
 
           imports = collectNix ./. |> remove ./flake.nix;
 
-          networking.hostName = hostname;
+          networking.hostName = metadata.hostname;
+          nixpkgs.hostPlatform = metadata.architecture;
 
           users.users.r3dlust.authorizedKey = config.secrets.ssh-vms-vm.path;
           secrets.password.file = ./password.age;
@@ -44,10 +46,8 @@ in
           time.timeZone = "America/Sao_Paulo";
           system.stateVersion = "25.05";
 
-          nixpkgs.hostPlatform = architecture;
-
-          nix.settings.extra-platforms = [ "aarch64-linux" ];
-          boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+          nix.settings.extra-platforms = extra-platforms;
+          boot.binfmt.emulatedSystems = extra-platforms;
         }
       );
   };
