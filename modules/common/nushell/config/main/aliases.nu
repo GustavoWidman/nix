@@ -30,7 +30,8 @@ def --env devshell [] {
 			msg: $"(ansi red)nix_shell::already_activated(ansi reset)\nAlready inside a nix shell\nExit the current nix shell first \(using \"bye\", \"quit\" or \"q\"\), then try again"
 		}
     } else {
-        nom develop -c (absolute nu)
+        let nupath = absolute nu
+        nom develop -c env $'SHELL=($nupath)' $nupath
     }
 }
 alias dev = devshell
