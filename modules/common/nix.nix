@@ -13,6 +13,7 @@ let
     disabled
     filterAttrs
     flip
+    length
     id
     isType
     mapAttrs
@@ -34,7 +35,9 @@ in
   nix.buildMachines =
     self.machineMetadata
     |> attrsToList
-    |> filter ({ name, ... }: name != config.networking.hostName)
+    |> filter (
+      { name, value }: (name != config.networking.hostName) && (length value.build-architectures > 0)
+    )
     |> map (
       { name, value }:
       {
@@ -49,7 +52,7 @@ in
           "kvm"
           "nixos-test"
         ];
-        system = value.architecture;
+        systems = value.build-architectures;
       }
     );
 
