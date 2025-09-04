@@ -136,16 +136,24 @@ in
           diagnostics.inline.enabled = true;
           features.edit_prediction_provider = "copilot";
           show_edit_predictions = false;
-          lsp.discord_presence.initialization_options = {
-            application_id = "1263505205522337886";
-            base_icons_url = "https://raw.githubusercontent.com/xhyrom/zed-discord-presence/main/assets/icons/";
-            state = "Working on {filename}";
-            details = "In {workspace}";
-            large_image = "{base_icons_url}/{language:lo}.png";
-            large_text = "{language:u}";
-            small_image = "{base_icons_url}/zed.png";
-            small_text = "Zed";
-            git_integration = false;
+          lsp = {
+            discord_presence.initialization_options = {
+              application_id = "1263505205522337886";
+              base_icons_url = "https://raw.githubusercontent.com/xhyrom/zed-discord-presence/main/assets/icons/";
+              state = "Working on {filename}";
+              details = "In {workspace}";
+              large_image = "{base_icons_url}/{language:lo}.png";
+              large_text = "{language:u}";
+              small_image = "{base_icons_url}/zed.png";
+              small_text = "Zed";
+              git_integration = false;
+            };
+            vscode-html-language-server = {
+              binary = {
+                path = "${pkgs.vscode-langservers-extracted}/bin/vscode-html-language-server";
+                arguments = [ "--stdio" ];
+              };
+            };
           };
         };
         userKeymaps = [
@@ -212,6 +220,7 @@ in
             "discord-presence"
             "env"
             "http"
+            "html"
             "ini"
             "make"
             "dockerfile"
