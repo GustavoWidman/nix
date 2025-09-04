@@ -238,6 +238,7 @@ in
             "prisma"
             "python-requirements"
             "neocmake"
+            "svelte"
           ]
           |> subtractLists (optionals config.isDevServer [ "discord-presence" ]);
       };
