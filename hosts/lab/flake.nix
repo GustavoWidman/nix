@@ -43,6 +43,14 @@ in
           time.timeZone = "America/Sao_Paulo";
           system.stateVersion = "25.05";
 
+          tailscale = {
+            exit-node = true;
+            advertise-routes = [
+              "192.168.101.0/24"
+              "10.0.200.0/24"
+              "10.0.100.0/24"
+            ];
+          };
         }
       );
   };
