@@ -49,6 +49,8 @@ in
 
           time.timeZone = "America/Sao_Paulo";
           system.stateVersion = "25.05";
+
+          tailscale.exit-node = true;
         }
       );
   };
