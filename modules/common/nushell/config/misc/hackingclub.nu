@@ -66,7 +66,9 @@ export def stop [] {
 	}
 }
 
-export def main [] {
+export def main [
+    --proxy (-p)
+] {
 	print $"(ansi light_gray)[(ansi reset)(ansi green_bold)+(ansi reset)(ansi light_gray)](ansi reset)(ansi white_dimmed) Starting hackingclub services...(ansi reset)(ansi red_bold)"
 	let openvpn_alive = ^ps -ax -o pid= -o command=  | parse "{pid} {cmd}" | where cmd == $"openvpn ($env.TRUE_HOME | path join 'Cybersec/hackingclub/hackingclub.ovpn')"
 	let ports = ports -lt
@@ -85,7 +87,11 @@ export def main [] {
 	}
 
 	let openvpn = job spawn {
-		sudo openvpn ($env.TRUE_HOME | path join "Cybersec/hackingclub/hackingclub.ovpn")
+	    if ($proxy | is-empty) {
+			sudo openvpn ($env.TRUE_HOME | path join "Cybersec/hackingclub/hackingclub.ovpn")
+		} else {
+		    sudo openvpn --config ($env.TRUE_HOME | path join "Cybersec/hackingclub/hackingclub.ovpn") --socks-proxy 127.0.0.1 1080
+		}
 	}
 	# wait for openvpn to start by checking if we have 10.0.71.220 as one of our IPs
 	print --no-newline $"(ansi reset)(ansi light_gray)[(ansi reset)(ansi green_bold)+(ansi reset)(ansi light_gray)](ansi reset)(ansi white_dimmed) Waiting for (ansi reset)(ansi purple)OpenVPN(ansi reset)(ansi white_dimmed) to start.."
