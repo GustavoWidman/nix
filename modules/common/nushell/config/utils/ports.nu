@@ -43,6 +43,7 @@ export def --env main [
                 | first
                 | last
                 | str replace "*" "0"
+                | into int
 
             let remote_addr = if ($addresses | length) > 1 {
                 $addresses
@@ -55,6 +56,7 @@ export def --env main [
                     | last
                     | last
                     | str replace "*" "0"
+                    | into int
             } else { "" }
 
             let pid = $parts.1
