@@ -148,7 +148,7 @@ export def main [] {
 	job kill $fileserver
 	job kill $mitmweb
 
-	hackingclub stop
+	stop
 
 	print $"(ansi reset)(ansi light_gray)[(ansi reset)(ansi green_bold)+(ansi reset)(ansi light_gray)](ansi reset)(ansi white_dimmed) HackingClub services stopped successfully."
 }
