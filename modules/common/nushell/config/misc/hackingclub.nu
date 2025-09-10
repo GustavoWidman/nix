@@ -137,9 +137,9 @@ export def main [
 	print $"\n(ansi reset)(ansi light_gray)[(ansi reset)(ansi green_bold)+(ansi reset)(ansi light_gray)] (ansi reset)(ansi green)MITMWeb(ansi reset)(ansi white_dimmed) started at (ansi reset)(ansi cyan):8080(ansi reset)(ansi white) \(proxy on (ansi reset)(ansi cyan):8080(ansi reset)(ansi white_dimmed)\) with job ID (ansi reset)(ansi cyan)($mitmweb)(ansi reset)(ansi white_dimmed).(ansi reset)"
 
 
-	print $"(ansi reset)(ansi light_gray)[(ansi reset)(ansi yellow_bold)?(ansi reset)(ansi light_gray)](ansi reset)(ansi white) Open VSCode on HackingClub Workspace?"
+	print $"(ansi reset)(ansi light_gray)[(ansi reset)(ansi yellow_bold)?(ansi reset)(ansi light_gray)](ansi reset)(ansi white) Open Zed Editor on HackingClub Workspace?"
 	if (["No", "Yes"] | input list) == "Yes" {
-		^code ($env.TRUE_HOME | path join "Cybersec/hackingclub")
+		^zeditor ($env.TRUE_HOME | path join "Cybersec/hackingclub")
 	}
 
 	let $penenlope_pid = $ports | where local_port == 4444
