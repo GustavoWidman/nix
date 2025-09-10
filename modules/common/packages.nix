@@ -115,6 +115,7 @@ in
           metasploit
           mitmproxy
           nuclei
+          penelope
           postgresql
           qemu_full
           radare2

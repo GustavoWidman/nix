@@ -18,7 +18,7 @@ alias ubuntinho = docker run --rm -it -v $"($env.PWD):/home/shared" amd64/ubuntu
 alias python3 = uv run python3
 alias python = uv run python
 
-alias revshell = uv run penelope
+alias penelope = penelope.py
 alias fg = job unfreeze
 
 alias multiplex = zellij options --default-shell nu

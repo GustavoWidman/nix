@@ -142,7 +142,7 @@ export def main [] {
 		kill ($penenlope_pid | first | get pid | into int)
 	}
 
-	^penelope
+	^penelope.py
 
 	job kill $openvpn
 	job kill $fileserver
