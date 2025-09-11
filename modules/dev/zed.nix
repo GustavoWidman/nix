@@ -225,6 +225,7 @@ in
             "make"
             "dockerfile"
             "docker-compose"
+            "java"
             "sql"
             "nix"
             "nu"
