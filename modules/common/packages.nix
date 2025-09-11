@@ -69,11 +69,9 @@ in
           ;
       }
       // optionalAttrs config.isDarwin {
-        lima = (
-          pkgs.lima.override {
-            withAdditionalGuestAgents = true;
-          }
-        );
+        lima = pkgs.lima.override {
+          withAdditionalGuestAgents = true;
+        };
         inherit (pkgs)
           alt-tab-macos
           fuse-ext2
