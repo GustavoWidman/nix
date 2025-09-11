@@ -26,6 +26,7 @@ def find-jj-dir [pwd?: string] {
 
 def get_branch [commit_list: list] {
     let branches = $commit_list
+        | reverse
         | each { get 3 }
         | flatten
     let current_branch = $branches
@@ -106,9 +107,23 @@ def jj_stats [] {
     let branch = get_branch $commit_list
     let status = get_status $commit_list
     let unpushed_commits = $commit_list
-        | where { get 1 | is-not-empty }
-        | each { get 3 | any {|e| $e.remote == "origin"}}
-        | where $it == false
+        | where {|c|
+            ($c
+                | get 1
+                | is-not-empty
+            ) and not (
+            $c
+                | get 0
+            ) and not (
+            $c
+                | get 3
+                | any {|e| $e.remote == "origin" }
+            ) and not (
+            $c
+                | get 3
+                | any {|e| $e.name != $branch }
+            )
+        }
         | length
     let unpushed_commits_str = if ($unpushed_commits > 0) {
         let superscript = $unpushed_commits
@@ -128,7 +143,7 @@ def jj_stats [] {
             | each { get 3 }
             | reverse
             | skip
-            | each { where remote == "git" }
+            | each { where {|el| $el.remote == "git" and $el.name == $branch } }
             | each { is-not-empty }
             | any {}
 
