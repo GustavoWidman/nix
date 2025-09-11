@@ -16,7 +16,7 @@ in
       owner = "camelsec";
       repo = "dailybot";
       ssh = true;
-      rev = "4e4ff35e85ab226095ed0a114c6d245874871422";
+      rev = "1bd4fd57185638ba1b7f705493f7da02440f71df";
     };
   };
 
