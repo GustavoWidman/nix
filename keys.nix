@@ -8,7 +8,9 @@ let
 in
 keys
 // {
-  admins = [ keys.laptop-mac ];
+  admins = [
+    keys.laptop-mac
+  ];
   linux = [
     keys.lab
     keys.home-vm
@@ -22,6 +24,8 @@ keys
     keys.oracle-2
     keys.lab
   ];
-  darwin = [ keys.laptop-mac ];
+  darwin = [
+    keys.laptop-mac
+  ];
   all = builtins.attrValues keys;
 }

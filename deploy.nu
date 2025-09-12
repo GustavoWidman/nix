@@ -15,6 +15,7 @@ def log [
     level: string
     message: string
     --no-newline (-n)
+    --return-instead
 ] {
     let color = ($LOG_COLORS | get $level)
     let prefix = match $level {
@@ -26,10 +27,16 @@ def log [
         _ => "›"
     }
 
+    let msg = $"[(ansi $color)($prefix)(ansi reset)] ($message)"
+
+    if $return_instead {
+        return $msg
+    }
+
     if $no_newline {
-        print -n $"[(ansi $color)($prefix)(ansi reset)] ($message)"
+        print -n $msg
     } else {
-        print $"[(ansi $color)($prefix)(ansi reset)] ($message)"
+        print $msg
     }
 }
 
@@ -124,7 +131,7 @@ def ensure-host-key [
     )
 
     if $existing_key == "null" {
-        let pubkey = if $remote {
+        let pubkey = if ($remote | is-not-empty) {
             ssh-exec $remote "cat /etc/ssh/ssh_host_ed25519_key.pub" --key $key --return-output
         } else {
             open -r /etc/ssh/ssh_host_ed25519_key.pub
@@ -132,9 +139,55 @@ def ensure-host-key [
 
         log info $"adding host key: (ansi $LOG_COLORS.cmd)($pubkey | str substring 0..50)...(ansi reset)"
 
-        open ./keys.nix
+        mut keys_content = open ./keys.nix
         | lines
         | insert 2 $'    ($hostname) = "($pubkey)";'
+
+        let os = (["linux" "darwin"] | input list (log info "choose machine os" --return-instead))
+        let os_line = ($keys_content
+            | enumerate
+            | where item =~ $os
+            | first
+            | get index
+        ) + 1
+        $keys_content = $keys_content
+        | insert $os_line $'    keys.($hostname)'
+
+        let type = (["server" "desktop"] | input list (log info "choose machine type" --return-instead))
+        let type_line = ($keys_content
+            | enumerate
+            | where item =~ $type
+            | first
+            | get index
+        ) + 1
+        $keys_content = $keys_content
+        | insert $type_line $'    keys.($hostname)'
+
+        let is_dev = (input -n 1 (log info $"is this machine a dev environment? [(ansi green)y(ansi reset)/(ansi red)N(ansi reset)]: " --return-instead))
+        if ($is_dev | str downcase) == "y" {
+            let dev_line = ($keys_content
+                | enumerate
+                | where item =~ dev
+                | first
+                | get index
+            ) + 1
+            $keys_content = $keys_content
+            | insert $dev_line $'    keys.($hostname)'
+        }
+
+        let is_admin = (input -n 1 (log info $"is this machine an admin? [(ansi green)y(ansi reset)/(ansi red)N(ansi reset)]: " --return-instead))
+        if ($is_admin | str downcase) == "y" {
+            let admin_line = ($keys_content
+                | enumerate
+                | where item =~ admins
+                | first
+                | get index
+            ) + 1
+            $keys_content = $keys_content
+            | insert $admin_line $'    keys.($hostname)'
+        }
+
+        $keys_content
         | str join "\n"
         | save -f ./keys.nix
 
