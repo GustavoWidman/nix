@@ -86,6 +86,15 @@ in
           ;
       }
       // optionalAttrs config.isDev {
+        penelope = pkgs.penelope.overrideAttrs (oldAttrs: {
+          version = "0.14.8";
+          src = pkgs.fetchFromGitHub {
+            owner = "brightio";
+            repo = "penelope";
+            rev = "v0.14.8";
+            hash = "sha256-m4EYP1lKte8r9Xa/xAuv6aiwMNha+B8HXUCizH0JgmI=";
+          };
+        });
         inherit (pkgs)
           abseil-cpp
           arduino-cli
@@ -113,7 +122,6 @@ in
           metasploit
           mitmproxy
           nuclei
-          penelope
           postgresql
           qemu_full
           radare2
