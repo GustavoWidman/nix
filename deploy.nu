@@ -239,16 +239,39 @@ def rebuild-remote [
     return
 }
 
+def validate-rebuild [
+    hostname: string
+] {
+    let current_system_hash = nix-store --query --deriver /run/current-system
+        | str replace -r '"?\/nix\/store\/([[:alnum:]]+)-.*"?' '$1'
+
+    let new_system_hash = nix eval $'.#($hostname).system.build.toplevel.drvPath' err> /dev/null
+        | str replace -r '"?\/nix\/store\/([[:alnum:]]+)-.*"?' '$1'
+
+    if ($current_system_hash == $new_system_hash) {
+        log info $"rebuild for (ansi $LOG_COLORS.host)($hostname)(ansi reset) is unnecessary, system hash is already (ansi $LOG_COLORS.path)($new_system_hash)(ansi reset)."
+
+        return false
+    }
+
+    return true
+}
+
 def rebuild-local [
     hostname: string
     --boot (-b)                 # Use boot instead of switch
     --dry-run (-d)              # Perform dry run
     --initial (-i)              # Initial setup for new host
 ] {
+    if not (validate-rebuild $hostname) {
+        return
+    }
+
     let system = (uname | get kernel-name)
     let action = if ($boot or $initial) { "boot" } else { "switch" }
 
     let nh_flags = [
+        "--quiet"
         "--hostname" $hostname
     ]
 
