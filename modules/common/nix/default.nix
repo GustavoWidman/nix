@@ -60,7 +60,13 @@ in
     with pkgs;
     [
       deploy-rs
-      nh
+      (nh.override {
+        nix-output-monitor = pkgs.nix-output-monitor.overrideAttrs (
+          finalAttrs: prevAttrs: {
+            patches = (prevAttrs.patches or [ ]) ++ [ ./nom.patch ];
+          }
+        );
+      })
       nix-index
       nix-output-monitor
       nixfmt-rfc-style
