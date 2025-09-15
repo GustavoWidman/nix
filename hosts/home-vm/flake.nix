@@ -5,10 +5,7 @@ let
     class = "nixos";
     type = "dev-server";
     architecture = "x86_64-linux";
-    build-architectures = [
-      metadata.architecture
-      "aarch64-linux"
-    ];
+    build-architectures = [ ];
   };
 in
 {
