@@ -249,6 +249,7 @@ def rebuild-local [
     let action = if ($boot or $initial) { "boot" } else { "switch" }
 
     let nh_flags = [
+        "--quiet"
         "--hostname" $hostname
     ]
 
