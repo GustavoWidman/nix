@@ -66,11 +66,6 @@
 
     nix.url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
 
-    nh = {
-      url = "github:nix-community/nh/v4.2.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     naersk = {
       url = "github:nix-community/naersk";
       inputs.nixpkgs.follows = "nixpkgs";
