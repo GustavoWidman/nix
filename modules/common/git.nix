@@ -81,9 +81,6 @@ in
           "result"
           "result-*"
 
-          # Nushell Hook
-          ".nu"
-
           # Python
           "*.pyc"
           "__pypackages__/"

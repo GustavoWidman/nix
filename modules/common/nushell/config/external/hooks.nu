@@ -78,44 +78,30 @@ $env.config.hooks.env_change.PWD = [
             )
         }
     }
-    # Nu Environment (add and create symlinks for any local nu files to PATH)
+    # Nu Environment
     {
-        condition: {|_, after| (ls $after err> /dev/null | where { get name | str ends-with ".nu" } | is-not-empty) }
-        code: {|_, after|
-            # Create symlinks to all nu files so we can reference "x.nu" as "x"
-            let nudir = ($after | path join ".nu")
-            if not ($nudir | path exists) {
-                mkdir ($nudir | path join "bin")
+        condition: {|_, after|
+            let files = ls -a $after err> /dev/null
+            | where {|el| ($el | get type) == "file" }
+            | par-each { get name | path parse }
+            | where {|el| ($el | get extension) == "nu" }
+
+            if ($files | is-empty) {
+                return false
             }
 
-            ls $after err> /dev/null
-                | where { get name | str ends-with ".nu" }
-                | par-each {|el|
-                    let file = ($el | get name | path expand)
-                    let symlink = ($nudir | path join "bin" | path join ($el | get name | path parse | get stem))
-                    if ((not ($symlink | path exists)) or ((readlink $symlink) != $file)) {
-                        ln -s $file ($symlink | path expand)
-                    }
-                }
+            touch /tmp/activate.nu
 
-            $env.PATH = (
-               	$env.PATH
-              		| prepend ($nudir | path join "bin")
-              		| uniq
-            )
+            $files
+            | par-each {|file|
+                $"overlay use \"($file.parent)/($file.stem).($file.extension)\" as ($file.stem)"
+            }
+            | str join "\n"
+            | save -f /tmp/activate.nu
+
+            return true
         }
-    },
-    {
-        condition: {|before, _|
-            (($before | is-not-empty) and (ls $before err> /dev/null | where { get name | str ends-with ".nu" } | is-not-empty))
-        }
-        code: {|before, _|
-            $env.PATH = (
-               	$env.PATH
-              		| where $it != ($before | path join ".nu" "bin")
-              		| uniq
-            )
-        }
+        code: 'source /tmp/activate.nu'
     }
 ];
 
