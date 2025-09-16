@@ -1,5 +1,5 @@
-use ($nu.default-config-dir | path join "config/external/mise.nu")
-use ($nu.default-config-dir | path join "config/external/zoxide.nu")
+use "../external/mise.nu"
+use "../external/zoxide.nu"
 
 def find-jj-dir [pwd?: string] {
     mut current_dir = if ($pwd | is-empty) {

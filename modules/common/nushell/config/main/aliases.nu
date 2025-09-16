@@ -1,4 +1,4 @@
-use ($nu.default-config-dir | path join config/main/absolute.nu)
+use "../main/absolute.nu"
 
 alias grun = go run
 

@@ -1,8 +1,9 @@
-use config/utils/cache.nu
-use config/utils/ports.nu
-use config/utils/init.nu
+use "config/utils/cache.nu"
+use "config/utils/ports.nu"
+use "config/utils/init.nu"
 
 $env.MISE_SHELL = "nu"
+$env.CARAPACE_BRIDGES = 'inshellisense,carapace,fish,zsh,bash'
 $env.config.show_banner = false
 $env.VIRTUAL_ENV_DISABLE_PROMPT = true
 $env.OS = uname | get operating-system
@@ -153,8 +154,11 @@ if $env.OS == "Darwin" {
 	]
 }
 
+if not ($"($env.TRUE_HOME)/.cache/carapace" | path exists) {
+	mkdir $"($env.TRUE_HOME)/.cache/carapace"
+}
+
 $env.PATH = $env.PATH | split row (char esep) | where not ($it in $path) | append $path
 
-source config/main/aliases.nu
-source config/main/carapace.nu
-use config/misc/hackingclub.nu
+source "config/main/aliases.nu"
+use "config/misc/hackingclub.nu"
