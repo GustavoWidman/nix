@@ -22,7 +22,7 @@ in
         package = mkIf config.isDarwin pkgs.ghostty-bin;
 
         settings = {
-          theme = "GruvboxDark";
+          theme = "Gruvbox Dark";
           # theme = "Dracula";
 
           font-family = "Fira Code Regular";
