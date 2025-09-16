@@ -303,21 +303,28 @@ def validate-hostname [
     }
 }
 
-# Rebuild a NixOS / Darwin config.
-def main --env [
-    hostname?: string           # Target hostname (defaults to current)
+def hostnames [] {
+    ls ./hosts
+    | where type == dir
+    | get name
+    | path basename
+}
 
-    --boot (-b)                 # Boot instead of switch (NixOS only)
-    --dry-run (-d)              # Sets "eval-cache" to false, skipping nix's eval cache and running "dry"
-    --initial (-i)              # Initial setup for new host
-    --update (-u)               # Update flake inputs before rebuild
+# Rebuild a NixOS / Darwin config.
+export def main --env [
+    hostname?: string@hostnames # Target hostname (defaults to current)
+
+    --boot (-b)                     # Boot instead of switch (NixOS only)
+    --dry-run (-d)                  # Sets "eval-cache" to false in nix options
+    --initial (-i)                  # Initial setup for new host
+    --update (-u)                   # Update flake inputs before rebuild
 
     # Remote options
-    --remote (-r): string       # Remote host address or hostname
-    --key (-k): path            # SSH identity file for remote access
+    --remote (-r): string@hostnames # Remote host address or hostname
+    --key (-k): path                # SSH identity file for remote access
 
     # Advanced options
-    --no-git                    # Skip git operations
+    --no-git                        # Skip git operations
 ]: nothing -> nothing {
     let in_remote = ("IN_REMOTE" in $env)
 
@@ -392,7 +399,7 @@ def discover-hosts [] {
     | sort-by remote
 }
 
-def "main all" --env [
+export def all --env [
     --boot (-b)                 # Boot instead of switch (for NixOS rebuilds only)
     --dry-run (-d)              # Sets "eval-cache" to false, skipping nix's eval cache and running "dry"
     --update (-u)               # Update flake inputs before any rebuilds
