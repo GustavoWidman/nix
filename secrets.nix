@@ -42,9 +42,6 @@ in
   "modules/common/ssh/github/inteli.age".publicKeys = all;
   "modules/common/ssh/github/personal.age".publicKeys = all;
 
-  # Dev Specific
-  "modules/dev/ai-commit/config.yaml.age".publicKeys = dev ++ admins;
-
   # Server Specific
   "modules/server/acme/environment.env.age".publicKeys = server ++ admins;
 
