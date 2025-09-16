@@ -1,0 +1,21 @@
+bootstrap:
+  - "1.1.1.1:53"
+listen-addrs:
+  - "127.0.0.1"
+listen-ports:
+  - 53
+max-go-routines: 0
+ratelimit: 0
+ratelimit-subnet-len-ipv4: 24
+ratelimit-subnet-len-ipv6: 64
+udp-buf-size: 0
+http3: true
+cache: true
+fallback:
+  - "https://1.1.1.1/dns-query"
+upstream:
+  - "https://dns.r3dlust.com/dns-query"
+  - "[/ts.net/]100.100.100.100"
+  - "[/staging.camelsec.com/]10.200.0.1"
+  - "[/internal.camelsec.com/]10.100.0.1"
+timeout: "10s"
