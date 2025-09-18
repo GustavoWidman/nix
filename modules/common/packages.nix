@@ -123,7 +123,7 @@ in
           mitmproxy
           nuclei
           postgresql
-          qemu_full
+          qemu
           radare2
           # retdec #! TODO not compatible with macos
           sqlmap
