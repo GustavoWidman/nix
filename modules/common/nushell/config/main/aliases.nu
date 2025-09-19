@@ -130,3 +130,9 @@ def "from env" []: string -> record {
 def _ []: nothing -> any {
   $env.last?
 }
+
+# Create a directory and cd into it.
+def --env mc [path: path]: nothing -> nothing {
+  mkdir $path
+  cd $path
+}
