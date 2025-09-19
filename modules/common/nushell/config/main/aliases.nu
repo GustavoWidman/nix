@@ -125,3 +125,8 @@ def "from env" []: string -> record {
     | update value {str trim -c '"'}
     | transpose -r -d
 }
+
+# Retrieve the output of the last command.
+def _ []: nothing -> any {
+  $env.last?
+}
