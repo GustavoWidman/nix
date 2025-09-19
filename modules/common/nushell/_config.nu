@@ -2,6 +2,7 @@ use "config/main/prompt.nu"
 use "config/main/absolute.nu"
 use "config/main/mkdevshell.nu"
 use "config/main/activate.nu"
+use "config/main/nudo.nu"
 use "config/main/env.nu"
 
 use "config/utils/hooks.nu"
