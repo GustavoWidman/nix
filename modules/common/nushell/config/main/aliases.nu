@@ -136,3 +136,10 @@ def --env mc [path: path]: nothing -> nothing {
   mkdir $path
   cd $path
 }
+
+# Create a directory, cd into it and initialize version control.
+def --env mcg [path: path]: nothing -> nothing {
+  mkdir $path
+  cd $path
+  jj git init --colocate
+}
