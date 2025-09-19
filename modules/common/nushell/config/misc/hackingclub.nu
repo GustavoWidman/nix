@@ -37,7 +37,9 @@ export def clean-scan [
 export def stop [] {
 	print $"(ansi reset)(ansi light_gray)[(ansi reset)(ansi green_bold)+(ansi reset)(ansi light_gray)](ansi reset)(ansi white_dimmed) Stopping HackingClub services..."
 
-	let openvpn_alive = ^ps -ax -o pid= -o command=  | parse "{pid} {cmd}" | where cmd =~ ($env.TRUE_HOME | path join 'Cybersec/hackingclub/hackingclub.ovpn') | where cmd !~ sudo
+	let openvpn_alive = sudo nu -c "ps | to json"
+	    | from json
+		| where name =~ openvpn
 	let ports = ports -lt
 
 	# grant sudo grace period
@@ -45,7 +47,7 @@ export def stop [] {
 		print $"(ansi reset)(ansi light_gray)[(ansi reset)(ansi yellow_bold)?(ansi reset)(ansi light_gray)](ansi reset)(ansi white) Killing (ansi reset)(ansi purple)OpenVPN(ansi reset)(ansi white) process...(ansi reset)(ansi red_bold)"
 		$openvpn_alive
 			| each {|p|
-			    sudo kill ($p | get pid | into int)
+			    sudo kill ($p | get pid)
 			}
 	}
 
@@ -68,17 +70,20 @@ export def main [
     --proxy (-p)
 ] {
 	print $"(ansi light_gray)[(ansi reset)(ansi green_bold)+(ansi reset)(ansi light_gray)](ansi reset)(ansi white_dimmed) Starting hackingclub services...(ansi reset)(ansi red_bold)"
-	let openvpn_alive = ^ps -ax -o pid= -o command=  | parse "{pid} {cmd}" | where cmd =~ ($env.TRUE_HOME | path join 'Cybersec/hackingclub/hackingclub.ovpn') | where cmd !~ sudo
-	let ports = ports -lt
 
 	# grant sudo grace period
 	sudo cat /dev/null
+
+	let openvpn_alive = sudo nu -c "ps | to json"
+	    | from json
+		| where name =~ openvpn
+	let ports = ports -lt
 
 	if not ($openvpn_alive | is-empty) {
 		print $"(ansi reset)(ansi light_gray)[(ansi reset)(ansi yellow_bold)?(ansi reset)(ansi light_gray)] (ansi reset)(ansi purple)OpenVPN(ansi reset)(ansi white) is already running, terminating the program.(ansi reset)"
 		$openvpn_alive
 			| each {|p|
-			    sudo kill ($p | get pid | into int)
+			    sudo kill ($p | get pid)
 			}
 	}
 
