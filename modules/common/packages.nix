@@ -79,7 +79,6 @@ in
           lima-additional-guestagents
           llama-cpp
           sshfs
-          stats
           unnaturalscrollwheels
           utm
           ;

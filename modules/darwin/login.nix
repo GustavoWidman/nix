@@ -7,7 +7,5 @@
 
   system.login-items = with pkgs; [
     unnaturalscrollwheels
-    stats
   ];
-
 }
