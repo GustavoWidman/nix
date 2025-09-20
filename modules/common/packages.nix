@@ -73,7 +73,6 @@ in
           withAdditionalGuestAgents = true;
         };
         inherit (pkgs)
-          alt-tab-macos
           fuse-ext2
           iproute2mac
           libiconv
