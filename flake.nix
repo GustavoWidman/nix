@@ -64,6 +64,15 @@
       inputs.home-manager.follows = "home-manager";
     };
 
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
+    homebrew-core = {
+      url = "github:homebrew/homebrew-core";
+      flake = false;
+    };
+    homebrew-cask = {
+      url = "github:homebrew/homebrew-cask";
+      flake = false;
+    };
     nix.url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
 
     naersk = {
