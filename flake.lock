@@ -351,6 +351,22 @@
         "type": "github"
       }
     },
+    "swipe-aero-space": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1747108014,
+        "narHash": "sha256-jyxvcG/l8nk9o7mPbv2kvWoNyE/pLRQegfCAaQVQv6c=",
+        "owner": "MediosZ",
+        "repo": "homebrew-tap",
+        "rev": "1b9277dd2df657669123273e62d4fd61d8a15dfa",
+        "type": "github"
+      },
+      "original": {
+        "owner": "MediosZ",
+        "repo": "homebrew-tap",
+        "type": "github"
+      }
+    },
     "systems": {
       "locked": {
         "lastModified": 1681028828,

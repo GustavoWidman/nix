@@ -8,6 +8,8 @@ let
     ;
 in
 {
+  homebrew.casks = [ "swipeaerospace" ];
+
   services.aerospace = enabled {
     settings = {
       accordion-padding = 30;
