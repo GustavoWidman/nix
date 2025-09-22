@@ -46,7 +46,9 @@ alias ":c" = clear # le vim enjoyer part 2
 
 # let's give this a try, shall we?
 alias nano = hx
+alias nano! = ^nano
 alias code = zeditor
+alias code! = ^code
 
 alias "sudo su" = sudo (absolute nu)
 
