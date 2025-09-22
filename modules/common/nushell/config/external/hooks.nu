@@ -78,31 +78,6 @@ $env.config.hooks.env_change.PWD = [
             )
         }
     }
-    # Nu Environment
-    {
-        condition: {|_, after|
-            let files = ls -a $after err> /dev/null
-            | where {|el| ($el | get type) == "file" }
-            | par-each { get name | path parse }
-            | where {|el| ($el | get extension) == "nu" }
-
-            if ($files | is-empty) {
-                return false
-            }
-
-            touch /tmp/activate.nu
-
-            $files
-            | par-each {|file|
-                $"overlay use \"($file.parent)/($file.stem).($file.extension)\" as ($file.stem)"
-            }
-            | str join "\n"
-            | save -f /tmp/activate.nu
-
-            return true
-        }
-        code: 'source /tmp/activate.nu'
-    }
 ];
 
 $env.config.hooks.pre_prompt = [
