@@ -98,3 +98,6 @@ setup_space 5 other $all_apps -i
 
 setup_app [ $settings $finder $preview ] -u
 setup_app [ $pip ] -u -s
+
+yabai -m rule --add title="^Save$" manage=off
+yabai -m rule --apply title="^Save$" manage=off
