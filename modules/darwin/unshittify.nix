@@ -62,8 +62,8 @@
     SecondClickThreshold = 0;
   };
 
-  system.defaults.CustomSystemPreferences."com.apple.Accessibility".ReduceMotionEnabled = 1;
-  system.defaults.universalaccess.reduceMotion = true;
+  system.defaults.CustomSystemPreferences."com.apple.Accessibility".ReduceMotionEnabled = 0;
+  system.defaults.universalaccess.reduceMotion = false;
 
   system.defaults.WindowManager = {
     AppWindowGroupingBehavior = false; # Show them one at a a time.
