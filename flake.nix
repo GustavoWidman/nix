@@ -73,10 +73,6 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
-    swipe-aero-space = {
-      url = "github:MediosZ/homebrew-tap";
-      flake = false;
-    };
 
     nix.url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
 

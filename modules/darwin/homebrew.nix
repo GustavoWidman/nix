@@ -1,7 +1,6 @@
 {
   homebrew-core,
   homebrew-cask,
-  swipe-aero-space,
   config,
   lib,
   ...
@@ -17,7 +16,6 @@ in
 
     taps."homebrew/homebrew-core" = homebrew-core;
     taps."homebrew/homebrew-cask" = homebrew-cask;
-    taps."mediosz/homebrew-tap" = swipe-aero-space;
 
     mutableTaps = false;
   };

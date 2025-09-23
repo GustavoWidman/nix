@@ -23,6 +23,26 @@ let
   };
   makeOptionDisableManipulators = keys: map makeManipulator keys;
 
+  makeFocusSpace = key: {
+    from.key_code = key;
+    from.modifiers.mandatory = [ "option" ];
+
+    to = [
+      { shell_command = "${pkgs.yabai}/bin/yabai -m space --focus ${key}"; }
+    ];
+    type = "basic";
+  };
+  makeMoveSpace = key: {
+    from.key_code = key;
+    from.modifiers.mandatory = [
+      "option"
+      "shift"
+    ];
+
+    to = [ { shell_command = "${pkgs.yabai}/bin/yabai -m window --space ${key} --focus"; } ];
+    type = "basic";
+  };
+
   letters = [
     "a"
     "b"
@@ -51,18 +71,18 @@ let
     "y"
     "z"
   ];
-  # numbers = [
-  #   "1"
-  #   "2"
-  #   "3"
-  #   "4"
-  #   "5"
-  #   "6"
-  #   "7"
-  #   "8"
-  #   "9"
-  #   "0"
-  # ];
+  numbers = [
+    "1"
+    "2"
+    "3"
+    "4"
+    "5"
+    "6"
+    "7"
+    "8"
+    "9"
+    "0"
+  ];
   punctuation = [
     "hyphen"
     "equal_sign"
@@ -99,7 +119,7 @@ let
       manipulators = makeOptionDisableManipulators allStandardKeys;
     }
     {
-      description = "Aerospace Binds";
+      description = "Yabai Binds";
       manipulators = [
         {
           from.key_code = "tab";
@@ -107,7 +127,7 @@ let
 
           to = [
             {
-              shell_command = "${pkgs.aerospace}/bin/aerospace list-workspaces --monitor focused --empty no | ${pkgs.aerospace}/bin/aerospace workspace next --wrap-around";
+              shell_command = "${pkgs.yabai}/bin/yabai -m space --focus recent";
             }
           ];
           type = "basic";
@@ -115,18 +135,33 @@ let
         {
           from.key_code = "tab";
           from.modifiers.mandatory = [
-            "command"
+            "option"
+          ];
+
+          to = [
+            {
+              shell_command = "${pkgs.yabai}/bin/yabai -m space --focus next";
+            }
+          ];
+          type = "basic";
+        }
+        {
+          from.key_code = "tab";
+          from.modifiers.mandatory = [
+            "option"
             "shift"
           ];
 
           to = [
             {
-              shell_command = "${pkgs.aerospace}/bin/aerospace list-workspaces --monitor focused --empty no | ${pkgs.aerospace}/bin/aerospace workspace prev --wrap-around";
+              shell_command = "${pkgs.yabai}/bin/yabai -m space --focus prev";
             }
           ];
           type = "basic";
         }
-      ];
+      ]
+      ++ (map makeFocusSpace numbers)
+      ++ (map makeMoveSpace numbers);
     }
   ];
 in
