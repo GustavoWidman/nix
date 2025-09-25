@@ -10,6 +10,7 @@ def setup_space [
     index: int
     name: string
     apps: list<string>
+    titles: list<string>
     --unmanaged (-u)
     --inverse (-i)
 ] {
@@ -20,22 +21,27 @@ def setup_space [
 
     yabai -m space $index --label $name
 
-    if ($apps | is-empty) {
+    if (($apps | is-empty) and ($titles | is-empty)) {
         return
     }
+    # apps not empty or titles not empty or both
 
-    let rule = if $inverse {
-        $"app!=($apps | str join '|')"
-    } else {
-        $"app=($apps | str join '|')"
-    }
+    let app_rule = $"app(if $inverse {'!'} else '')=($apps | str join '|')"
+    let title_rule = $"title(if $inverse {'!'} else '')=($titles | str join '|')"
 
-    if $unmanaged {
-        yabai -m rule --add $rule $"space=^($index)" "manage=off"
-        yabai -m rule --apply $rule $"space=($index)" "manage=off"
-    } else {
-        yabai -m rule --add $rule $"space=^($index)"
-        yabai -m rule --apply $rule $"space=($index)"
+    let manage_rule = $"manage=(if $unmanaged {'off'} else {'on'})"
+
+    if ($apps | is-not-empty) { # apps not empty
+        if ($titles | is-not-empty) { # apps not empty and titles not empty
+            yabai -m rule --add $app_rule $title_rule $"space=^($index)" $manage_rule
+            yabai -m rule --add $app_rule $title_rule $"space=($index)" $manage_rule
+        } else { # only apps not empty
+            yabai -m rule --add $app_rule $"space=^($index)" $manage_rule
+            yabai -m rule --apply $app_rule $"space=($index)" $manage_rule
+        }
+    } else { # only titles not empty
+        yabai -m rule --add $title_rule $"space=^($index)" $manage_rule
+        yabai -m rule --apply $title_rule $"space=($index)" $manage_rule
     }
 }
 
@@ -67,6 +73,34 @@ def setup_app [
     yabai -m rule --apply $rule $unmanaged_rule $sticky_rule
 }
 
+def setup_title [
+    titles: list<string>
+    --inverse (-i)
+    --unmanaged (-u)
+    --sticky (-s)
+] {
+    let rule = if $inverse {
+        $"title!=($titles | str join '|')"
+    } else {
+        $"title=($titles | str join '|')"
+    }
+
+    let unmanaged_rule = if $unmanaged {
+        "manage=off"
+    } else {
+        "manage=on"
+    }
+
+    let sticky_rule = if $sticky {
+        "sticky=on"
+    } else {
+        "sticky=off"
+    }
+
+    yabai -m rule --add $rule $unmanaged_rule $sticky_rule
+    yabai -m rule --apply $rule $unmanaged_rule $sticky_rule
+}
+
 let zed = "Zed"
 let ghostty = "Ghostty"
 let zen = "Zen"
@@ -75,7 +109,8 @@ let discord = "Discord"
 let finder = "Finder"
 let preview = "Preview"
 let settings = "System Settings"
-let pip = "^Picture-in-"
+let pip = [ "Picture-in-picture Window", "Picture-in-Picture" ]
+let save = [ "Save", "Save As" ]
 
 let all_apps = [
     $zed,
@@ -86,18 +121,21 @@ let all_apps = [
     $finder,
     $preview,
     $settings,
-    $pip
 ]
 
+let all_titles = [
+    ...$pip,
+    ...$save,
+]
 
-setup_space 1 code [ $zed ]
-setup_space 2 terminal [ $ghostty ] -u
-setup_space 3 web [ $zen ]
-setup_space 4 social [ $discord, $whatsapp ]
-setup_space 5 other $all_apps -i
+setup_space 1 code [ $zed ] []
+setup_space 2 terminal [ $ghostty ] [] -u
+setup_space 3 web [ $zen ] []
+setup_space 4 social [ $discord, $whatsapp ] []
+setup_space 5 other $all_apps $all_titles -i
 
 setup_app [ $settings $finder $preview ] -u
-setup_app [ $pip ] -u -s
 
-yabai -m rule --add title="^Save$" manage=off
-yabai -m rule --apply title="^Save$" manage=off
+setup_title $pip -u -s
+setup_title $save -u
+
