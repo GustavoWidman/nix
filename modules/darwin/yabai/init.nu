@@ -34,7 +34,7 @@ def setup_space [
     if ($apps | is-not-empty) { # apps not empty
         if ($titles | is-not-empty) { # apps not empty and titles not empty
             yabai -m rule --add $app_rule $title_rule $"space=^($index)" $manage_rule
-            yabai -m rule --add $app_rule $title_rule $"space=($index)" $manage_rule
+            yabai -m rule --apply $app_rule $title_rule $"space=($index)" $manage_rule
         } else { # only apps not empty
             yabai -m rule --add $app_rule $"space=^($index)" $manage_rule
             yabai -m rule --apply $app_rule $"space=($index)" $manage_rule
