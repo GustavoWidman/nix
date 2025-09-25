@@ -130,6 +130,9 @@ let all_titles = [
     ...$save,
 ]
 
+yabai -m rule --add app=".*" sub-layer=normal
+yabai -m signal --add event=application_front_switched action="yabai -m window --sub-layer normal"
+
 setup_space 1 code [ $zed ] []
 setup_space 2 terminal [ $ghostty ] [] -u
 setup_space 3 web [ $zen ] []
