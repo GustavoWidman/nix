@@ -208,7 +208,7 @@ let
 
           to = [
             {
-              shell_command = "biggest_space=$(${pkgs.yabai}/bin/yabai -m query --spaces | ${pkgs.jq}/bin/jq -r 'max_by(.index).index') && [[ '$biggest_space' -gt 5 ]] && current_space=$(${pkgs.yabai}/bin/yabai -m query --spaces --space | ${pkgs.jq}/bin/jq -r '.index') && [[ '$current_space' == '$biggest_space' ]] && ${pkgs.yabai}/bin/yabai -m space --focus recent ; [[ '$biggest_space' -gt 5 ]] && ${pkgs.yabai}/bin/yabai -m space --destroy '$biggest_space'";
+              shell_command = "biggest_space=$(${pkgs.yabai}/bin/yabai -m query --spaces | ${pkgs.jq}/bin/jq -r 'max_by(.index).index') && [[ $biggest_space -gt 5 ]] && current_space=$(${pkgs.yabai}/bin/yabai -m query --spaces --space | ${pkgs.jq}/bin/jq -r '.index') && [[ $current_space == $biggest_space ]] && ${pkgs.yabai}/bin/yabai -m space --focus recent ; [[ $biggest_space -gt 5 ]] && ${pkgs.yabai}/bin/yabai -m space --destroy $biggest_space";
             }
           ];
           type = "basic";
