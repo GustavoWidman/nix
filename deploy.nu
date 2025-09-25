@@ -14,6 +14,7 @@ const LOG_COLORS = {
 def log [
     level: string
     message: string
+    --exit (-e)
     --no-newline (-n)
     --return-instead
 ] {
@@ -31,6 +32,12 @@ def log [
 
     if $return_instead {
         return $msg
+    }
+
+    if $exit {
+        error make -u {
+            msg: $msg
+        }
     }
 
     if $no_newline {
@@ -112,8 +119,7 @@ def sync-nix-config [
         | ^sort -u
         | rsync-files "./" $"($host):.nix" -k $key
     } catch {
-        log error $"failed to sync configuration: ($in)"
-        exit 1
+        log error -e $"failed to sync configuration: ($in.rendered)"
     }
 }
 
@@ -193,8 +199,7 @@ def ensure-host-key [
 
         nixfmt ./keys.nix
         sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key
-        log warn "host key added. please configure secrets and rerun."
-        exit 0
+        log warn -e "host key added. please configure secrets and rerun."
     }
 }
 
@@ -281,8 +286,7 @@ def rebuild-local [
         }
         log success "rebuild completed successfully"
     } catch {
-        log error $"rebuild failed: ($in)"
-        exit 1
+        log error -e $"rebuild failed, please check logs."
     }
 }
 
@@ -297,8 +301,7 @@ def validate-hostname [
         print ""
 
         if ($response | str downcase) != "y" {
-            log info "operation cancelled"
-            exit 0
+            log info -e "operation cancelled"
         }
     }
 }
@@ -374,8 +377,7 @@ def host-status [
 
 def discover-hosts [] {
     if not ("./hosts" | path exists) {
-        log error "hosts directory './hosts' not found"
-        exit 1
+        log error -e "hosts directory './hosts' not found"
     }
 
     let hosts = ls ./hosts
