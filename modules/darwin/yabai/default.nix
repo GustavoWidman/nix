@@ -11,7 +11,7 @@ in
     enableScriptingAddition = true;
     config = {
       focus_follows_mouse = "on";
-      mouse_follows_focus = "on";
+      mouse_follows_focus = "off";
       window_placement = "second_child";
       window_opacity = "off";
       top_padding = 4;
