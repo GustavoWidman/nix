@@ -109,6 +109,7 @@ let discord = "Discord"
 let finder = "Finder"
 let preview = "Preview"
 let settings = "System Settings"
+let turtlesim = "turtlesim_node"
 let pip = [ "Picture-in-picture Window", "Picture-in-Picture" ]
 let save = [ "Save", "Save As" ]
 
@@ -121,6 +122,7 @@ let all_apps = [
     $finder,
     $preview,
     $settings,
+    $turtlesim
 ]
 
 let all_titles = [
@@ -135,6 +137,7 @@ setup_space 4 social [ $discord, $whatsapp ] []
 setup_space 5 other $all_apps $all_titles -i
 
 setup_app [ $settings $finder $preview ] -u
+setup_app [ $turtlesim ] -u -s
 
 setup_title $pip -u -s
 setup_title $save -u
