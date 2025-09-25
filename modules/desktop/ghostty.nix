@@ -23,20 +23,17 @@ in
 
         settings = {
           theme = "Gruvbox Dark";
-          # theme = "Dracula";
 
-          font-family = "Fira Code Regular";
-          # font-family = "JetBrains Mono";
+          font-family = "JetBrains Mono";
           font-size = 18;
 
           window-colorspace = mkIf config.isDarwin "display-p3";
           window-height = 42;
           window-width = 150;
 
-          # background-opacity = 0.85;
-          # background-opacity = 0.9;
-
           mouse-hide-while-typing = true;
+
+          auto-update = "off";
 
           cursor-click-to-move = true;
           cursor-style = "bar";
