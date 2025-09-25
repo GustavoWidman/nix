@@ -11,6 +11,7 @@ $env.HOSTNAME = cache get_hostname
 $env.config.buffer_editor = "hx"
 $env.TRUE_HOME = cache true_home
 $env.USER_COLOR = init init_user_color
+$env.TMPDIR = cache get_tempdir
 $env.HOME = if $env.USER == "root" {
   if $env.OS == "Darwin" {
     "/var/root"

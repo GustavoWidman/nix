@@ -27,7 +27,7 @@ export def start [id: string, name?: string] {
 
 		print --no-newline $"Waiting for ($name) VM to start."
 
-		let $ip_file = ($nu.temp-path | path join $"($id)_($name).ip")
+		let $ip_file = $"/tmp/($id)_($name).ip"
 
 		do { ^nc -lnp 4444 e> /dev/null | save --raw --force $ip_file }
 
@@ -48,7 +48,7 @@ export def start [id: string, name?: string] {
 	} else {
 		print $"($name) VM is already running."
 
-		let $ip_path = ($nu.temp-path | path join $"($id)_($name).ip")
+		let $ip_path = $"/tmp/($id)_($name).ip"
 		if not ($ip_path | path exists) {
 			print $"No IP address found for ($name) VM. VM is running but unable to connect."
 			return
@@ -72,7 +72,7 @@ export def stop [id: string, name?: string] {
 	if (^utmctl status $id | str contains "stopped") {
 		print $"($name) VM is already stopped."
 	} else {
-		let $ip_file = ($nu.temp-path | path join $"($id)_($name).ip")
+		let $ip_file = $"/tmp/($id)_($name).ip"
 		if not ($ip_file | path exists) {
 			print $"No IP address found for ($name) VM. VM is running but unable to connect."
 			return
@@ -128,7 +128,7 @@ export def status [id: string, name?: string] {
 	} else {
 		print $"($name) VM is running."
 
-		let $ip_path = ($nu.temp-path | path join $"($id)_($name).ip")
+		let $ip_path = $"/tmp/($id)_($name).ip"
 		if not ($ip_path | path exists) {
 			print $"No IP address found for ($name) VM. VM is running but unable to connect."
 			return

@@ -1,7 +1,8 @@
-const cache_file = ($nu.temp-path | path join "nushell_cache.nuon")
+const cache_file = "/tmp/nushell_cache.nuon"
 const null_cache_records = {
 	true_home: null,
 	hostname: null,
+	tempdir: null
 }
 
 export def --env get_cache [] {
@@ -85,4 +86,22 @@ export def --env get_hostname [] {
 
 		$hostname
 	}
+}
+
+export def --env get_tempdir [] {
+    let cache = get_cache
+
+    if $cache.tempdir != null {
+        $cache.tempdir
+    } else {
+        let tempdir = if $env.OS == "Darwin" {
+            (getconf DARWIN_USER_TEMP_DIR)
+        } else {
+            "/tmp"
+        }
+
+        save_to_cache tempdir $tempdir
+
+        $tempdir
+    }
 }
