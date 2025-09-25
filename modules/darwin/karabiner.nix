@@ -133,33 +133,6 @@ let
           type = "basic";
         }
         {
-          from.key_code = "tab";
-          from.modifiers.mandatory = [
-            "option"
-          ];
-
-          to = [
-            {
-              shell_command = "${pkgs.yabai}/bin/yabai -m space --focus next";
-            }
-          ];
-          type = "basic";
-        }
-        {
-          from.key_code = "tab";
-          from.modifiers.mandatory = [
-            "option"
-            "shift"
-          ];
-
-          to = [
-            {
-              shell_command = "${pkgs.yabai}/bin/yabai -m space --focus prev";
-            }
-          ];
-          type = "basic";
-        }
-        {
           from.key_code = "f";
           from.modifiers.mandatory = [
             "option"
