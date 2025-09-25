@@ -142,3 +142,12 @@ setup_app [ $turtlesim ] -u -s
 setup_title $pip -u -s
 setup_title $save -u
 
+yabai -m signal --add event=application_activated action='
+focused_pid=$(lsappinfo info -only pid `lsappinfo front` | cut -d= -f2)
+current_space=$(yabai -m query --spaces --space | jq -r ".index")
+focused_space=$(yabai -m query --windows | jq -r "map(select(.pid == $focused_pid and .\"is-sticky\" == false)) | .[0].space // empty")
+echo "focused pid: $focused_pid | current space: $current_space | focused space: $focused_space | date: $(date)" >> /tmp/yabai-debug.log
+if [[ -n "$focused_space" && "$current_space" != "$focused_space" ]]; then
+    yabai -m space --focus "$focused_space"
+fi
+'
