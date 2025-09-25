@@ -101,7 +101,7 @@ def jj_stats [] {
     }
 
     if ($commit_list | is-empty) {
-        return $" in (ansi red)???(ansi reset)(ansi green)(ansi reset)"
+        return $" in (ansi red)???(ansi reset) (ansi green)(ansi reset)"
     }
 
     let branch = get_branch $commit_list
@@ -152,7 +152,7 @@ def jj_stats [] {
         $"(ansi $unpushed_color)($superscript)(ansi reset)"
     } else { "" }
 
-	return $" in (ansi red)($branch)(ansi reset)($unpushed_commits_str)(ansi $status)(ansi reset)"
+	return $" in (ansi red)($branch)(ansi reset)($unpushed_commits_str) (ansi $status)(ansi reset)"
 }
 
 def venv_prompt [] {
