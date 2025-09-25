@@ -145,6 +145,7 @@ setup_app [ $turtlesim ] -u -s
 setup_title $pip -u -s
 setup_title $save -u
 
+# Switch to "partially focused" applications
 yabai -m signal --add event=application_activated action='
 focused_pid=$(lsappinfo info -only pid `lsappinfo front` | cut -d= -f2)
 current_space=$(yabai -m query --spaces --space | jq -r ".index")
@@ -153,4 +154,11 @@ echo "focused pid: $focused_pid | current space: $current_space | focused space:
 if [[ -n "$focused_space" && "$current_space" != "$focused_space" ]]; then
     yabai -m space --focus "$focused_space"
 fi
+'
+
+# float unresizeable windows by default
+yabai -m signal --add event=window_created action='
+can_resize=$(yabai -m query --windows --window $YABAI_WINDOW_ID | jq -r ".\"can-resize\"")
+if [[ $can_resize == "false" ]]; then
+    yabai -m window $YABAI_WINDOW_ID toggle float
 '
