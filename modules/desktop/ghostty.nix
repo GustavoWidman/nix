@@ -33,6 +33,7 @@ in
           theme = "GruvboxDark";
 
           font-family = "JetBrains Mono";
+          font-codepoint-map = "U+E0A0=Fira Code";
           font-size = 18;
 
           window-colorspace = mkIf config.isDarwin "display-p3";
