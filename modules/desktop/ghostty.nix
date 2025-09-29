@@ -30,7 +30,7 @@ in
         );
 
         settings = {
-          theme = "Gruvbox Dark";
+          theme = "GruvboxDark";
 
           font-family = "JetBrains Mono";
           font-size = 18;
