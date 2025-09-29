@@ -19,7 +19,15 @@ in
   home-manager.sharedModules = [
     {
       programs.ghostty = enabled {
-        package = mkIf config.isDarwin pkgs.ghostty-bin;
+        package = mkIf config.isDarwin (
+          pkgs.ghostty-bin.overrideAttrs (oldAttrs: {
+            version = "1.1.3";
+            src = pkgs.fetchurl {
+              url = "https://release.files.ghostty.org/1.1.3/Ghostty.dmg";
+              sha256 = "sha256-ZOUUGI9UlZjxZtbctvjfKfMz6VTigXKikB6piKFPJkc=";
+            };
+          })
+        );
 
         settings = {
           theme = "Gruvbox Dark";
