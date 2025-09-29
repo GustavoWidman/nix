@@ -140,7 +140,7 @@ export def main [
 
 	print $"(ansi reset)(ansi light_gray)[(ansi reset)(ansi yellow_bold)?(ansi reset)(ansi light_gray)](ansi reset)(ansi white) Open Zed Editor on HackingClub Workspace?"
 	if (["No", "Yes"] | input list) == "Yes" {
-		^zeditor ($env.TRUE_HOME | path join "Cybersec/hackingclub")
+		^zed ($env.TRUE_HOME | path join "Cybersec/hackingclub")
 	}
 
 	let $penenlope_pid = $ports | where local_port == 4444
