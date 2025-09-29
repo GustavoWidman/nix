@@ -1,5 +1,5 @@
-use "../external/mise.nu"
-use "../external/zoxide.nu"
+use mise.nu
+use zoxide.nu
 
 def find-jj-dir [pwd?: string] {
     mut current_dir = if ($pwd | is-empty) {
