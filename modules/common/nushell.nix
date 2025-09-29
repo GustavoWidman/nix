@@ -20,6 +20,10 @@ let
   devPackagesWithHeaders = filter (
     pkg: builtins.pathExists "${pkg}/include"
   ) config.environment.systemPackages;
+
+  nushellPath = "${
+    if config.isDarwin then "Library/Application Support/nushell" else ".config/nushell"
+  }";
 in
 {
   environment =
@@ -63,15 +67,19 @@ in
     };
 
   home-manager.sharedModules = [
+    (mkIf config.isDarwin {
+      home.file."${nushellPath}/autoload" = {
+        source = ../macos/nushell;
+        recursive = true;
+        force = true;
+      };
+    })
     {
-      home.file."${
-        if config.isDarwin then "Library/Application Support/nushell" else ".config/nushell"
-      }" =
-        {
-          source = ./nushell;
-          recursive = true;
-          force = true;
-        };
+      home.file."${nushellPath}" = {
+        source = ./nushell;
+        recursive = true;
+        force = true;
+      };
 
       programs.nushell = enabled {
         package = pkgs.nushell;
