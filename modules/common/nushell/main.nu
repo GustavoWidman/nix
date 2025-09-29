@@ -161,5 +161,15 @@ if not ($"($env.TRUE_HOME)/.cache/carapace" | path exists) {
 
 $env.PATH = $env.PATH | split row (char esep) | where not ($it in $path) | append $path
 
-source "config/main/aliases.nu"
+use "config/utils/hooks.nu"
 use "config/misc/hackingclub.nu"
+use "config/main/prompt.nu"
+use "config/main/absolute.nu"
+use "config/main/mkdevshell.nu"
+use "config/main/nudo.nu"
+use "config/main/env.nu"
+use "config/main/py.nu"
+use "config/main/nu.nu"
+
+source "config/main/aliases.nu"
+source "config/external/hooks.nu"

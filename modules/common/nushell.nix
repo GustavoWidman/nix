@@ -85,16 +85,9 @@ in
         package = pkgs.nushell;
 
         configFile.text = ''
-          source ($nu.default-config-dir | path join _config.nu)
-        '';
-
-        envFile.text = ''
           open /etc/environment | from toml | load-env
-          source ($nu.default-config-dir | path join _env.nu)
+          source ($nu.default-config-dir | path join main.nu)
         '';
-
-        # sometimes, even my own genius scares me
-        # environmentVariables = config.environment.variables;
       };
 
       programs.bat = enabled {
