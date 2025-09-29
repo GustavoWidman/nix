@@ -10,7 +10,7 @@ let
 
   modulesCommon = collectNix ../modules/common;
   modulesLinux = collectNix ../modules/linux;
-  modulesDarwin = collectNix ../modules/darwin;
+  modulesDarwin = collectNix ../modules/macos;
   modulesDesktop = collectNix ../modules/desktop;
   modulesDev = collectNix ../modules/dev;
   modulesServer = collectNix ../modules/server;
