@@ -110,6 +110,7 @@ let finder = "Finder"
 let preview = "Preview"
 let settings = "System Settings"
 let turtlesim = "turtlesim_node"
+let mirroring = "iPhone Mirroring"
 let pip = [ "Picture-in-picture Window", "Picture-in-Picture" ]
 let save = [ "Save", "Save As" ]
 
@@ -122,7 +123,8 @@ let all_apps = [
     $finder,
     $preview,
     $settings,
-    $turtlesim
+    $turtlesim,
+    $mirroring
 ]
 
 let all_titles = [
@@ -139,7 +141,7 @@ setup_space 3 web [ $zen ] []
 setup_space 4 social [ $discord, $whatsapp ] []
 setup_space 5 other $all_apps $all_titles -i
 
-setup_app [ $settings $finder $preview ] -u
+setup_app [ $settings $finder $preview $mirroring ] -u
 setup_app [ $turtlesim ] -u -s
 
 setup_title $pip -u -s
