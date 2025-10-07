@@ -3,7 +3,7 @@ let
   metadata = {
     hostname = "lab";
     class = "nixos";
-    type = "server";
+    type = "dev-server";
     architecture = "x86_64-linux";
     build-architectures = [
       metadata.architecture
@@ -20,7 +20,7 @@ in
       inputs@{
         ...
       }:
-      inputs.lib.linuxServerSystem inputs (
+      inputs.lib.linuxDevServerSystem inputs (
         {
           config,
           lib,
@@ -28,6 +28,8 @@ in
         }:
         let
           inherit (lib) collectNix remove;
+
+          extra-platforms = metadata.build-architectures |> remove metadata.architecture;
         in
         {
           inherit metadata;
@@ -42,6 +44,9 @@ in
 
           time.timeZone = "America/Sao_Paulo";
           system.stateVersion = "25.05";
+
+          nix.settings.extra-platforms = extra-platforms;
+          boot.binfmt.emulatedSystems = extra-platforms;
 
           tailscale = {
             exit-node = true;
