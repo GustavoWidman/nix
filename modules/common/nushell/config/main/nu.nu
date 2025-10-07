@@ -12,6 +12,7 @@ const LOG_COLORS = {
 def log [
     level: string
     message: string
+    --exit (-e)
     --no-newline (-n)
     --return-instead
 ] {
@@ -29,6 +30,12 @@ def log [
 
     if $return_instead {
         return $msg
+    }
+
+    if $exit {
+        error make -u {
+            msg: $msg
+        }
     }
 
     if $no_newline {
@@ -76,8 +83,7 @@ export def --env "activate" [] {
             if ($choice | str downcase) == "y" {
                 deactivate
             } else {
-                log warn "exiting without doing anything..."
-                exit 1
+                log warn "exiting without doing anything..." --exit
             }
         }
 	}
