@@ -5,7 +5,7 @@ let
     class = "nixos";
     type = "dev-server";
     architecture = "x86_64-linux";
-    build-architectures = [ ];
+    build-architectures = [ ]; # no builds, not always on
   };
 in
 {
