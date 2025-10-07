@@ -91,7 +91,7 @@ export def --env "activate" [] {
 	if ( ($nu_files | length) == 1 ) {
 		let file = ($nu_files | first)
 
-		hooks run-hooked $'overlay use ($file.path) as ($file.stem)'
+		hooks run-hooked $'overlay use -p ($file.path) as ($file.stem)'
 
 		log success $"acivated nu environment succesfully"
 		log info $"to deactivate, please use (ansi purple)nu deactivate(ansi reset)"
@@ -105,7 +105,7 @@ export def --env "activate" [] {
 		let name = input (log warn --return-instead "more than one nu file is available, please choose a name for this env: ")
 
 		for $file in ($nu_files | get stem) {
-		    hooks run-hooked $'overlay use ($file.path) as ($file.stem)'
+		    hooks run-hooked $'overlay use -p ($file.path) as ($file.stem)'
 		}
 
 		log success $"acivated nu environment succesfully"
