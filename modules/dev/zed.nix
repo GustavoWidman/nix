@@ -219,6 +219,7 @@ in
             "cargo-tom"
             "discord-presence"
             "env"
+            "emmet"
             "http"
             "html"
             "ini"
