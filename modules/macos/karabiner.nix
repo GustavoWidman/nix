@@ -133,6 +133,17 @@ let
           type = "basic";
         }
         {
+          from.key_code = "tab";
+          from.modifiers.mandatory = [ "option" ];
+
+          to = [
+            {
+              shell_command = "${pkgs.yabai}/bin/yabai -m window --focus $(${pkgs.yabai}/bin/yabai -m query --windows --space | jq '.[-1].id')";
+            }
+          ];
+          type = "basic";
+        }
+        {
           from.key_code = "f";
           from.modifiers.mandatory = [
             "option"
