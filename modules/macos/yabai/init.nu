@@ -106,18 +106,27 @@ let ghostty = "Ghostty"
 let zen = "Zen"
 let whatsapp = "WhatsApp"
 let discord = "Discord"
-let unmanaged_sticky = [
+let unmanaged_sticky_apps = [
     "turtlesim_node",
 ]
-let unmanaged = [
+let unmanaged_apps = [
+    "TextEdit",
     "iPhone Mirroring",
     "Sideloadly!",
     "System Settings" ,
     "Finder",
     "Preview"
 ]
-let pip = [ "Picture-in-picture Window", "Picture-in-Picture" ]
-let save = [ "Save", "Save As" ]
+let unmanaged_sticky_titles = [
+    "Picture-in-picture Window",
+    "Picture-in-Picture"
+]
+let unmanaged_titles = [
+    "Save",
+    "Save As",
+    "Extension"
+    "Settings Window",
+]
 
 let all_apps = [
     $zed,
@@ -125,44 +134,58 @@ let all_apps = [
     $zen,
     $whatsapp,
     $discord,
-    ...$unmanaged
-    ...$unmanaged_sticky
+    ...$unmanaged_apps
+    ...$unmanaged_sticky_apps
 ]
 
 let all_titles = [
-    ...$pip,
-    ...$save,
+    ...$unmanaged_titles,
+    ...$unmanaged_sticky_titles,
 ]
+
+# Switch to "partially focused" applications
+let partially_focused_handler = '
+focused_pid=$(lsappinfo info -only pid `lsappinfo front` | cut -d= -f2)
+current_space=$(yabai -m query --spaces --space | jq -r ".index")
+focused_space=$(yabai -m query --windows | jq -r "map(select(.pid == $focused_pid and .\"is-sticky\" == false)) | .[0].space // empty")
+if [[ -n "$focused_space" && "$current_space" != "$focused_space" ]]; then
+    yabai -m space --focus "$focused_space"
+fi
+' | str trim | $"action=($in)"
+yabai -m signal --add event=application_activated $partially_focused_handler
+
+# float unresizeable windows by default
+let unresizeable_handler = '
+can_resize=$(yabai -m query --windows --window $YABAI_WINDOW_ID | jq -r ".\"can-resize\"")
+if [[ $can_resize == "false" ]]; then
+    yabai -m window $YABAI_WINDOW_ID toggle float
+fi
+' | str trim | $"action=($in)"
+yabai -m signal --add event=window_created $unresizeable_handler
 
 yabai -m rule --add app=".*" sub-layer=normal
 yabai -m signal --add event=application_front_switched action="yabai -m window --sub-layer normal"
 
+yabai -m rule --add subrole!="AXStandardWindow" manage=off
+
 setup_space 1 code [ $zed ] []
 setup_space 2 terminal [ $ghostty ] [] -u
 setup_space 3 web [ $zen ] []
-setup_space 4 social [ $discord, $whatsapp ] []
+setup_space 4 social [ $discord ] []
+
+let whatsapp_rule = $"
+can_resize=$\(yabai -m query --windows --window $YABAI_WINDOW_ID | jq -r \".\\\"can-resize\\\"\"\)
+if [[ $can_resize == \"true\" ]]; then
+    yabai -m window --space 4 --focus
+fi
+" | str trim | $"action=($in)"
+yabai -m rule --apply $"app=($whatsapp)" subrole="AXStandardWindow" "space=4"
+yabai -m signal --add event=window_created $"app=($whatsapp)" $whatsapp_rule
+
 setup_space 5 other $all_apps $all_titles -i
 
-setup_app $unmanaged -u
-setup_app $unmanaged_sticky -u -s
+setup_app $unmanaged_apps -u
+setup_app $unmanaged_sticky_apps -u -s
 
-setup_title $pip -u -s
-setup_title $save -u
-
-# Switch to "partially focused" applications
-yabai -m signal --add event=application_activated action='
-focused_pid=$(lsappinfo info -only pid `lsappinfo front` | cut -d= -f2)
-current_space=$(yabai -m query --spaces --space | jq -r ".index")
-focused_space=$(yabai -m query --windows | jq -r "map(select(.pid == $focused_pid and .\"is-sticky\" == false)) | .[0].space // empty")
-echo "focused pid: $focused_pid | current space: $current_space | focused space: $focused_space | date: $(date)" >> /tmp/yabai-debug.log
-if [[ -n "$focused_space" && "$current_space" != "$focused_space" ]]; then
-    yabai -m space --focus "$focused_space"
-fi
-'
-
-# float unresizeable windows by default
-yabai -m signal --add event=window_created action='
-can_resize=$(yabai -m query --windows --window $YABAI_WINDOW_ID | jq -r ".\"can-resize\"")
-if [[ $can_resize == "false" ]]; then
-    yabai -m window $YABAI_WINDOW_ID toggle float
-'
+setup_title $unmanaged_titles -u
+setup_title $unmanaged_sticky_titles -u -s
