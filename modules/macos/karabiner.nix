@@ -138,7 +138,7 @@ let
 
           to = [
             {
-              shell_command = "${pkgs.yabai}/bin/yabai -m window --focus $(${pkgs.yabai}/bin/yabai -m query --windows --space | jq '.[-1].id')";
+              shell_command = "${pkgs.yabai}/bin/yabai -m window --focus $(${pkgs.yabai}/bin/yabai -m query --windows --space | ${pkgs.jq}/bin/jq 'map(select(.[\"is-minimized\"] == false)) | .[-1].id')";
             }
           ];
           type = "basic";
