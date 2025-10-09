@@ -10,6 +10,7 @@
     clippy
     rustfmt
     rust-analyzer
+    cargo-info
     # rust-src
     sqlx-cli
   ];
