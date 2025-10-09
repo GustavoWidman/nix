@@ -7,7 +7,7 @@
       "https://cache.garnix.io"
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
-      "https://zed.cachix.org"
+      "https://r3dlust.cachix.org"
     ];
 
     extra-trusted-public-keys = [
@@ -16,7 +16,7 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "determinate-systems.cachix.org-1:8hfO/4KM4BUMONABo3NyuTsIB9YLUo5aIwGPg2A6Zs4="
       "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
-      "zed.cachix.org-1:/pHQ6dpMsAZk2DiP4WCL0p9YDNKWj2Q5FL20bNmw1cU="
+      "r3dlust.cachix.org-1:/R3S8pW/nr7kOBJKcGPsZ0zCepvldTUEgbrqa4O3cW0="
     ];
 
     experimental-features = [
@@ -83,10 +83,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    zed = {
-      url = "github:zed-industries/zed";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    zed.url = "github:GustavoWidman/zed-autobuild";
   };
 
   outputs =

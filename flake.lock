@@ -350,6 +350,19 @@
         "type": "github"
       }
     },
+    "nixpkgs_3": {
+      "locked": {
+        "lastModified": 315532800,
+        "narHash": "sha256-YPoFUJMpbuPvIS4FJBn2Sv/iWsui9S26gu2ufFWEY0g=",
+        "rev": "a1f79a1770d05af18111fbbe2a3ab2c42c0f6cd0",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixpkgs/nixpkgs-25.11pre864673.a1f79a1770d0/nixexprs.tar.xz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -385,6 +398,7 @@
       "inputs": {
         "nixpkgs": [
           "zed",
+          "zed",
           "nixpkgs"
         ]
       },
@@ -419,23 +433,40 @@
     },
     "zed": {
       "inputs": {
+        "zed": "zed_2"
+      },
+      "locked": {
+        "lastModified": 1759979345,
+        "narHash": "sha256-gJK0yKIHbAfGs7VRG6fYKrQoC4O7zY07YR9eEGJg/rs=",
+        "owner": "GustavoWidman",
+        "repo": "zed-autobuild",
+        "rev": "ed00babecc7724599eb314b3ecb927063c549308",
+        "type": "github"
+      },
+      "original": {
+        "owner": "GustavoWidman",
+        "repo": "zed-autobuild",
+        "type": "github"
+      }
+    },
+    "zed_2": {
+      "inputs": {
         "crane": "crane",
         "flake-compat": "flake-compat_2",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
+        "nixpkgs": "nixpkgs_3",
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1759872872,
-        "narHash": "sha256-gbTqx+zAFufOXPTJCXI1VW9sKm422KBCE+dvhoXajhg=",
+        "lastModified": 1759955752,
+        "narHash": "sha256-OknOP8QDdr/6hDZELeWiuxOaaUtjRC3HN37PAVklmHU=",
         "owner": "zed-industries",
         "repo": "zed",
-        "rev": "8cb67ec91c776649af648be6bc437b227042be5a",
+        "rev": "37e7f305395220a39922bf525090b430c29972af",
         "type": "github"
       },
       "original": {
         "owner": "zed-industries",
+        "ref": "v0.208.1-pre",
         "repo": "zed",
         "type": "github"
       }
