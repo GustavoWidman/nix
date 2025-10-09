@@ -16,7 +16,7 @@ in
           age
           awscli2
           bash
-          # binwalk # TODO broken
+          binwalk
           # coreutils
           curlHTTP3
           dig
