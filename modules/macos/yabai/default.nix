@@ -26,4 +26,13 @@ in
       ${pkgs.nushell}/bin/nu ${./init.nu}
     '';
   };
+
+  environment.systemPackages = [
+    (pkgs.writeShellScriptBin "yabai-apply" ''
+      ${pkgs.nushell}/bin/nu ${./init.nu}
+    '')
+    (pkgs.writeShellScriptBin "yabai-reload" ''
+      launchctl stop org.nixos.yabai
+    '')
+  ];
 }
