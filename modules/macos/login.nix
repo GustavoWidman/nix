@@ -9,4 +9,15 @@
     unnaturalscrollwheels
     stats
   ];
+
+  launchd.daemons.limit-maxfiles = {
+    serviceConfig.ProgramArguments = [
+      "launchctl"
+      "limit"
+      "maxfiles"
+      "65536"
+      "unlimited"
+    ];
+    serviceConfig.RunAtLoad = true;
+  };
 }
