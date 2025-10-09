@@ -14,7 +14,7 @@ in
       {
         inherit (pkgs)
           age
-          awscli2
+          # awscli2 # TODO broken
           bash
           binwalk
           # coreutils
