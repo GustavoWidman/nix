@@ -33,15 +33,15 @@ def setup_space [
 
     if ($apps | is-not-empty) { # apps not empty
         if ($titles | is-not-empty) { # apps not empty and titles not empty
-            yabai -m rule --add $app_rule $title_rule $"space=^($index)" $manage_rule
-            yabai -m rule --apply $app_rule $title_rule $"space=($index)" $manage_rule
+            yabai -m rule --add $app_rule $title_rule subrole="AXStandardWindow" $"space=^($index)" $manage_rule
+            yabai -m rule --apply $app_rule $title_rule subrole="AXStandardWindow" $"space=($index)" $manage_rule
         } else { # only apps not empty
-            yabai -m rule --add $app_rule $"space=^($index)" $manage_rule
-            yabai -m rule --apply $app_rule $"space=($index)" $manage_rule
+            yabai -m rule --add $app_rule subrole="AXStandardWindow" $"space=^($index)" $manage_rule
+            yabai -m rule --apply $app_rule subrole="AXStandardWindow" $"space=($index)" $manage_rule
         }
     } else { # only titles not empty
-        yabai -m rule --add $title_rule $"space=^($index)" $manage_rule
-        yabai -m rule --apply $title_rule $"space=($index)" $manage_rule
+        yabai -m rule --add $title_rule subrole="AXStandardWindow" $"space=^($index)" $manage_rule
+        yabai -m rule --apply $title_rule subrole="AXStandardWindow" $"space=($index)" $manage_rule
     }
 }
 
