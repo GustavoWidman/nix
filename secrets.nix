@@ -44,6 +44,9 @@ in
   "modules/common/ssh/github/inteli.age".publicKeys = all;
   "modules/common/ssh/github/personal.age".publicKeys = all;
 
+  # Common
+  "modules/common/nix/github-token-nix-conf.age".publicKeys = all;
+
   # Server Specific
   "modules/server/acme/environment.env.age".publicKeys = server ++ admins;
 

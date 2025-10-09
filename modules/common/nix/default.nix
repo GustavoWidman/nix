@@ -106,5 +106,15 @@ in
       ]
     );
 
+  secrets.github-token-nix-conf = {
+    file = ./github-token-nix-conf.age;
+    mode = "444";
+    owner = "root";
+  };
+
+  nix.extraOptions = ''
+    !include ${config.secrets.github-token-nix-conf.path}
+  '';
+
   nix.optimise.automatic = true;
 }
