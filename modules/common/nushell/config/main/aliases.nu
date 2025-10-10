@@ -52,9 +52,9 @@ alias code! = ^code
 
 alias "sudo su" = sudo (absolute nu)
 
-alias secrekey = sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key
+alias secrekey = sudo ragenix -r -i /etc/ssh/ssh_host_ed25519_key
 def secredit [path] {
-	sudo agenix -i /etc/ssh/ssh_host_ed25519_key -e $path
+	sudo ragenix -i /etc/ssh/ssh_host_ed25519_key -e $path
 }
 
 def --env get-env [name] { $env | get $name }
