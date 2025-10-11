@@ -231,6 +231,7 @@ in
             "nix"
             "nu"
             "log"
+            "lua"
             "tombi"
             "nginx"
             "git-firefly"
