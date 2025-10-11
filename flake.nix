@@ -76,13 +76,12 @@
       flake = false;
     };
 
-    nix.url = "https://flakehub.com/f/DeterminateSystems/nix-src/*";
-
     naersk = {
       url = "github:nix-community/naersk";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix.url = "github:GustavoWidman/nix-src-autobuild";
     zed.url = "github:GustavoWidman/zed-autobuild";
   };
 
