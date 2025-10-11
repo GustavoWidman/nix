@@ -11,7 +11,6 @@ def setup_space [
     name: string
     apps: list<string>
     titles: list<string>
-    --unmanaged (-u)
     --inverse (-i)
 ] {
     print $"setup space ($index) : ($name)"
@@ -29,26 +28,23 @@ def setup_space [
     let app_rule = $"app(if $inverse {'!'} else '')=($apps | str join '|')"
     let title_rule = $"title(if $inverse {'!'} else '')=($titles | str join '|')"
 
-    let manage_rule = $"manage=(if $unmanaged {'off'} else {'on'})"
-
     if ($apps | is-not-empty) { # apps not empty
         if ($titles | is-not-empty) { # apps not empty and titles not empty
-            yabai -m rule --add $app_rule $title_rule subrole="AXStandardWindow" $"space=^($index)" $manage_rule
-            yabai -m rule --apply $app_rule $title_rule subrole="AXStandardWindow" $"space=($index)" $manage_rule
+            yabai -m rule --add $app_rule $title_rule subrole="AXStandardWindow" $"space=^($index)"
+            yabai -m rule --apply $app_rule $title_rule subrole="AXStandardWindow" $"space=($index)"
         } else { # only apps not empty
-            yabai -m rule --add $app_rule subrole="AXStandardWindow" $"space=^($index)" $manage_rule
-            yabai -m rule --apply $app_rule subrole="AXStandardWindow" $"space=($index)" $manage_rule
+            yabai -m rule --add $app_rule subrole="AXStandardWindow" $"space=^($index)"
+            yabai -m rule --apply $app_rule subrole="AXStandardWindow" $"space=($index)"
         }
     } else { # only titles not empty
-        yabai -m rule --add $title_rule subrole="AXStandardWindow" $"space=^($index)" $manage_rule
-        yabai -m rule --apply $title_rule subrole="AXStandardWindow" $"space=($index)" $manage_rule
+        yabai -m rule --add $title_rule subrole="AXStandardWindow" $"space=^($index)"
+        yabai -m rule --apply $title_rule subrole="AXStandardWindow" $"space=($index)"
     }
 }
 
 def setup_app [
     apps: list<string>
     --inverse (-i)
-    --unmanaged (-u)
     --sticky (-s)
 ] {
     let rule = if $inverse {
@@ -57,26 +53,19 @@ def setup_app [
         $"app=($apps | str join '|')"
     }
 
-    let unmanaged_rule = if $unmanaged {
-        "manage=off"
-    } else {
-        "manage=on"
-    }
-
     let sticky_rule = if $sticky {
         "sticky=on"
     } else {
         "sticky=off"
     }
 
-    yabai -m rule --add $rule $unmanaged_rule $sticky_rule
-    yabai -m rule --apply $rule $unmanaged_rule $sticky_rule
+    yabai -m rule --add $rule $sticky_rule
+    yabai -m rule --apply $rule $sticky_rule
 }
 
 def setup_title [
     titles: list<string>
     --inverse (-i)
-    --unmanaged (-u)
     --sticky (-s)
 ] {
     let rule = if $inverse {
@@ -85,20 +74,14 @@ def setup_title [
         $"title=($titles | str join '|')"
     }
 
-    let unmanaged_rule = if $unmanaged {
-        "manage=off"
-    } else {
-        "manage=on"
-    }
-
     let sticky_rule = if $sticky {
         "sticky=on"
     } else {
         "sticky=off"
     }
 
-    yabai -m rule --add $rule $unmanaged_rule $sticky_rule
-    yabai -m rule --apply $rule $unmanaged_rule $sticky_rule
+    yabai -m rule --add $rule $sticky_rule
+    yabai -m rule --apply $rule $sticky_rule
 }
 
 let zed = "Zed"
@@ -154,22 +137,22 @@ fi
 ' | str trim | $"action=($in)"
 yabai -m signal --add event=application_activated $partially_focused_handler
 
-# float unresizeable windows by default
-let unresizeable_handler = '
-can_resize=$(yabai -m query --windows --window $YABAI_WINDOW_ID | jq -r ".\"can-resize\"")
-if [[ $can_resize == "false" ]]; then
-    yabai -m window $YABAI_WINDOW_ID toggle float
-fi
-' | str trim | $"action=($in)"
-yabai -m signal --add event=window_created $unresizeable_handler
+# # float unresizeable windows by default
+# let unresizeable_handler = '
+# can_resize=$(yabai -m query --windows --window $YABAI_WINDOW_ID | jq -r ".\"can-resize\"")
+# if [[ $can_resize == "false" ]]; then
+#     yabai -m window $YABAI_WINDOW_ID toggle float
+# fi
+# ' | str trim | $"action=($in)"
+# yabai -m signal --add event=window_created $unresizeable_handler
 
-yabai -m rule --add app=".*" sub-layer=normal
+yabai -m rule --add app=".*" sub-layer=normal manage=off
 yabai -m signal --add event=application_front_switched action="yabai -m window --sub-layer normal"
 
-yabai -m rule --add subrole!="AXStandardWindow" manage=off
+# yabai -m rule --add subrole!="AXStandardWindow" manage=off
 
 setup_space 1 code [ $zed ] []
-setup_space 2 terminal [ $ghostty ] [] -u
+setup_space 2 terminal [ $ghostty ] []
 setup_space 3 web [ $zen ] []
 setup_space 4 social [ $discord ] []
 
@@ -184,8 +167,8 @@ yabai -m signal --add event=window_created $"app=($whatsapp)" $whatsapp_rule
 
 setup_space 5 other $all_apps $all_titles -i
 
-setup_app $unmanaged_apps -u
-setup_app $unmanaged_sticky_apps -u -s
+# setup_app $unmanaged_apps -u
+setup_app $unmanaged_sticky_apps -s
 
-setup_title $unmanaged_titles -u
-setup_title $unmanaged_sticky_titles -u -s
+# setup_title $unmanaged_titles -u
+setup_title $unmanaged_sticky_titles -s
