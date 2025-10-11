@@ -19,7 +19,7 @@ in
 
   environment = mkIf config.isDesktop {
     systemPackages = with pkgs; [
-      ragenix
+      agenix
     ];
   };
 }
