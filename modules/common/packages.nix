@@ -13,6 +13,7 @@ in
     <|
       {
         inherit (pkgs)
+          attic-client
           age
           # awscli2 # TODO broken
           bash
