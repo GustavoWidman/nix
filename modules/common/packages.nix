@@ -18,6 +18,7 @@ in
           # awscli2 # TODO broken
           bash
           binwalk
+          cachix
           # coreutils
           curlHTTP3
           dig
