@@ -6,3 +6,9 @@ alias finder = /usr/bin/open
 def --wrapped mount [source: string, directory: path, ...args] {
 	diskutil mount -mountPoint $directory $source ...$args
 }
+
+def dnswipe [] {
+    sudo dscacheutil -flushcache
+    sudo killall -HUP mDNSResponder
+    sudo killall dnsproxy
+}
