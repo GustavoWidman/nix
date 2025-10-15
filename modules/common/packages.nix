@@ -20,7 +20,7 @@ in
           binwalk
           cachix
           # coreutils
-          curlHTTP3
+          curl
           dig
           dosfstools
           e2fsprogs
