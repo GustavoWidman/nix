@@ -16,6 +16,7 @@ fallback:
 upstream:
   - "https://dns.r3dlust.com/dns-query"
   - "[/ts.net/]100.100.100.100"
-  - "[/staging.camelsec.com/]10.200.0.1"
-  - "[/internal.camelsec.com/]10.100.0.1"
+  - "[/tailnet.camelsec.com/]100.100.100.100"
+  - "[/staging.camelsec.com/]100.100.100.100"
+  - "[/internal.camelsec.com/]100.100.100.100"
 timeout: "10s"
