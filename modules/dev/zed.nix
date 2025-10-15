@@ -74,9 +74,15 @@ in
           };
           agent.enabled = false;
           languages = {
-            "Nix".formatter."external" = {
-              command = "nixfmt";
-              arguments = [ "-q" ];
+            "Nix" = {
+              formatter.external = {
+                command = "nixfmt";
+                arguments = [ "-q" ];
+              };
+              language_servers = [
+                "!nil"
+                "nixd"
+              ];
             };
             "Python" = {
               language_servers = [
@@ -152,6 +158,64 @@ in
               binary = {
                 path = "${pkgs.vscode-langservers-extracted}/bin/vscode-html-language-server";
                 arguments = [ "--stdio" ];
+              };
+            };
+            nil = {
+              settings = {
+                nix = {
+                  flake = {
+                    autoEvalInputs = true;
+                    nixpkgsInputName = "nixpkgs";
+                  };
+                };
+              };
+            };
+            nixd = {
+              settings = {
+                nixpkgs = {
+                  expr = ''
+                    let
+                      flake = builtins.getFlake (builtins.toString ./.);
+                      real = flake.inputs.nixpkgs;
+                      lib = flake.lib or real.lib;
+
+                      nixpkgs = real // {
+                        lib = lib;
+                        outputs.lib = lib;
+                      };
+                    in (import nixpkgs { })
+                  '';
+                };
+                options = {
+                  nixd = {
+                    expr = /* nix */ ''
+                      let
+                        flake = builtins.getFlake (builtins.toString ./.);
+                        default = {
+                          users.type.getSubOptions = options: { };
+                        };
+                        lib = flake.lib or flake.inputs.nixpkgs.lib;
+
+                        darwin = (builtins.attrValues (flake.darwinConfigurations or { }));
+                        nixos = (builtins.attrValues (flake.nixosConfigurations or { }));
+                        home = (builtins.attrValues (flake.homeConfigurations or { }));
+                        all = darwin ++ nixos ++ home;
+
+                        home-manager-options = flake: (flake.options.home-manager or default).users.type.getSubOptions [ ];
+                        home-manager = builtins.foldl' (acc: elem: acc // (home-manager-options elem)) { } all;
+
+                        systems = builtins.foldl' (acc: elem: acc // elem.options) { } all;
+
+                        final-flake = flake // {
+                          lib = lib;
+                          self = flake;
+                        };
+
+                        final = ((home-manager // systems) // final-flake);
+                      in final
+                    '';
+                  };
+                };
               };
             };
           };
