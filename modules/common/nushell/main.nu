@@ -3,7 +3,7 @@ use "config/utils/ports.nu"
 use "config/utils/init.nu"
 
 $env.MISE_SHELL = "nu"
-$env.CARAPACE_BRIDGES = 'inshellisense,carapace,fish,zsh,bash'
+$env.CARAPACE_BRIDGES = 'fish,inshellisense,carapace,zsh,bash'
 $env.config.show_banner = false
 $env.VIRTUAL_ENV_DISABLE_PROMPT = true
 $env.OS = uname | get operating-system
@@ -12,14 +12,12 @@ $env.config.buffer_editor = "hx"
 $env.TRUE_HOME = cache true_home
 $env.USER_COLOR = init init_user_color
 $env.TMPDIR = cache get_tempdir
-$env.HOME = if $env.USER == "root" {
-  if $env.OS == "Darwin" {
-    "/var/root"
-  } else {
-    "/root"
-  }
-} else {
-  $env.TRUE_HOME
+$env.HOME = match $env.USER {
+    "root" => (match $env.OS {
+        "Darwin" => "/var/root",
+        _ => "/root"
+    }),
+    _ => $env.TRUE_HOME
 }
 
 $env.EDITOR = "hx"
@@ -67,18 +65,18 @@ $env.config.float_precision = 2
 $env.config.ls.use_ls_colors = true
 
 $env.config.color_config.bool = {||
-  if $in {
-    "light_green_bold"
-  } else {
-    "light_red_bold"
-  }
+    if $in {
+        "light_green_bold"
+    } else {
+        "light_red_bold"
+    }
 }
 $env.config.color_config.string = {||
-  if $in =~ "^(#|0x)[a-fA-F0-9]+$" {
-    $in | str replace "0x" "#"
-  } else {
-    "white"
-  }
+    if $in =~ "^(#|0x)[a-fA-F0-9]+$" {
+        $in | str replace "0x" "#"
+    } else {
+        "white"
+    }
 }
 $env.config.color_config.row_index = "light_yellow_bold"
 $env.config.color_config.header = "light_yellow_bold"
@@ -172,5 +170,6 @@ use "config/main/env.nu"
 use "config/main/py.nu"
 use "config/main/nu.nu"
 
+source "config/main/extern.nu"
 source "config/main/aliases.nu"
 source "config/external/hooks.nu"

@@ -38,9 +38,8 @@ export def main [
 		}
 	}
 
-	if $all {
-		$out | get path | str join (char newline)
-	} else {
-		$out | get path | first
+	match $all {
+		true => ($out | get path | str join (char newline))
+		false => ($out | get path | first),
 	}
 }

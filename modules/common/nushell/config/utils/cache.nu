@@ -15,16 +15,17 @@ export def --env get_cache [] {
 		$null_cache_records
 	}
 
-	if ($cache_file | path exists) {
-		try {
-			let cache = open $cache_file
-			$env.CACHE_RECORDS = $cache
-			$cache
-		} catch {
-			empty_cache
-		}
-	} else {
-		empty_cache
+	match ($cache_file | path exists) {
+		true => {
+    		try {
+    			let cache = open $cache_file
+    			$env.CACHE_RECORDS = $cache
+    			$cache
+    		} catch {
+    			empty_cache
+    		}
+		},
+		false => { empty_cache }
 	}
 }
 
@@ -40,28 +41,32 @@ def --env save_to_cache [key: string, value: any] {
 export def --env true_home [] {
 	let cache = get_cache
 
-	if $cache.true_home != null {
-		$cache.true_home
-	} else {
-		let true_home = if $env.OS == "Darwin" {
-			# may god have mercy on my soul what the fuck is this :sob:
-			dscl . -list /Users UniqueID
-				| ^awk '$2 >= 501 { print $1 }'
-				| ^head -n 1
-				| ^dscl . -read /Users/($in) NFSHomeDirectory
-				| ^awk '{ print $2 }'
-				| str trim
-		} else {
-			^grep '/home/' /etc/passwd
-				| each {|str| $str | ^cut -d: -f6 | str trim}
-				| where {|str| not ($str =~ "build")}
-				| first
-		}
+	match ($cache.true_home != null) {
+		null => {
+    		let true_home = match ($env.OS == "Darwin") {
+    			# may god have mercy on my soul what the fuck is this :sob:
+    			true => {
+     			dscl . -list /Users UniqueID
+        				| ^awk '$2 >= 501 { print $1 }'
+        				| ^head -n 1
+        				| ^dscl . -read /Users/($in) NFSHomeDirectory
+        				| ^awk '{ print $2 }'
+        				| str trim
+    			},
+    			false => {
+     			^grep '/home/' /etc/passwd
+        				| each {|str| $str | ^cut -d: -f6 | str trim}
+        				| where {|str| not ($str =~ "build")}
+        				| first
+    			}
+            };
 
-		save_to_cache true_home $true_home
+ 			save_to_cache true_home $true_home
 
-		$true_home
-	}
+ 			$true_home
+        },
+	    _ => $cache.true_home
+    };
 }
 
 export def --env get_hostname [] {
@@ -75,10 +80,9 @@ export def --env get_hostname [] {
 		} else if 'HOSTNAME' in $env {
 			$env.HOSTNAME
 		} else {
-			if $env.OS == "Darwin" {
-				(do { hostname -s })
-			} else {
-				(do { cat /etc/hostname })
+			match ($env.OS == "Darwin") {
+				true => (do { hostname -s }),
+				false => (do { cat /etc/hostname })
 			}
 		}
 
@@ -94,10 +98,9 @@ export def --env get_tempdir [] {
     if $cache.tempdir != null {
         $cache.tempdir
     } else {
-        let tempdir = if $env.OS == "Darwin" {
-            (getconf DARWIN_USER_TEMP_DIR)
-        } else {
-            "/tmp"
+        let tempdir = match ($env.OS == "Darwin") {
+            true => (getconf DARWIN_USER_TEMP_DIR),
+            false => "/tmp"
         }
 
         save_to_cache tempdir $tempdir

@@ -2,10 +2,9 @@ use mise.nu
 use zoxide.nu
 
 def find-jj-dir [pwd?: string] {
-    mut current_dir = if ($pwd | is-empty) {
-        pwd
-    } else {
-        $pwd
+    mut current_dir = match ($pwd | is-empty) {
+        true => (pwd),
+        false => $pwd
     }
 
     loop {
@@ -105,5 +104,5 @@ $env.config.completions.external.completer = {|spans|
   })
 
   carapace $spans.0 nushell ...$spans
-  | from json
+    | from json
 }

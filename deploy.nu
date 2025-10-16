@@ -198,7 +198,11 @@ def ensure-host-key [
         | save -f ./keys.nix
 
         nixfmt ./keys.nix
-        sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key
+        let home = match ($env.OS == "Darwin") {
+            true => "/var/root",
+            false => "/root"
+        }
+        with-env { HOME: $home } { sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key }
         log warn -e "host key added. please configure secrets and rerun."
     }
 }

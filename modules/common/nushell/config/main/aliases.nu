@@ -114,29 +114,29 @@ def --wrapped crun [...args] {
 }
 
 def "from env" []: string -> record {
-  lines
-    | split column '#'
-    | get column1
-    | where {($in | str length) > 0}
-    | parse "{key}={value}"
-    | update value {str trim -c '"'}
-    | transpose -r -d
+    lines
+        | split column '#'
+        | get column1
+        | where {($in | str length) > 0}
+        | parse "{key}={value}"
+        | update value {str trim -c '"'}
+        | transpose -r -d
 }
 
 # Retrieve the output of the last command.
 def _ []: nothing -> any {
-  $env.last?
+    $env.last?
 }
 
 # Create a directory and cd into it.
 def --env mc [path: path]: nothing -> nothing {
-  mkdir $path
-  cd $path
+    mkdir $path
+    cd $path
 }
 
 # Create a directory, cd into it and initialize version control.
 def --env mcg [path: path]: nothing -> nothing {
-  mkdir $path
-  cd $path
-  jj git init --colocate
+    mkdir $path
+    cd $path
+    jj git init --colocate
 }

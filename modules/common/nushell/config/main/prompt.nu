@@ -3,10 +3,9 @@ def get-cwd [] {
 }
 
 def find-jj-dir [pwd?: string] {
-    mut current_dir = if ($pwd | is-empty) {
-        pwd
-    } else {
-        $pwd
+    mut current_dir = match ($pwd | is-empty) {
+        true => (pwd),
+        false => $pwd
     }
 
     loop {
@@ -32,22 +31,25 @@ def get_branch [commit_list: list] {
     let current_branch = $branches
         | where remote == "origin"
 
-    if ($current_branch | is-empty) {
+    match ($current_branch | is-empty) {
         # try to get any remote (not just origin)
-        if ($branches | is-not-empty) {
-            return ($branches
+        true => {
+            if ($branches | is-not-empty) {
+                return ($branches
+                    | first
+                    | get name)
+            }
+
+            # if all else fails, fallback to current commit ID instead
+            return ($commit_list
+                | first
+                | get 2)
+        },
+        false => {
+            return ($current_branch
                 | first
                 | get name)
         }
-
-        # if all else fails, fallback to current commit ID instead
-        return ($commit_list
-            | first
-            | get 2)
-    } else {
-        return ($current_branch
-            | first
-            | get name)
     }
 }
 
@@ -156,26 +158,23 @@ def jj_stats [] {
 }
 
 def venv_prompt [] {
-    if "VIRTUAL_ENV_PROMPT" in $env {
-        $" using (ansi green)(($env.VIRTUAL_ENV_PROMPT))(ansi reset)"
-    } else {
-        ""
+    match ("VIRTUAL_ENV_PROMPT" in $env) {
+        true => $" using (ansi green)(($env.VIRTUAL_ENV_PROMPT))(ansi reset)",
+        false => ""
     }
 }
 
 def nuenv_prompt [] {
-    if (("NU_ENV" in $env) and ($env.NU_ENV != null)) {
-        $" using (ansi purple)($env.NU_ENV.name)(ansi reset)"
-    } else {
-        ""
+    match (("NU_ENV" in $env) and ($env.NU_ENV != null)) {
+        true => $" using (ansi purple)($env.NU_ENV.name)(ansi reset)",
+        false => ""
     }
 }
 
 def nix_shell_prompt [] {
-    if ("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env) {
-        $" in (ansi cyan)nix-shell(ansi reset)"
-    } else {
-        ""
+    match (("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env)) {
+        true => $" in (ansi cyan)nix-shell(ansi reset)"
+        false => ""
     }
 }
 
@@ -189,10 +188,9 @@ def venv_activateable [ls_results] {
 				| path exists
 		)
 
-	if (($venvs | is-not-empty) and not ("VIRTUAL_ENV_PROMPT" in $env)) {
-	    return $"(ansi green_bold)⁺(ansi reset)"
-	} else {
-	    return ""
+	match (($venvs | is-not-empty) and not ("VIRTUAL_ENV_PROMPT" in $env)) {
+	    true => $"(ansi green_bold)⁺(ansi reset)",
+	    false => ""
 	}
 }
 
@@ -202,10 +200,9 @@ def nuenv_activateable [ls_results] {
         | par-each { get name | path parse }
         | where {|el| ($el | get extension) == "nu" }
 
-    if (($nu_files | is-not-empty) and not (("NU_ENV" in $env) and ($env.NU_ENV != null))) {
-        return $"(ansi purple_bold)⁺(ansi reset)"
-    } else {
-        return ""
+    match (($nu_files | is-not-empty) and not (("NU_ENV" in $env) and ($env.NU_ENV != null))) {
+        true => $"(ansi purple_bold)⁺(ansi reset)",
+        false => ""
     }
 }
 
@@ -213,10 +210,9 @@ def nix_shell_activateable [ls_results] {
     let nix_flakes = $ls_results
         | where name == "flake.nix"
 
-    if (($nix_flakes | is-not-empty) and (open ($nix_flakes | first | get name) | str contains "devShells") and (not (("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env)))) {
-        return $"(ansi cyan_bold)⁺(ansi reset)"
-    } else {
-        return ""
+    match (($nix_flakes | is-not-empty) and (open ($nix_flakes | first | get name) | str contains "devShells") and (not (("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env)))) {
+        true => $"(ansi cyan_bold)⁺(ansi reset)",
+        false => ""
     }
 }
 
@@ -228,10 +224,9 @@ def activateables [] {
 
     let concat = $'(venv_activateable $ls_results)(nuenv_activateable $ls_results)(nix_shell_activateable $ls_results)'
 
-    if ($concat | is-not-empty) {
-        return $"($concat)"
-    } else {
-        return ""
+    match ($concat | is-not-empty) {
+        true => $"($concat)",
+        false => ""
     }
 }
 
