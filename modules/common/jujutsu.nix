@@ -29,6 +29,18 @@ in
               "@+"
             ];
 
+            aliases.a = [
+              "abandon"
+            ];
+            aliases."a!" = [
+              "abandon"
+              "--ignore-immutable"
+            ];
+            aliases."abandon!" = [
+              "abandon"
+              "--ignore-immutable"
+            ];
+
             aliases.fetch = [
               "git"
               "fetch"
