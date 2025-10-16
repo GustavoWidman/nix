@@ -1,5 +1,13 @@
 def get-cwd [] {
-    $" in (ansi blue)((do { pwd }) | str replace $env.HOME '~')(ansi reset)"
+    let pwd = match $env.OS {
+        "Darwin" => ((do { pwd })
+            | str replace $env.HOME '~'
+            | str downcase),
+        _ => ((do { pwd })
+            | str replace $env.HOME '~')
+    }
+
+    $" in (ansi blue)($pwd)(ansi reset)"
 }
 
 def find-jj-dir [pwd?: string] {
