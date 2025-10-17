@@ -29,7 +29,6 @@ let
 in
 {
   nix.enable = true;
-  nix.package = pkgs.nix;
 
   nix.distributedBuilds = true;
   nix.buildMachines =
