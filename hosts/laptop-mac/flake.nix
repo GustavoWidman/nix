@@ -39,16 +39,31 @@ in
           networking.hostName = metadata.hostname;
           nixpkgs.hostPlatform = metadata.architecture;
 
-          users.users.r3dlust = {
-            name = "r3dlust";
-            home = "/Users/r3dlust";
-            isMainUser = true;
-            shell = pkgs.nushell;
+          users.users = {
+            r3dlust = {
+              name = "r3dlust";
+              home = "/Users/r3dlust";
+              isMainUser = true;
+              shell = pkgs.nushell;
+            };
+
+            root = {
+              name = "root";
+              home = "/var/root";
+              shell = pkgs.nushell;
+            };
           };
 
-          home-manager.users.r3dlust.home = {
-            stateVersion = "25.05";
-            homeDirectory = "/Users/r3dlust";
+          home-manager.users = {
+            root.home = {
+              stateVersion = "25.05";
+              homeDirectory = "/var/root";
+            };
+
+            r3dlust.home = {
+              stateVersion = "25.05";
+              homeDirectory = "/Users/r3dlust";
+            };
           };
 
           system.stateVersion = 5;
