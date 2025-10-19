@@ -41,8 +41,8 @@ def --env save_to_cache [key: string, value: any] {
 export def --env true_home [] {
 	let cache = get_cache
 
-	match ($cache.true_home != null) {
-		null => {
+	match ($cache.true_home == null) {
+		true => {
     		let true_home = match ($env.OS == "Darwin") {
     			# may god have mercy on my soul what the fuck is this :sob:
     			true => {
