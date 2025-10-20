@@ -71,6 +71,11 @@
       flake = false;
     };
 
+    gemini-juggler = {
+      url = "github:GustavoWidman/gemini-juggler";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     zed.url = "github:GustavoWidman/zed-autobuild";
   };
 
