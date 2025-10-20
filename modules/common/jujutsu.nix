@@ -15,8 +15,8 @@ in
       {
         programs.jujutsu = enabled {
           settings = {
-            user.name = config'.programs.git.userName;
-            user.email = config'.programs.git.userEmail;
+            user.name = config'.programs.git.settings.user.name;
+            user.email = config'.programs.git.settings.user.email;
 
             ui.diff-editor = ":builtin";
 

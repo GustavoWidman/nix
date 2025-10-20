@@ -13,12 +13,14 @@ in
   home-manager.sharedModules = [
     {
       programs.git = enabled {
-        userName = "GustavoWidman (${config.networking.hostName})";
-        userEmail = "admin@r3dlust.com";
-
         lfs = enabled;
 
-        extraConfig = {
+        settings = {
+          user = {
+            name = "GustavoWidman (${config.networking.hostName})";
+            email = "admin@r3dlust.com";
+          };
+
           init.defaultBranch = "main";
 
           column.ui = "auto";
