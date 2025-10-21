@@ -29,6 +29,18 @@ in
               "@+"
             ];
 
+            aliases.r = [
+              "rebase"
+            ];
+            aliases."r!" = [
+              "rebase"
+              "--ignore-immutable"
+            ];
+            aliases."rebase!" = [
+              "rebase"
+              "--ignore-immutable"
+            ];
+
             aliases.a = [
               "abandon"
             ];
