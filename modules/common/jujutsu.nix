@@ -120,6 +120,11 @@ in
               "--ignore-immutable"
             ];
 
+            aliases."split!" = [
+              "split"
+              "--ignore-immutable"
+            ];
+
             aliases.c = [ "commit" ];
             aliases.ci = [
               "commit"
