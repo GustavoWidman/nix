@@ -10,6 +10,20 @@ def get-cwd [] {
     $" in (ansi blue)($pwd)(ansi reset)"
 }
 
+def superscript []: string -> string {
+    $in
+        | str replace -a "0" "⁰"
+        | str replace -a "1" "¹"
+        | str replace -a "2" "²"
+        | str replace -a "3" "³"
+        | str replace -a "4" "⁴"
+        | str replace -a "5" "⁵"
+        | str replace -a "6" "⁶"
+        | str replace -a "7" "⁷"
+        | str replace -a "8" "⁸"
+        | str replace -a "9" "⁹"
+}
+
 def find-jj-dir [pwd?: string] {
     mut current_dir = match ($pwd | is-empty) {
         true => (pwd),
@@ -34,7 +48,7 @@ def find-jj-dir [pwd?: string] {
 def get_branch [commit_list: list] {
     let branches = $commit_list
         | reverse
-        | each { get 3 }
+        | each { get branches }
         | flatten
     let current_branch = $branches
         | where remote == "origin"
@@ -47,11 +61,6 @@ def get_branch [commit_list: list] {
                     | first
                     | get name)
             }
-
-            # if all else fails, fallback to current commit ID instead
-            return ($commit_list
-                | first
-                | get 2)
         },
         false => {
             return ($current_branch
@@ -62,17 +71,18 @@ def get_branch [commit_list: list] {
 }
 
 def get_status [commit_list: list] {
-    let is_empty = $commit_list
+    let working_changes = $commit_list
         | first
-        | get 0
+
+    let is_empty = $working_changes
+        | get empty
 
     if $is_empty {
         return "green" # clean
     }
 
-    let has_commit_msg = $commit_list
-        | first
-        | get 1
+    let has_commit_msg = $working_changes
+        | get description
         | is-not-empty
 
     if $has_commit_msg {
@@ -89,24 +99,18 @@ def jj_stats [] {
     }
 
     let commit_list: list = try {
-        jj --quiet -R $jjdir --color never --ignore-working-copy log --no-graph -r 'heads(::@- & ancestors(coalesce(remote_bookmarks(), bookmarks())) & ::)::' -T 'empty ++ "\n" ++ description.first_line() ++ "\n" ++ commit_id.short(8) ++ "\n" ++ change_id ++ "\n" ++ json(remote_bookmarks) ++ "\n"' err> /dev/null
+        jj --quiet -R $jjdir --color never --ignore-working-copy log --no-graph -r "(first_parent(mutable()) | mutable())::@ | @" -T 'empty ++ "\n" ++ description.first_line() ++ "\n" ++ immutable ++ "\n" ++ change_id ++ "\n" ++ json(remote_bookmarks) ++ "\n"' err> /dev/null
             | lines
             | chunks 5
             | where ($it.3 != "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
-            | group-by { get 3 }
-            | values
-            | each {|group|
-                let empty = ($group | each { get 0 | into bool } ) | all {}
-                let merged_branches = ($group | each { get 4 | from json} | flatten)
-                let description = ($group | where { get 1 | is-not-empty } | get -o 0 | get -o 1)
-                let commit_id = if ($group | length) > 1 { "???" } else { $group | first | get 2 }
-
-                [
-                    $empty,
-                    $description,
-                    $commit_id,
-                    $merged_branches
-                ]
+            | each {|commit|
+                ({
+                    empty: ($commit | get 0 | into bool),
+                    description: ($commit | get 1),
+                    branches: ($commit | get 4 | from json),
+                    change_id: ($commit | get 3 | str substring 0..7)
+                    immutable: ($commit | get 2 | into bool)
+                })
             }
     }
 
@@ -115,54 +119,56 @@ def jj_stats [] {
     }
 
     let branch = get_branch $commit_list
+    let detached = if (($branch | is-empty) or (($commit_list | length) <= 1)) {
+        $commit_list
+            | first
+            | get change_id
+    }
     let status = get_status $commit_list
-    let unpushed_commits = $commit_list
-        | where {|c|
-            ($c
-                | get 1
-                | is-not-empty
-            ) and not (
-            $c
-                | get 0
-            ) and not (
-            $c
-                | get 3
-                | any {|e| $e.remote == "origin" }
-            ) and not (
-            $c
-                | get 3
-                | any {|e| $e.name != $branch }
-            )
+    let unpushed_commits = match ($detached | is-empty) {
+        true => {
+            let valid_commits = $commit_list
+                | where {|c|
+                    ($c.description | is-not-empty) and not ($c.immutable)
+                }
+                # maybe also add $c.empty check here (commit is not empty)
+
+            let total = $valid_commits
+                | length
+
+            let untugged_commits = $valid_commits
+                | take until {|c| $c.branches | any {|b|
+                    (($b.name == $branch) and ($b.remote == "git"))
+                } }
+                | length
+
+            ({
+                tugged: ($total - $untugged_commits),
+                untugged: $untugged_commits,
+                total: $total
+            })
+        },
+        false => ({
+            tugged: 0,
+            untugged: 0,
+            total: 0
+        })
+    }
+    let unpushed_commits_str = if ($unpushed_commits.total > 0) {
+        if ($unpushed_commits.tugged > 0 and $unpushed_commits.untugged > 0) {
+            $"(ansi blue)($unpushed_commits.tugged | into string | superscript)(ansi reset)⸍(ansi yellow)($unpushed_commits.untugged | into string | superscript)(ansi reset)"
+        } else if ($unpushed_commits.untugged > 0) {
+            $"(ansi yellow)($unpushed_commits.untugged | into string | superscript)(ansi reset)"
+        } else {
+            $"(ansi blue)($unpushed_commits.tugged | into string | superscript)(ansi reset)"
         }
-        | length
-    let unpushed_commits_str = if ($unpushed_commits > 0) {
-        let superscript = $unpushed_commits
-            | into string
-            | str replace -a "0" "⁰"
-            | str replace -a "1" "¹"
-            | str replace -a "2" "²"
-            | str replace -a "3" "³"
-            | str replace -a "4" "⁴"
-            | str replace -a "5" "⁵"
-            | str replace -a "6" "⁶"
-            | str replace -a "7" "⁷"
-            | str replace -a "8" "⁸"
-            | str replace -a "9" "⁹"
-        let tugged = $commit_list
-            | where { get 1 | is-not-empty }
-            | each { get 3 }
-            | reverse
-            | skip
-            | each { where {|el| $el.remote == "git" and $el.name == $branch } }
-            | each { is-not-empty }
-            | any {}
-
-        let unpushed_color = if ($tugged) { "blue" } else { "yellow" }
-
-        $"(ansi $unpushed_color)($superscript)(ansi reset)"
     } else { "" }
+    let consolidated_branch = match ($detached | is-not-empty) {
+        true => $detached,
+        false => $branch
+    }
 
-	return $" in (ansi red)($branch)(ansi reset)($unpushed_commits_str) (ansi $status)(ansi reset)"
+    return $" in (ansi red)($consolidated_branch)(ansi reset)($unpushed_commits_str) (ansi $status)(ansi reset)"
 }
 
 def venv_prompt [] {

@@ -20,6 +20,10 @@ in
 
             ui.diff-editor = ":builtin";
 
+            revset-aliases = {
+              "immutable_heads()" = "builtin_immutable_heads() | remote_bookmarks()";
+            };
+
             aliases.".." = [
               "edit"
               "@-"
