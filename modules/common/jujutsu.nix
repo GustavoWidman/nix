@@ -20,6 +20,8 @@ in
 
             ui.diff-editor = ":builtin";
 
+            snapshot.max-new-file-size = "1GiB";
+
             revset-aliases = {
               "immutable_heads()" = "builtin_immutable_heads() | remote_bookmarks()";
             };
