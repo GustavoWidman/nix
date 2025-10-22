@@ -301,7 +301,6 @@ in
             "git-firefly"
             "material-icon-theme"
             "xml"
-            "ruff"
             "php"
             "prisma"
             "python-requirements"
