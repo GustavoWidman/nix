@@ -57,6 +57,7 @@ in
           util-linux
           uutils-coreutils-noprefix
           uutils-findutils
+          watchexec
           wget
           wireguard-tools
           ;

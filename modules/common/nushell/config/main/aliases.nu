@@ -50,6 +50,8 @@ alias nano! = ^nano
 alias code = zed
 alias code! = ^code
 
+alias "cargo hot" = watchexec -e rs -w src -w Cargo.toml -w Cargo.lock -r cargo run
+
 alias "sudo su" = sudo (absolute nu)
 
 def --env get-env [name] { $env | get $name }
