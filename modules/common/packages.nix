@@ -120,7 +120,7 @@ in
           nasmfmt
           maven
           manix
-          # metasploit # TODO broken
+          metasploit
           mitmproxy
           nuclei
           postgresql
