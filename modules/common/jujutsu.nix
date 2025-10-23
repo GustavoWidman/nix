@@ -125,6 +125,10 @@ in
               "--interactive"
               "--ignore-immutable"
             ];
+            aliases.squashi = [
+              "squash"
+              "--interactive"
+            ];
             aliases."squashi!" = [
               "squash"
               "--interactive"
