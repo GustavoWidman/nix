@@ -15,33 +15,6 @@ let
   modulesDev = collectNix ../modules/dev;
   modulesServer = collectNix ../modules/server;
 
-  nushell = final: prev: {
-    nushell = prev.nushell.override (
-      let
-        rp = prev.rustPlatform;
-      in
-      {
-        rustPlatform = rp // {
-          buildRustPackage =
-            args:
-            rp.buildRustPackage (
-              args
-              // rec {
-                version = "0.108.0";
-                src = prev.fetchFromGitHub {
-                  owner = "nushell";
-                  repo = "nushell";
-                  tag = version;
-                  hash = "sha256-8OMTscMObV+IOSgOoTSzJvZTz6q/l2AjrOb9y3p2tZY=";
-                };
-                cargoHash = "sha256-M2wkhhaS3bVhwaa3O0CUK5hL757qFObr7EDtBFXXwxg=";
-              }
-            );
-        };
-      }
-    );
-  };
-
   collectInputsFrom =
     inputSet:
     let
@@ -62,7 +35,7 @@ in
         "default"
       ];
       overlayModule = {
-        nixpkgs.overlays = inputOverlays ++ [ nushell ];
+        nixpkgs.overlays = inputOverlays;
       };
 
       specialArgs = inputs // {
@@ -97,7 +70,7 @@ in
         "default"
       ];
       overlayModule = {
-        nixpkgs.overlays = inputOverlays ++ [ nushell ];
+        nixpkgs.overlays = inputOverlays;
       };
 
       specialArgs = inputs // {
@@ -131,7 +104,7 @@ in
         "default"
       ];
       overlayModule = {
-        nixpkgs.overlays = inputOverlays ++ [ nushell ];
+        nixpkgs.overlays = inputOverlays;
       };
 
       specialArgs = inputs // {
@@ -165,7 +138,7 @@ in
         "default"
       ];
       overlayModule = {
-        nixpkgs.overlays = inputOverlays ++ [ nushell ];
+        nixpkgs.overlays = inputOverlays;
       };
 
       specialArgs = inputs // {
@@ -200,7 +173,7 @@ in
         "default"
       ];
       overlayModule = {
-        nixpkgs.overlays = inputOverlays ++ [ nushell ];
+        nixpkgs.overlays = inputOverlays;
       };
 
       specialArgs = inputs // {
