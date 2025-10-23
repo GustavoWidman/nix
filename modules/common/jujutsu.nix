@@ -59,6 +59,11 @@ in
               "--ignore-immutable"
             ];
 
+            aliases.back = [
+              "edit"
+              "heads(@::)"
+            ];
+
             aliases.fetch = [
               "git"
               "fetch"
