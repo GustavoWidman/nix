@@ -130,7 +130,11 @@ in
           sqlmap
           terraform
           tldr
-          wireshark
+          # -------------------------------------- #
+          # wireshark # TODO broken
+          termshark # wireshark substiture for now
+          tshark
+          # -------------------------------------- #
           yq
           yt-dlp
           ;
