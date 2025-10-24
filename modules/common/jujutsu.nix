@@ -24,6 +24,9 @@ in
 
             revset-aliases = {
               "immutable_heads()" = "builtin_immutable_heads() | remote_bookmarks()";
+              "working_changes" = "heads(mutable()) & description(exact:'')";
+              "closest_bookmark(x)" = "heads(::x & bookmarks())";
+              "closest_remote_bookmark(x)" = "heads(::x & remote_bookmarks())";
             };
 
             aliases.".." = [
@@ -61,7 +64,7 @@ in
 
             aliases.back = [
               "edit"
-              "heads(@::)"
+              "reachable(@::, working_changes)"
             ];
 
             aliases.fetch = [
@@ -180,7 +183,7 @@ in
               "bookmark"
               "move"
               "--from"
-              "heads(::@- & bookmarks())"
+              "closest_bookmark(@-)"
               "--to"
               "@-"
             ];
