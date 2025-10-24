@@ -62,6 +62,16 @@ def pubkey [path] {
 	ssh-keygen -f $path -y
 }
 
+# Moves a revision to after the target and rebases
+def "jj move" [
+    --from (-f): string
+    --to (-t): string
+] {
+    jj new $to
+    jj squash -f $from -t @
+    jj rebase -s $"roots\(@-.. & ~@\)" -d @
+}
+
 def psub [] {
   let tmp = (mktemp -t | str trim)
 
