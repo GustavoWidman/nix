@@ -192,6 +192,18 @@ in
               "working"
             ];
 
+            aliases.nb = [
+              "bookmark"
+              "create"
+            ];
+            aliases.mb = [
+              "bookmark"
+              "move"
+            ];
+            aliases.sb = [
+              "bookmark"
+              "set"
+            ];
 
             aliases.tug = [
               "bookmark"
