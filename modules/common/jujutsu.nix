@@ -22,6 +22,8 @@ in
 
             snapshot.max-new-file-size = "1GiB";
 
+            merge.hunk-level = "line";
+
             revset-aliases = {
               "immutable_heads()" = "builtin_immutable_heads() | remote_bookmarks()";
               "working_changes" = "heads(mutable()) & description(exact:'')";
