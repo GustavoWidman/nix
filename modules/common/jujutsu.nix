@@ -183,6 +183,15 @@ in
               "-r"
               "closest_bookmark(@)::@"
             ];
+            aliases.working = [
+              "log"
+              "-r"
+              "working_changes"
+            ];
+            aliases.wc = [
+              "working"
+            ];
+
 
             aliases.tug = [
               "bookmark"
