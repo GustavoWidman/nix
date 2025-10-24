@@ -178,6 +178,11 @@ in
               "-r"
               "all()"
             ];
+            aliases.pov = [
+              "log"
+              "-r"
+              "closest_bookmark(@)::@"
+            ];
 
             aliases.tug = [
               "bookmark"
