@@ -47,7 +47,6 @@ def find-jj-dir [pwd?: string] {
 
 def get_branch [commit_list: list] {
     let branches = $commit_list
-        | reverse
         | each { get branches }
         | flatten
     let current_branch = $branches
