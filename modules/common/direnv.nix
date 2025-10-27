@@ -12,6 +12,7 @@ in
           whitelist.prefix = [ config.homeDir ];
         };
         silent = true;
+        nix-direnv.enable = true;
       };
     }
   ];
