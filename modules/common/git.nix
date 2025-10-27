@@ -67,6 +67,9 @@ in
           # direnv
           ".direnv"
 
+          # devenv
+          ".devenv"
+
           # IDEs
           ".vscode/"
           ".idea/"
