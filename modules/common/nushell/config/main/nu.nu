@@ -45,7 +45,9 @@ def log [
     }
 }
 
-export def --env "activate" [] {
+export def --env "activate" [
+    --quiet (-q)
+] {
 	use ($nu.default-config-dir | path join config/utils/hooks.nu)
 
     let nu_files = ls -a err> /dev/null
@@ -78,10 +80,13 @@ export def --env "activate" [] {
     			msg: $"(ansi red)nu-activate::already_activated(ansi reset)\nthese nu files have already been activated.\ndeactivate the current nu environment first, then try again if you think this is an error."
     		}
     	} else {
-            let choice = input -n 1 -s (log warn --return-instead $"you already have a nu environment activated, but this one is different. activate? [(ansi green)y(ansi reset)/(ansi red)N(ansi reset)]: ")
-            print ""
+            let choice = match $quiet {
+                true => "y",
+                false => (input -n 1 -s (log warn --return-instead $"you already have a nu environment activated, but this one is different. activate? [(ansi green)y(ansi reset)/(ansi red)N(ansi reset)]: "))
+            }
+            if not $quiet { print "" }
             if ($choice | str downcase) == "y" {
-                deactivate
+                deactivate --quiet=$quiet
             } else {
                 log warn "exiting without doing anything..." --exit
             }
@@ -91,35 +96,29 @@ export def --env "activate" [] {
 	if ( ($nu_files | length) == 1 ) {
 		let file = ($nu_files | first)
 
-		hooks run-hooked $'overlay use -p ($file.path) as ($file.stem)'
+		hooks run-hooked $'overlay use -p ($file.path) as ($file.stem); $env.NU_ENV = { hash: "($env_hash)" name: "($file.stem)" activated: [ "($file.stem)" ] }'
 
-		log success $"acivated nu environment succesfully"
-		log info $"to deactivate, please use (ansi purple)nu deactivate(ansi reset)"
-
-		$env.NU_ENV = {
-		    hash: $env_hash
-			name: $file.stem
-			activated: [ $file.stem ]
+		if not $quiet {
+    		log success $"acivated nu environment succesfully"
+    		log info $"to deactivate, please use (ansi purple)nu deactivate(ansi reset)"
 		}
 	} else {
 		let name = input (log warn --return-instead "more than one nu file is available, please choose a name for this env: ")
 
 		for $file in ($nu_files | get stem) {
-		    hooks run-hooked $'overlay use -p ($file.path) as ($file.stem)'
+		    hooks run-hooked $'overlay use -p ($file.path) as ($file.stem); $env.NU_ENV = { hash: "($env_hash)" name: "($file.stem)" activated: [ "($file.stem)" ] }'
 		}
 
-		log success $"acivated nu environment succesfully"
-		log info $"to deactivate, please use (ansi purple)nu deactivate(ansi reset)"
-
-		$env.NU_ENV = {
-		    hash: $env_hash
-			name: $name
-			activated: ($nu_files | get stem)
+		if not $quiet {
+    		log success $"acivated nu environment succesfully"
+    		log info $"to deactivate, please use (ansi purple)nu deactivate(ansi reset)"
 		}
 	}
 }
 
-export def --env "deactivate" [] {
+export def --env "deactivate" [
+    --quiet (-q)
+] {
     use ($nu.default-config-dir | path join config/utils/hooks.nu)
    	if ((not ("NU_ENV" in $env)) or $env.NU_ENV == null) {
   		error make -u {
@@ -128,10 +127,8 @@ export def --env "deactivate" [] {
 	}
 
 	for $file in ($env.NU_ENV | get activated) {
-		hooks run-hooked $'overlay hide --keep-env [ PWD NU_ENV ] ($file)'
+		hooks run-hooked $"overlay hide --keep-env \($env | transpose | get column0\) ($file); $env.NU_ENV = null"
 	}
 
-	$env.NU_ENV = null
-
-	log success $"nu environment deactivated succesfully"
+	if not $quiet { log success $"nu environment deactivated succesfully" }
 }

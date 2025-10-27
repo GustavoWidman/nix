@@ -66,7 +66,7 @@ $env.config.hooks.env_change.PWD = [
               		| uniq
             )
         }
-    },
+    }
     {
         condition: {|before, _| ($before | default '' | path join 'flake.lock' | path exists) and ($before | is-not-empty)}
         code: {|before, _|
@@ -77,6 +77,73 @@ $env.config.hooks.env_change.PWD = [
             )
         }
     }
+    # nu
+    {
+        condition: {
+            let nu_files = ls -a err> /dev/null
+                | where {|el| ($el | get type) == "file" }
+                | par-each { get name | path parse }
+                | where {|el| ($el | get extension) == "nu" }
+                | par-each {|el|
+                    let path = (pwd | path join $"($el.stem).($el.extension)")
+                    {
+                        stem: $el.stem
+                        hash: (open $path | hash sha256),
+                        path: $path
+                    }
+                }
+
+            # stops if we have 0 or +1 nu file in pwd
+            if ($nu_files | is-empty) or (($nu_files | length) > 1) {
+                return false
+            };
+
+            let env_hash = $nu_files
+                | get hash
+                | str join "\n"
+                | hash sha256
+
+           	if (("NU_ENV" in $env) and $env.NU_ENV != null) {
+               	if ($env_hash == ($env.NU_ENV | get hash)) {
+                    # already EXACTLY activated
+                    return false
+               	} else {
+                    # other is activated
+                    return true
+                }
+           	} else {
+                # not activated
+                return true
+            }
+        }
+        code: 'nu activate -q'
+    },
+    {
+        condition: {
+            let activated = ("NU_ENV" in $env) and ($env.NU_ENV != null)
+
+            if not $activated {
+                return false
+            }
+
+            let nu_files = ls -a err> /dev/null
+                | where {|el| ($el | get type) == "file" }
+                | par-each { get name | path parse }
+                | where {|el| ($el | get extension) == "nu" }
+                | par-each {|el|
+                    let path = (pwd | path join $"($el.stem).($el.extension)")
+                    {
+                        stem: $el.stem
+                        hash: (open $path | hash sha256),
+                        path: $path
+                    }
+                }
+
+            ($nu_files | is-empty)
+        }
+        code: 'nu deactivate -q'
+    }
+   	# direnv
 	{||
 	    direnv export json | from json | default {} | load-env
 		$env.PATH = $env.PATH | split row (char env_sep)
