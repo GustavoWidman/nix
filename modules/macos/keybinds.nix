@@ -2,6 +2,136 @@
   system.defaults.CustomUserPreferences = {
     "com.apple.symbolichotkeys" = {
       AppleSymbolicHotKeys = {
+        # Desktop 1 (⌥1)
+        "118" = {
+          enabled = 1;
+          value = {
+            parameters = [
+              65535
+              18
+              524288
+            ];
+            type = "standard";
+          };
+        };
+
+        # Desktop 2 (⌥2)
+        "119" = {
+          enabled = 1;
+          value = {
+            parameters = [
+              65535
+              19
+              524288
+            ];
+            type = "standard";
+          };
+        };
+
+        # Desktop 3 (⌥3)
+        "120" = {
+          enabled = 1;
+          value = {
+            parameters = [
+              65535
+              20
+              524288
+            ];
+            type = "standard";
+          };
+        };
+
+        # Desktop 4 (⌥4)
+        "121" = {
+          enabled = 1;
+          value = {
+            parameters = [
+              65535
+              21
+              524288
+            ];
+            type = "standard";
+          };
+        };
+
+        # Desktop 5 (⌥5)
+        "122" = {
+          enabled = 1;
+          value = {
+            parameters = [
+              65535
+              23
+              524288
+            ];
+            type = "standard";
+          };
+        };
+
+        # Desktop 6 (⌥6)
+        "123" = {
+          enabled = 1;
+          value = {
+            parameters = [
+              65535
+              22
+              524288
+            ];
+            type = "standard";
+          };
+        };
+
+        # Desktop 7 (⌥7)
+        "124" = {
+          enabled = 1;
+          value = {
+            parameters = [
+              65535
+              26
+              524288
+            ];
+            type = "standard";
+          };
+        };
+
+        # Desktop 8 (⌥8)
+        "125" = {
+          enabled = 1;
+          value = {
+            parameters = [
+              65535
+              28
+              524288
+            ];
+            type = "standard";
+          };
+        };
+
+        # Desktop 9 (⌥9)
+        "126" = {
+          enabled = 1;
+          value = {
+            parameters = [
+              65535
+              25
+              524288
+            ];
+            type = "standard";
+          };
+        };
+
+        # Desktop 10 (⌥0)
+        "127" = {
+          enabled = 1;
+          value = {
+            parameters = [
+              65535
+              29
+              524288
+            ];
+            type = "standard";
+          };
+        };
+
         # Disable Spotlight Search (⌘Space by default)
         "64" = {
           enabled = 0;

@@ -23,15 +23,6 @@ let
   };
   makeOptionDisableManipulators = keys: map makeManipulator keys;
 
-  makeFocusSpace = key: {
-    from.key_code = key;
-    from.modifiers.mandatory = [ "option" ];
-
-    to = [
-      { shell_command = "${pkgs.yabai}/bin/yabai -m space --focus ${key}"; }
-    ];
-    type = "basic";
-  };
   makeMoveSpace = key: {
     from.key_code = key;
     from.modifiers.mandatory = [
@@ -198,7 +189,6 @@ let
           type = "basic";
         }
       ]
-      ++ (map makeFocusSpace numbers)
       ++ (map makeMoveSpace numbers);
     }
   ];
