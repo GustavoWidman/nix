@@ -64,6 +64,9 @@ in
           # The usual culprits
           ".env"
 
+          # direnv
+          ".direnv"
+
           # IDEs
           ".vscode/"
           ".idea/"
