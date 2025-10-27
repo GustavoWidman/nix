@@ -49,10 +49,10 @@ def get_branch [commit_list: list] {
     let branches = $commit_list
         | each { get branches }
         | flatten
-    let current_branch = $branches
-        | where remote == "origin"
+    # let current_branch = $branches
+    #     | where remote == "origin"
 
-    match ($current_branch | is-empty) {
+    match ($branches | is-empty) {
         # try to get any remote (not just origin)
         true => {
             if ($branches | is-not-empty) {
@@ -62,7 +62,7 @@ def get_branch [commit_list: list] {
             }
         },
         false => {
-            return ($current_branch
+            return ($branches
                 | first
                 | get name)
         }
