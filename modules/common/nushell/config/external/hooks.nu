@@ -145,8 +145,25 @@ $env.config.hooks.env_change.PWD = [
     }
    	# direnv
 	{||
-	    direnv export json | from json | default {} | load-env
-		$env.PATH = $env.PATH | split row (char env_sep)
+	    direnv export json
+			| from json --strict
+			| default {}
+			| items {|key, value|
+                let value = do (
+                    {
+                    "PATH": {
+                        from_string: {|s| $s | split row (char esep) | path expand --no-symlink }
+                        to_string: {|v| $v | path expand --no-symlink | str join (char esep) }
+                    }
+                    }
+                    | merge ($env.ENV_CONVERSIONS? | default {})
+                    | get ([[value, optional, insensitive]; [$key, true, true] [from_string, true, false]] | into cell-path)
+                    | if ($in | is-empty) { {|x| $x} } else { $in }
+                ) $value
+                return [ $key $value ]
+            }
+            | into record
+            | load-env
     }
 ];
 
