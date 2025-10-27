@@ -9,9 +9,9 @@ in
     {
       programs.direnv = enabled {
         config = {
-          global.log_filter = "^loading";
           whitelist.prefix = [ config.homeDir ];
         };
+        silent = true;
       };
     }
   ];
