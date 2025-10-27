@@ -37,6 +37,7 @@ in
           theme = "Base16 Gruvbox dark, medium";
           buffer_font_family = "Fira Code";
           buffer_font_size = 14;
+          load_direnv = "direct";
           terminal.button = false;
           show_whitespaces = "selection";
           read_ssh_config = true;
