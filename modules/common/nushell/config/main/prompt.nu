@@ -186,7 +186,7 @@ def nuenv_prompt [] {
 }
 
 def nix_shell_prompt [] {
-    match (("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env)) {
+    match (("IN_NIX_SHELL" in $env) and ($env.IN_NIX_SHELL | is-not-empty)) {
         true => $" in (ansi cyan)nix-shell(ansi reset)"
         false => ""
     }
