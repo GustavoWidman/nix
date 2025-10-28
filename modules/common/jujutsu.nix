@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   lib,
   ...
 }:
@@ -7,6 +8,10 @@ let
   inherit (lib) enabled;
 in
 {
+  environment.systemPackages = with pkgs; [
+    difftastic
+  ];
+
   home-manager.sharedModules = [
     (
       homeArgs:
@@ -20,6 +25,13 @@ in
             user.email = config'.programs.git.settings.user.email;
 
             ui.diff-editor = ":builtin";
+            ui.diff-formatter = [
+              "difft"
+              "--color"
+              "always"
+              "$left"
+              "$right"
+            ];
 
             snapshot.max-new-file-size = "1GiB";
 
