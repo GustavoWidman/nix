@@ -24,6 +24,7 @@ in
             user.name = config'.programs.git.settings.user.name;
             user.email = config'.programs.git.settings.user.email;
 
+            ui.default-command = "ls";
             ui.diff-editor = ":builtin";
             ui.diff-formatter = [
               "difft"
@@ -43,6 +44,11 @@ in
               "closest_bookmark(x)" = "heads(::x & bookmarks())";
               "closest_remote_bookmark(x)" = "heads(::x & remote_bookmarks())";
             };
+
+            aliases.ls = [
+              "log"
+              "--summary"
+            ];
 
             aliases.".." = [
               "edit"
