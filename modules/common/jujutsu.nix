@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   ...
 }:
@@ -238,7 +239,7 @@ in
 
             signing.backend = "ssh";
             signing.behavior = "own";
-            signing.key = "~/.ssh/id_ed25519";
+            signing.key = config.secrets.ssh-id_ed25519.path;
           };
         };
       }
