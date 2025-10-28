@@ -151,10 +151,10 @@ $env.config.hooks.env_change.PWD = [
 			| items {|key, value|
                 let value = do (
                     {
-                    "PATH": {
-                        from_string: {|s| $s | split row (char esep) | path expand --no-symlink }
-                        to_string: {|v| $v | path expand --no-symlink | str join (char esep) }
-                    }
+                        "PATH": {
+                            from_string: {|s| $s | split row (char esep) | path expand --no-symlink }
+                            to_string: {|v| $v | path expand --no-symlink | str join (char esep) }
+                        }
                     }
                     | merge ($env.ENV_CONVERSIONS? | default {})
                     | get ([[value, optional, insensitive]; [$key, true, true] [from_string, true, false]] | into cell-path)
