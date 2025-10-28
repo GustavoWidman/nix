@@ -9,6 +9,7 @@ let
 in
 {
   environment.systemPackages = with pkgs; [
+    mergiraf
     difftastic
   ];
 
@@ -44,6 +45,13 @@ in
               "closest_bookmark(x)" = "heads(::x & bookmarks())";
               "closest_remote_bookmark(x)" = "heads(::x & remote_bookmarks())";
             };
+
+            aliases.resolve-ast = [
+              "resolve"
+              "--tool"
+              "mergiraf"
+            ];
+            aliases.resa = [ "resolve-ast" ];
 
             aliases.ls = [
               "log"
