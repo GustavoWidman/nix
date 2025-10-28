@@ -11,6 +11,7 @@ in
   environment.systemPackages = with pkgs; [
     mergiraf
     difftastic
+    jjui
   ];
 
   home-manager.sharedModules = [
