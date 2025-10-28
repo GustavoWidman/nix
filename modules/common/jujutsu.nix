@@ -35,6 +35,8 @@ in
               "$left"
               "$right"
             ];
+            ui.conflict-marker-style = "snapshot";
+            ui.graph.style = "curved";
 
             snapshot.max-new-file-size = "1GiB";
 
