@@ -23,17 +23,6 @@ let
   };
   makeOptionDisableManipulators = keys: map makeManipulator keys;
 
-  makeMoveSpace = key: {
-    from.key_code = key;
-    from.modifiers.mandatory = [
-      "option"
-      "shift"
-    ];
-
-    to = [ { shell_command = "${pkgs.yabai}/bin/yabai -m window --space ${key} --focus"; } ];
-    type = "basic";
-  };
-
   letters = [
     "a"
     "b"
@@ -61,18 +50,6 @@ let
     "x"
     "y"
     "z"
-  ];
-  numbers = [
-    "1"
-    "2"
-    "3"
-    "4"
-    "5"
-    "6"
-    "7"
-    "8"
-    "9"
-    "0"
   ];
   punctuation = [
     "hyphen"
@@ -118,78 +95,12 @@ let
 
           to = [
             {
-              shell_command = "${pkgs.yabai}/bin/yabai -m space --focus recent";
+              shell_command = "${pkgs.aerospace}/bin/aerospace workspace-back-and-forth";
             }
           ];
           type = "basic";
         }
-        {
-          from.key_code = "tab";
-          from.modifiers.mandatory = [ "option" ];
-
-          to = [
-            {
-              shell_command = "${pkgs.yabai}/bin/yabai -m window --focus $(${pkgs.yabai}/bin/yabai -m query --windows --space | ${pkgs.jq}/bin/jq 'map(select(.[\"is-minimized\"] == false)) | .[-1].id')";
-            }
-          ];
-          type = "basic";
-        }
-        {
-          from.key_code = "f";
-          from.modifiers.mandatory = [
-            "option"
-          ];
-
-          to = [
-            {
-              shell_command = "${pkgs.yabai}/bin/yabai -m window --toggle float && ${pkgs.yabai}/bin/yabai -m window --toggle float";
-            }
-          ];
-          type = "basic";
-        }
-        {
-          from.key_code = "t";
-          from.modifiers.mandatory = [
-            "option"
-          ];
-
-          to = [
-            {
-              shell_command = "${pkgs.yabai}/bin/yabai -m window --toggle float";
-            }
-          ];
-          type = "basic";
-        }
-        {
-          from.key_code = "equal_sign";
-          from.modifiers.mandatory = [
-            "option"
-            "shift"
-          ];
-
-          to = [
-            {
-              shell_command = "${pkgs.yabai}/bin/yabai -m space --create && ${pkgs.yabai}/bin/yabai -m space --focus $(${pkgs.yabai}/bin/yabai -m query --spaces | ${pkgs.jq}/bin/jq -r 'max_by(.index).index')";
-            }
-          ];
-          type = "basic";
-        }
-        {
-          from.key_code = "hyphen";
-          from.modifiers.mandatory = [
-            "option"
-            "shift"
-          ];
-
-          to = [
-            {
-              shell_command = "biggest_space=$(${pkgs.yabai}/bin/yabai -m query --spaces | ${pkgs.jq}/bin/jq -r 'max_by(.index).index') && [[ $biggest_space -gt 5 ]] && current_space=$(${pkgs.yabai}/bin/yabai -m query --spaces --space | ${pkgs.jq}/bin/jq -r '.index') && [[ $current_space == $biggest_space ]] && ${pkgs.yabai}/bin/yabai -m space --focus recent ; [[ $biggest_space -gt 5 ]] && ${pkgs.yabai}/bin/yabai -m space --destroy $biggest_space";
-            }
-          ];
-          type = "basic";
-        }
-      ]
-      ++ (map makeMoveSpace numbers);
+      ];
     }
   ];
 in
