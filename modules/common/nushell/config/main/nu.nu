@@ -26,7 +26,11 @@ def log [
         _ => "›"
     }
 
-    let msg = $"[(ansi $color)($prefix)(ansi reset)] ($message)"
+    let msg = $'[(ansi $color)($prefix)(ansi reset)] ($message
+        | str trim -l
+        | lines
+        | each { str trim -l }
+        | str join $"\n (ansi white)|(ansi reset)  ")'
 
     if $return_instead {
         return $msg
@@ -38,10 +42,9 @@ def log [
         }
     }
 
-    if $no_newline {
-        print -n $msg
-    } else {
-        print $msg
+    match $no_newline {
+        true => (print -n $msg)
+        false => (print $msg)
     }
 }
 

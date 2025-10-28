@@ -12,6 +12,7 @@ const LOG_COLORS = {
 def log [
     level: string
     message: string
+    --exit (-e)
     --no-newline (-n)
     --return-instead
 ] {
@@ -25,16 +26,25 @@ def log [
         _ => "›"
     }
 
-    let msg = $"[(ansi $color)($prefix)(ansi reset)] ($message)"
+    let msg = $'[(ansi $color)($prefix)(ansi reset)] ($message
+        | str trim -l
+        | lines
+        | each { str trim -l }
+        | str join $"\n (ansi white)|(ansi reset)  ")'
 
     if $return_instead {
         return $msg
     }
 
-    if $no_newline {
-        print -n $msg
-    } else {
-        print $msg
+    if $exit {
+        error make -u {
+            msg: $msg
+        }
+    }
+
+    match $no_newline {
+        true => (print -n $msg)
+        false => (print $msg)
     }
 }
 
