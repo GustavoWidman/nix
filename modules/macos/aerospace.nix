@@ -107,6 +107,7 @@ in
         (mkFloat "com.apple.SecurityAgent" false)
         (mkFloat "com.apple.finder" false)
         (mkFloat "com.apple.Preview" false)
+        (mkFloat "com.apple.QuickTimePlayerX" false)
 
         # Workspace 5 - etc
         {
