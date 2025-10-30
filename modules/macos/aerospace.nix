@@ -42,7 +42,7 @@ in
         cmd-alt-h = [ ];
 
         alt-f = "fullscreen";
-        alt-t = "layout floating";
+        alt-t = "layout floating tiling";
 
         alt-h = "focus left";
         alt-j = "focus down";
@@ -66,6 +66,9 @@ in
         alt-8 = "workspace 8";
         alt-9 = "workspace 9";
         alt-0 = "workspace 10";
+
+        alt-shift-z = "reload-config";
+        alt-z = "balance-sizes";
 
         # alt-minus = "resize smart -50";
         # alt-equal = "resize smart +50";

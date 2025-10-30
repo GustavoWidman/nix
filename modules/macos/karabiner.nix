@@ -49,7 +49,7 @@ let
     "w"
     "x"
     "y"
-    "z"
+    # "z"
   ];
   punctuation = [
     "hyphen"
