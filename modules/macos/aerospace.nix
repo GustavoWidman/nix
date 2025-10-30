@@ -19,6 +19,11 @@ let
     "if".app-id = app-id;
     run = [ "layout floating" ];
   };
+  mkFloatTitle = app-title: check-further-callbacks: {
+    inherit check-further-callbacks;
+    "if".window-title-regex-substring = app-title;
+    run = [ "layout floating" ];
+  };
 in
 {
   services.aerospace = enabled {
@@ -77,6 +82,10 @@ in
       };
 
       on-window-detected = [
+        (mkFloatTitle "save" true)
+        (mkFloatTitle "bitwarden" true)
+        (mkFloatTitle "settings" true)
+
         # Workspace 1 - Code
         (mkWorkspaceEntry "dev.zed.Zed" 1 false)
         (mkWorkspaceEntry "dev.zed.Zed-Nightly" 1 false)
