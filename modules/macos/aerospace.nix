@@ -19,9 +19,12 @@ let
     "if".app-id = app-id;
     run = [ "layout floating" ];
   };
-  mkFloatTitle = app-title: check-further-callbacks: {
+  mkFloatTitle = app-id: app-title: check-further-callbacks: {
     inherit check-further-callbacks;
-    "if".window-title-regex-substring = app-title;
+    "if" = {
+      inherit app-id;
+      window-title-regex-substring = app-title;
+    };
     run = [ "layout floating" ];
   };
 in
@@ -82,9 +85,10 @@ in
       };
 
       on-window-detected = [
-        (mkFloatTitle "save" true)
-        (mkFloatTitle "bitwarden" true)
-        (mkFloatTitle "settings" true)
+        (mkFloatTitle "app.zen-browser.zen" "bitwarden" true)
+        (mkFloatTitle "dev.zed.Zed" "settings" true)
+        (mkFloatTitle "dev.zed.Zed-Nightly" "settings" true)
+        (mkFloatTitle "net.whatsapp.WhatsApp" "call" true)
 
         # Workspace 1 - Code
         (mkWorkspaceEntry "dev.zed.Zed" 1 false)
