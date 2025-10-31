@@ -75,6 +75,17 @@ in
         alt-9 = "workspace 9";
         alt-0 = "workspace 10";
 
+        alt-shift-1 = "move-node-to-workspace --focus-follows-window 1";
+        alt-shift-2 = "move-node-to-workspace --focus-follows-window 2";
+        alt-shift-3 = "move-node-to-workspace --focus-follows-window 3";
+        alt-shift-4 = "move-node-to-workspace --focus-follows-window 4";
+        alt-shift-5 = "move-node-to-workspace --focus-follows-window 5";
+        alt-shift-6 = "move-node-to-workspace --focus-follows-window 6";
+        alt-shift-7 = "move-node-to-workspace --focus-follows-window 7";
+        alt-shift-8 = "move-node-to-workspace --focus-follows-window 8";
+        alt-shift-9 = "move-node-to-workspace --focus-follows-window 9";
+        alt-shift-0 = "move-node-to-workspace --focus-follows-window 10";
+
         alt-shift-z = "reload-config";
         alt-z = "balance-sizes";
 
