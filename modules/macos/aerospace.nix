@@ -134,7 +134,6 @@ in
         # Workspace 5 - etc
         {
           run = [
-            # "layout floating"
             "move-node-to-workspace 5"
           ];
         }
