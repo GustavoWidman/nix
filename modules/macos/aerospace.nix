@@ -50,7 +50,6 @@ in
         cmd-alt-h = [ ];
 
         alt-f = "fullscreen";
-        alt-t = "layout floating tiling";
 
         alt-h = "focus left";
         alt-j = "focus down";
