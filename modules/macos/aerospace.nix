@@ -124,6 +124,12 @@ in
         (mkFloat "com.apple.finder" false)
         (mkFloat "com.apple.Preview" false)
         (mkFloat "com.apple.QuickTimePlayerX" false)
+        (mkFloat "com.apple.ScreenContinuity" false)
+        (mkFloat "com.raycast.macos" false)
+        (mkFloat "com.apple.SystemProfiler" false)
+        (mkFloat "com.docker.docker" false)
+        (mkFloat "com.electron.dockerdesktop" false)
+        (mkFloat "com.apple.mobilephone" false)
 
         # Workspace 5 - etc
         {
