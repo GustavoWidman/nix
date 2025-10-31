@@ -101,6 +101,7 @@ in
 
         # Workspace 3 - Browser
         (mkWorkspaceEntry "app.zen-browser.zen" 3 false)
+        (mkWorkspaceEntry "com.apple.Safari" 3 false)
         (mkWorkspaceEntry "com.google.Chrome" 3 false)
 
         # Workspace 4 - Social
