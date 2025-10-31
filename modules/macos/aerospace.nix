@@ -33,9 +33,9 @@ in
     settings = {
       accordion-padding = 160;
       default-root-container-layout = "accordion";
-      # after-startup-command = [
-      #   "layout h_tiles"
-      # ];
+      after-startup-command = [
+        "layout accordion"
+      ];
 
       gaps = {
         inner.horizontal = 8;
