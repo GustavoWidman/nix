@@ -61,7 +61,8 @@ in
         alt-shift-k = "move up";
         alt-shift-l = "move right";
 
-        alt-tab = "focus-back-and-forth";
+        alt-tab = "focus dfs-next --boundaries-action wrap-around-the-workspace";
+        alt-shift-tab = "focus dfs-prev --boundaries-action wrap-around-the-workspace";
 
         alt-1 = "workspace 1";
         alt-2 = "workspace 2";
