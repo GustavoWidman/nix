@@ -131,6 +131,7 @@ in
         (mkFloat "com.docker.docker" false)
         (mkFloat "com.electron.dockerdesktop" false)
         (mkFloat "com.apple.mobilephone" false)
+        (mkFloat "eu.exelban.Stats" false)
         (mkFloat "com.apple.ActivityMonitor" false)
         (mkFloat "com.mojang.minecraftlauncher" false)
 
