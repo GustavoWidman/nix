@@ -100,6 +100,7 @@ in
         (mkFloatTitle "dev.zed.Zed" "settings" true)
         (mkFloatTitle "dev.zed.Zed-Nightly" "settings" true)
         (mkFloatTitle "net.whatsapp.WhatsApp" "call" true)
+        (mkFloatTitle "com.hnc.Discord" "call" true)
 
         # Workspace 1 - Code
         (mkWorkspaceEntry "dev.zed.Zed" 1 false)
