@@ -130,6 +130,7 @@ in
           # retdec #! TODO not compatible with macos
           sqlmap
           terraform
+          testdisk
           tldr
           # -------------------------------------- #
           # wireshark # TODO broken
