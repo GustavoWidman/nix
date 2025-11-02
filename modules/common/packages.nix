@@ -115,6 +115,7 @@ in
           hashcat
           jdk
           john
+          libbde
           lua
           nasm
           nasmfmt
