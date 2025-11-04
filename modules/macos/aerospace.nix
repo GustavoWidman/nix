@@ -180,6 +180,7 @@ in
         (mkFloat "eu.exelban.Stats" false)
         (mkFloat "com.apple.ActivityMonitor" false)
         (mkFloat "com.mojang.minecraftlauncher" false)
+        (mkFloat "com.gather.GatherV2" false)
 
         # Workspace 5 - etc
         {
