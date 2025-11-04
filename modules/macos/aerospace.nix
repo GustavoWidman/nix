@@ -181,6 +181,7 @@ in
         (mkFloat "com.apple.ActivityMonitor" false)
         (mkFloat "com.mojang.minecraftlauncher" false)
         (mkFloat "com.gather.GatherV2" false)
+        (mkFloat "com.apple.calculator" false)
 
         # Workspace 5 - etc
         {
