@@ -69,6 +69,9 @@ in
   "hosts/oracle-2/lynx/db.env.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/lynx/app.env.age".publicKeys = [ oracle-2 ] ++ admins;
 
+  "hosts/oracle-2/mail/sasl_passwd.age".publicKeys = [ oracle-2 ] ++ admins;
+  "hosts/oracle-2/mail/users/admin.age".publicKeys = [ oracle-2 ] ++ admins;
+
   # Oracle-Xray Specific
   "hosts/oracle-xray/password.age".publicKeys = [ oracle-xray ] ++ admins;
   "hosts/oracle-xray/xray/config.json.age".publicKeys = [ oracle-xray ] ++ admins;

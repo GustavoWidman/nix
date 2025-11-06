@@ -76,6 +76,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixos-mailserver = {
+      url = "gitlab:simple-nixos-mailserver/nixos-mailserver/master";
+
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     arion = {
       url = "github:hercules-ci/arion";
       inputs.nixpkgs.follows = "nixpkgs";
