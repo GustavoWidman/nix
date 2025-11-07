@@ -56,7 +56,7 @@
         ];
         depends_on = [ "lynx-db" ];
         networks = [ "lynx" ];
-        ports = [ "26638:3000" ];
+        ports = [ "127.0.0.1:26638:3000" ];
       };
     };
 
