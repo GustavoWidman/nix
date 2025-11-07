@@ -23,6 +23,8 @@ alias fg = job unfreeze
 
 alias multiplex = zellij options --default-shell nu
 
+alias "docker ps" = docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{ if gt (len .Ports) 33 }}{{printf \"%.30s...\" .Ports}}{{ else }}{{ .Ports }}{{ end }}\t{{.Status}}"
+
 alias "submodule pull" = git submodule update --recursive --remote
 def --env devshell [] {
     if ("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env) {
