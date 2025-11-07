@@ -182,6 +182,7 @@ in
         (mkFloat "com.mojang.minecraftlauncher" false)
         (mkFloat "com.gather.GatherV2" false)
         (mkFloat "com.apple.calculator" false)
+        (mkFloat "com.apple.iWork.Pages" false)
 
         # Workspace 5 - etc
         {
