@@ -9,7 +9,7 @@ in
 {
   networking.certificates."${domain}" = {
     enable = true;
-    group = "main-certs"; # no problem in doing this as main-certs already only has "caddy"
+    group = "caddy-certs";
     users = [
       "caddy"
     ];

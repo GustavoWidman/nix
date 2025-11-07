@@ -12,7 +12,7 @@ in
 {
   networking.certificates."gemini.r3dlust.com" = {
     enable = true;
-    group = "gemini-certs";
+    group = "caddy-certs";
     users = [
       "caddy"
     ];

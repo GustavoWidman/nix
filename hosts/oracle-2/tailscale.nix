@@ -32,7 +32,7 @@ in
 
   networking.certificates."tailscale.r3dlust.com" = {
     enable = true;
-    group = "tailscale-certs";
+    group = "caddy-certs";
     users = [
       "caddy"
     ];
