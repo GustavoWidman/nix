@@ -89,8 +89,8 @@
     crane.url = "github:ipetkov/crane";
     rift = {
       # url = "github:acsandmann/rift";
-      url = "github:gustavowidman/rift/fix/app-rules";
-      flake = false;
+      url = "github:gustavowidman/rift/feat/nix-compat";
+      # flake = false;
     };
 
     arion = {
