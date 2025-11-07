@@ -83,12 +83,14 @@ in
               language_servers = [
                 "!nil"
                 "nixd"
+                "discord_presence"
               ];
             };
             "Python" = {
               language_servers = [
                 "ruff"
                 "pyright"
+                "discord_presence"
               ];
               formatter = [
                 {
