@@ -9,7 +9,7 @@ in
     {
       programs.uv = enabled {
         settings = {
-          python-preference = "only-system";
+          python-preference = "system";
         };
       };
     }
