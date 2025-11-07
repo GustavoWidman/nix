@@ -42,8 +42,8 @@ app_rules = [
   { app_id = "com.microsoft.VSCode", workspace = 0 },
 
   # terminal
-  { app_id = "com.mitchellh.ghostty", floating = true, workspace = 1 },
-  { app_id = "com.apple.Terminal", floating = true, workspace = 1 },
+  { app_id = "com.mitchellh.ghostty", workspace = 1 },
+  { app_id = "com.apple.Terminal", workspace = 1 },
 
   # browser
   { app_id = "app.zen-browser.zen", workspace = 2 },
