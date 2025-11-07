@@ -756,11 +756,11 @@
         "zed": "zed_2"
       },
       "locked": {
-        "lastModified": 1762460136,
-        "narHash": "sha256-bvC3Ghy0Nq9FfXWlTctKsiEL2fiIp1DpoFvm+bhsDMY=",
+        "lastModified": 1762551666,
+        "narHash": "sha256-BmQlwBgehwQsh8HxZAQ+YgqOC6tqBOaS8lTQMlw6wkE=",
         "owner": "GustavoWidman",
         "repo": "zed-autobuild",
-        "rev": "039d33535b4303f15bd224473ae1f251e05a6826",
+        "rev": "43f01ae660deeae43e59a39be51c71f1cef93815",
         "type": "github"
       },
       "original": {
@@ -777,16 +777,16 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1762441405,
-        "narHash": "sha256-S2HwfYN+ltCxplgStrCV4xzLlVzUQeXpJm72mpaBY84=",
+        "lastModified": 1762532735,
+        "narHash": "sha256-jQLOIo8eumNejhQCpSnxgPWBfORlw5PnC/n1ZVBPJKU=",
         "owner": "zed-industries",
         "repo": "zed",
-        "rev": "3aeeed0b306120db98dbf773fb033c3cdcf04167",
+        "rev": "c70617c69e7b247efd5fc9f98631e7fa342125e4",
         "type": "github"
       },
       "original": {
         "owner": "zed-industries",
-        "ref": "v0.212.1-pre",
+        "ref": "v0.212.2-pre",
         "repo": "zed",
         "type": "github"
       }
