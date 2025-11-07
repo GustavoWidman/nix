@@ -1,0 +1,109 @@
+[settings]
+hot_reload = true
+animate = false
+
+[settings.layout]
+mode = "traditional"
+
+[settings.layout.gaps.inner]
+horizontal = 8.0
+vertical = 8.0
+
+[settings.layout.gaps.outer]
+top = 4.0
+left = 4.0
+bottom = 4.0
+right = 4.0
+
+[settings.ui.menu_bar]
+enabled = true
+show_empty = false
+
+[settings.layout.stack]
+stack_offset = 40.0
+
+[virtual_workspaces]
+enabled = true
+default_workspace_count = 10
+auto_assign_windows = true
+preserve_focus_per_workspace = true
+default_workspace = 5
+app_rules = [
+  # specific exceptions
+  { app_id = "app.zen-browser.zen", title_substring = "bitwarden", floating = true },
+  { app_id = "dev.zed.Zed", title_substring = "settings", floating = true },
+  { app_id = "dev.zed.Zed-Nightly", title_substring = "settings", floating = true },
+  { app_id = "net.whatsapp.WhatsApp", title_substring = "call", floating = true },
+  { app_id = "com.hnc.Discord", title_substring = "call", floating = true },
+
+  # code
+  { app_id = "dev.zed.Zed", workspace = 0 },
+  { app_id = "dev.zed.Zed-Nightly", workspace = 0 },
+  { app_id = "com.microsoft.VSCode", workspace = 0 },
+
+  # terminal
+  { app_id = "com.mitchellh.ghostty", floating = true, workspace = 1 },
+  { app_id = "com.apple.Terminal", floating = true, workspace = 1 },
+
+  # browser
+  { app_id = "app.zen-browser.zen", workspace = 2 },
+  { app_id = "com.apple.Safari", workspace = 2 },
+  { app_id = "com.google.Chrome", workspace = 2 },
+
+  # social
+  { app_id = "com.hnc.Discord", workspace = 3 },
+  { app_id = "net.whatsapp.WhatsApp", workspace = 3 },
+
+  # system/utils
+  { app_id = "com.apple.systempreferences", floating = true },
+  { app_id = "com.apple.SecurityAgent", floating = true },
+  { app_id = "com.apple.finder", floating = true },
+  { app_id = "com.apple.Preview", floating = true },
+  { app_id = "com.apple.QuickTimePlayerX", floating = true },
+  { app_id = "com.apple.ScreenContinuity", floating = true },
+  { app_id = "com.raycast.macos", floating = true },
+  { app_id = "com.apple.SystemProfiler", floating = true },
+  { app_id = "com.docker.docker", floating = true },
+  { app_id = "com.electron.dockerdesktop", floating = true },
+  { app_id = "com.apple.mobilephone", floating = true },
+  { app_id = "eu.exelban.Stats", floating = true },
+  { app_id = "com.apple.ActivityMonitor", floating = true },
+  { app_id = "com.mojang.minecraftlauncher", floating = true },
+  { app_id = "com.gather.GatherV2", floating = true },
+  { app_id = "com.apple.calculator", floating = true },
+]
+
+[keys]
+"Alt + Z" = "toggle_space_activated"
+
+"Alt + 1" = { switch_to_workspace = 0 }
+"Alt + 2" = { switch_to_workspace = 1 }
+"Alt + 3" = { switch_to_workspace = 2 }
+"Alt + 4" = { switch_to_workspace = 3 }
+"Alt + 5" = { switch_to_workspace = 4 }
+"Alt + 6" = { switch_to_workspace = 5 }
+"Alt + 7" = { switch_to_workspace = 6 }
+"Alt + 8" = { switch_to_workspace = 7 }
+"Alt + 9" = { switch_to_workspace = 8 }
+"Alt + 0" = { switch_to_workspace = 9 }
+
+"Alt + H" = { move_focus = "left" }
+"Alt + J" = { move_focus = "down" }
+"Alt + K" = { move_focus = "up" }
+"Alt + L" = { move_focus = "right" }
+
+"Alt + Shift + H" = { move_node = "left" }
+"Alt + Shift + J" = { move_node = "down" }
+"Alt + Shift + K" = { move_node = "up" }
+"Alt + Shift + L" = { move_node = "right" }
+
+"Alt + Shift + 1" = { move_window_to_workspace = 0 }
+"Alt + Shift + 2" = { move_window_to_workspace = 1 }
+"Alt + Shift + 3" = { move_window_to_workspace = 2 }
+"Alt + Shift + 4" = { move_window_to_workspace = 3 }
+"Alt + Shift + 5" = { move_window_to_workspace = 4 }
+"Alt + Shift + 6" = { move_window_to_workspace = 5 }
+"Alt + Shift + 7" = { move_window_to_workspace = 6 }
+"Alt + Shift + 8" = { move_window_to_workspace = 7 }
+"Alt + Shift + 9" = { move_window_to_workspace = 8 }
+"Alt + Shift + 0" = { move_window_to_workspace = 9 }
