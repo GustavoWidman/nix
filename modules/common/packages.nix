@@ -28,6 +28,7 @@ in
           eza
           fastfetch
           file
+          ffmpeg
           fzf
           gawk
           gcc
