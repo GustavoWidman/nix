@@ -64,6 +64,7 @@ in
   "hosts/oracle-2/dailybot/creds.json.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/juggler/config.toml.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/adguard/config.yaml.age".publicKeys = [ oracle-2 ] ++ admins;
+  "hosts/oracle-2/realms/whitelist.json.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/password.age".publicKeys = [ oracle-2 ] ++ admins;
 
   "hosts/oracle-2/lynx/db.env.age".publicKeys = [ oracle-2 ] ++ admins;
