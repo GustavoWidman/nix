@@ -156,6 +156,7 @@ in
               small_image = "{base_icons_url}/zed.png";
               small_text = "Zed";
               git_integration = false;
+              idle.timeout = 0;
             };
             vscode-html-language-server = {
               binary = {
