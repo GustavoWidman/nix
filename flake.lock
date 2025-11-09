@@ -616,11 +616,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1762541240,
-        "narHash": "sha256-XogpZwIOYSix+X+JlZ08Qd7Ja1sPO1ZEEAQKM3zCl/k=",
+        "lastModified": 1762636076,
+        "narHash": "sha256-IY86Cgjx9AkpVU7fMLB1cOEPaKhAF6HP6l/l5bfa8mM=",
         "owner": "gustavowidman",
         "repo": "rift",
-        "rev": "298f283a54d42d6d05bde61e7e32015c39e958ee",
+        "rev": "7f2dfe675d6b9657020e524900972117dc36ca71",
         "type": "github"
       },
       "original": {
