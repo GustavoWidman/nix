@@ -51,6 +51,9 @@ in
     keyFile = config.networking.certificates."mail.r3dlust.com".paths.key;
 
     openFirewall = true;
+
+    rejectRecipients = [ ];
+    rejectSender = [ ];
   };
 
   systemd.services.dovecot = {
@@ -68,30 +71,10 @@ in
   };
 
   services.postfix = {
-    mapFiles = mkForce {
-      sasl_passwd = config.secrets.mail-sasl-passwd.path;
-      valias = config.secrets.mail-postfix.path;
-      vaccounts = config.secrets.mail-postfix.path;
-      virtual = config.secrets.mail-postfix.path;
-      denied_recipient = pkgs.writeText "denied_recipient" "";
-      reject_senders = pkgs.writeText "reject_senders" "";
-      reject_recipient = pkgs.writeText "reject_recipient" "";
-    };
-
-    submissionOptions = mkForce {
-      smtpd_tls_security_level = "encrypt";
-      smtpd_sasl_auth_enable = "yes";
-      smtpd_sasl_type = "dovecot";
-      smtpd_sasl_path = "/run/dovecot2/auth";
-      smtpd_sasl_security_options = "noanonymous";
-      smtpd_sasl_local_domain = "$myhostname";
-      smtpd_client_restrictions = "permit_sasl_authenticated,reject";
-      smtpd_sender_login_maps = "hash:/etc/postfix/vaccounts";
-      smtpd_sender_restrictions = "reject_sender_login_mismatch";
-      smtpd_recipient_restrictions = "reject_non_fqdn_recipient,reject_unknown_recipient_domain,permit_sasl_authenticated,reject";
-      cleanup_service_name = "submission-header-cleanup";
-    };
-    submissionsOptions = mkForce (config.services.postfix.submissionOptions);
+    mapFiles.sasl_passwd = mkForce config.secrets.mail-sasl-passwd.path;
+    mapFiles.valias = mkForce config.secrets.mail-postfix.path;
+    mapFiles.vaccounts = mkForce config.secrets.mail-postfix.path;
+    mapFiles.virtual = mkForce config.secrets.mail-postfix.path;
 
     settings.main = {
       smtp_sasl_auth_enable = true;
@@ -101,10 +84,6 @@ in
       smtp_sasl_mechanism_filter = "AUTH LOGIN";
       smtp_tls_security_level = mkForce "encrypt";
       relayhost = [ "[smtp-relay.brevo.com]:587" ];
-
-      virtual_alias_maps = mkForce "hash:/etc/postfix/virtual";
-      virtual_mailbox_maps = mkForce "hash:/etc/postfix/valias";
-
       header_size_limit = mkForce 1048576;
       message_size_limit = mkForce 19922944;
     };
