@@ -74,6 +74,8 @@ in
   "hosts/oracle-2/mail/dovecot.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/mail/postfix.age".publicKeys = [ oracle-2 ] ++ admins;
 
+  "hosts/oracle-2/pinger/config.toml.age".publicKeys = [ oracle-2 ] ++ admins;
+
   # Oracle-Xray Specific
   "hosts/oracle-xray/password.age".publicKeys = [ oracle-xray ] ++ admins;
   "hosts/oracle-xray/xray/config.json.age".publicKeys = [ oracle-xray ] ++ admins;

@@ -99,6 +99,7 @@
     };
 
     zed.url = "github:GustavoWidman/zed-autobuild";
+    kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
   };
 
   outputs =
