@@ -10,5 +10,6 @@
     openssl.dev
     openssl.out
     freetds
+    llvmPackages.libcxx
   ];
 }
