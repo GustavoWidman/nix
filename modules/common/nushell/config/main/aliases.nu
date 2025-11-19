@@ -154,3 +154,30 @@ def --env mcg [path: path]: nothing -> nothing {
     cd $path
     jj git init --colocate
 }
+
+def --env source-bash [
+    script_path: string  # Path to the bash script to source
+] {
+    let script_dir = ($script_path | path dirname)
+    let script_name = ($script_path | path basename)
+
+    let env_out = ^bash -c $"
+        cd '($script_dir)'
+        env
+        echo '<ENV_CAPTURE_EVAL_FENCE>'
+        source ./($script_name)
+        echo '<ENV_CAPTURE_EVAL_FENCE>'
+        env -0"
+    | split row '<ENV_CAPTURE_EVAL_FENCE>'
+    | {
+        before: ($in | first | str trim | lines)
+        after: ($in | last | str trim | split row (char --integer 0))
+    }
+
+    $env_out.after
+    | where { |line| $line not-in $env_out.before }
+    | parse "{key}={value}"
+    | transpose --header-row --as-record
+    | if $in == [] { {} } else { $in }
+    | load-env
+}
