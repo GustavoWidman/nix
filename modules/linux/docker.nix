@@ -1,5 +1,11 @@
-{ ... }:
-
+{ lib, ... }:
+let
+  inherit (lib)
+    enabled
+    ;
+in
 {
-  virtualisation.docker.enable = true;
+  virtualisation.docker = enabled {
+    autoPrune.enable = true;
+  };
 }
