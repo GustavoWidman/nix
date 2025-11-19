@@ -41,7 +41,12 @@ in
           time.timeZone = "America/Sao_Paulo";
           system.stateVersion = "25.05";
 
-          tailscale.exit-node = true;
+          tailscale = {
+            exit-node = true;
+            advertise-routes = [
+              "2000::/3" # our little ipv6 guy :)
+            ];
+          };
         }
       );
   };
