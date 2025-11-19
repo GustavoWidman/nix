@@ -70,6 +70,10 @@ in
           # devenv
           ".devenv"
 
+          # Claude
+          ".claude/"
+          "CLAUDE.md"
+
           # IDEs
           ".vscode/"
           ".idea/"
