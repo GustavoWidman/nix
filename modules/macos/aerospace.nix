@@ -20,6 +20,11 @@ let
     "if".app-id = app-id;
     run = [ "layout floating" ];
   };
+  mkFloatName = app-name: check-further-callbacks: {
+    inherit check-further-callbacks;
+    "if".app-name-regex-substring = app-name;
+    run = [ "layout floating" ];
+  };
   mkFloatTitle = app-id: app-title: check-further-callbacks: {
     inherit check-further-callbacks;
     "if" = {
