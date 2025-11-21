@@ -188,6 +188,7 @@ in
         (mkFloat "com.gather.GatherV2" false)
         (mkFloat "com.apple.calculator" false)
         (mkFloat "com.apple.iWork.Pages" false)
+        (mkFloatName "python" false)
 
         # Workspace 5 - etc
         {
