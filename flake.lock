@@ -535,11 +535,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1763341298,
-        "narHash": "sha256-uxWanw7hPULsKB4EeFcwaCg3amrgiUtDyXhiCYSOyxo=",
+        "lastModified": 1764014786,
+        "narHash": "sha256-itMYnVjqZCWgd9duhTdCmMcK0JxJwgCFDrruJ8PI6zc=",
         "owner": "GustavoWidman",
         "repo": "kemono-pinger",
-        "rev": "9dc1a22a2540ba3eb7e6ca9fbd52b18d8d4eadec",
+        "rev": "f5df8d5810b28696938132314b803174df296933",
         "type": "github"
       },
       "original": {
