@@ -71,11 +71,6 @@
       flake = false;
     };
 
-    gemini-juggler = {
-      url = "github:GustavoWidman/gemini-juggler";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nixos-mailserver = {
       url = "gitlab:simple-nixos-mailserver/nixos-mailserver/master";
 
@@ -99,6 +94,7 @@
     };
 
     zed.url = "github:GustavoWidman/zed-autobuild";
+    gemini-juggler.url = "github:GustavoWidman/gemini-juggler";
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
   };
 
