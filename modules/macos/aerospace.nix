@@ -81,6 +81,13 @@ let
 in
 {
   services.aerospace = enabled {
+    package = pkgs.aerospace.overrideAttrs (oldAttrs: {
+      version = "0.20.0-Beta";
+      src = pkgs.fetchzip {
+        url = "https://github.com/nikitabobko/AeroSpace/releases/download/v0.20.0-Beta/AeroSpace-v0.20.0-Beta.zip";
+        sha256 = "sha256-bPcVgTPvskit0/LeqmWoOOnlwwyzPoa48P8Vooaqlig=";
+      };
+    });
     settings = {
       accordion-padding = 160;
       default-root-container-layout = "accordion";
