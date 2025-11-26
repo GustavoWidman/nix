@@ -96,6 +96,7 @@
     zed.url = "github:GustavoWidman/zed-autobuild";
     gemini-juggler.url = "github:GustavoWidman/gemini-juggler";
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
+    portfolio.url = "github:GustavoWidman/portfolio";
   };
 
   outputs =
