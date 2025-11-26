@@ -146,6 +146,13 @@ in
                     readOnly = true;
                     description = "Path to full certificate (cert + key)";
                   };
+
+                  caddy = mkOption {
+                    type = str;
+                    default = "tls /var/lib/acme/${name}/cert.pem /var/lib/acme/${name}/key.pem";
+                    readOnly = true;
+                    description = "Pre-formatted Caddy TLS directive";
+                  };
                 };
               };
               default = { };
