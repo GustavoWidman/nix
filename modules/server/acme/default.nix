@@ -68,6 +68,12 @@ in
               description = "Whether to include wildcard certificate (*.domain.com)";
             };
 
+            extraDomainNames = mkOption {
+              type = listOf str;
+              default = [ ];
+              description = "Additional domain names to include in the certificate.";
+            };
+
             dnsProvider = mkOption {
               type = str;
               default = "cloudflare";
@@ -182,8 +188,9 @@ in
             dnsResolver = certCfg.dnsResolver;
             group = certCfg.group;
             postRun = certCfg.postRun;
-            extraDomainNames = [ certCfg.wildcard ] |> filter id |> map (_: "*.${domain}");
             reloadServices = certCfg.reloadServices;
+            extraDomainNames =
+              ([ certCfg.wildcard ] |> filter id |> map (_: "*.${domain}")) ++ certCfg.extraDomainNames;
           }
         );
     };
