@@ -139,6 +139,13 @@ in
                     readOnly = true;
                     description = "Path to full certificate chain";
                   };
+
+                  full = mkOption {
+                    type = str;
+                    default = "/var/lib/acme/${name}/full.pem";
+                    readOnly = true;
+                    description = "Path to full certificate (cert + key)";
+                  };
                 };
               };
               default = { };
