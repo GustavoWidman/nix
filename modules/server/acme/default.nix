@@ -104,6 +104,12 @@ in
               description = "Commands to run after certificate renewal";
             };
 
+            reloadServices = mkOption {
+              type = listOf str;
+              default = [ ];
+              description = "The list of systemd services to call `systemctl try-reload-or-restart` on.";
+            };
+
             paths = mkOption {
               type = submodule {
                 options = {
@@ -177,6 +183,7 @@ in
             group = certCfg.group;
             postRun = certCfg.postRun;
             extraDomainNames = [ certCfg.wildcard ] |> filter id |> map (_: "*.${domain}");
+            reloadServices = certCfg.reloadServices;
           }
         );
     };
