@@ -146,6 +146,9 @@ in
           ;
       }
       // optionalAttrs config.isDesktop {
+        inherit (pkgs)
+          pandoc
+          ;
         inherit (pkgs.texlive.combined)
           scheme-full
           ;
