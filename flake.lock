@@ -861,11 +861,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1764379933,
-        "narHash": "sha256-3Ilf1ARJnl2k2j3+yIhmpkjeDhDvlB5V2/2QE0M0Hc0=",
+        "lastModified": 1764553436,
+        "narHash": "sha256-KRtWAj5wnCRv49TNy2I1V6idu9UHt24x/0IdoYIpnRs=",
         "owner": "GustavoWidman",
         "repo": "portfolio",
-        "rev": "c72df5ec800b2e1a7c7473ae174d492f0fa18fdd",
+        "rev": "1194e8fe915186a4866a7b2f94d60fc3d16dc399",
         "type": "github"
       },
       "original": {
