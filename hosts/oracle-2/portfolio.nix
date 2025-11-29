@@ -6,29 +6,24 @@
 }:
 
 let
-  inherit (lib)
-    genAttrs
-    ;
-in
-{
-  networking.certificates."r3dlust.com" = {
+  inherit (lib) genAttrs concatMap;
+
+  domains = [
+    "guswid.com"
+    "r3dlust.com"
+  ];
+
+  mkCertConfig = domain: {
     enable = true;
     group = "caddy-certs";
-    extraDomainNames = [
-      "www.r3dlust.com"
-    ];
-    users = [
-      "caddy"
-    ];
-
-    reloadServices = [
-      "caddy.service"
-    ];
+    extraDomainNames = [ "www.${domain}" ];
+    users = [ "caddy" ];
+    reloadServices = [ "caddy.service" ];
   };
 
-  services.caddy.virtualHosts = genAttrs [ "www.r3dlust.com" "r3dlust.com" ] (_: {
+  mkVhostConfig = domain: {
     extraConfig = ''
-      ${config.networking.certificates."r3dlust.com".paths.caddy}
+      ${config.networking.certificates."${domain}".paths.caddy}
 
       handle {
         root * ${portfolio.packages.${config.metadata.architecture}.default}
@@ -41,13 +36,11 @@ in
           Referrer-Policy strict-origin-when-cross-origin
         }
 
-        # Cache static assets
         @static {
           path *.js *.css *.woff *.woff2 *.ttf *.otf *.png *.jpg *.jpeg *.gif *.svg *.ico
         }
         header @static Cache-Control "public, max-age=31536000, immutable"
 
-        # Don't cache HTML files
         @html {
           path *.html /
         }
@@ -56,5 +49,23 @@ in
         file_server
       }
     '';
-  });
+  };
+
+in
+{
+  networking.certificates = genAttrs domains mkCertConfig;
+
+  services.caddy.virtualHosts =
+    genAttrs
+      (concatMap (d: [
+        d
+        "www.${d}"
+      ]) domains)
+      (
+        host:
+        let
+          domain = if lib.hasPrefix "www." host then lib.removePrefix "www." host else host;
+        in
+        mkVhostConfig domain
+      );
 }
