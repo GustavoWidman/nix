@@ -144,5 +144,10 @@ in
         inherit (pkgs.llvmPackages)
           llvm
           ;
+      }
+      // optionalAttrs config.isDesktop {
+        inherit (pkgs.texlive.combined)
+          scheme-full
+          ;
       };
 }
