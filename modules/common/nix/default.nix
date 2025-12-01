@@ -1,4 +1,5 @@
 {
+  determinate,
   self,
   config,
   inputs,
@@ -10,28 +11,50 @@ let
   inherit (lib)
     concatStringsSep
     const
-    disabled
     filterAttrs
     flip
+    mkIf
     length
     id
     isType
+    isList
+    isBool
     mapAttrs
     mapAttrsToList
-    merge
-    optionalAttrs
+    mergeAttrs
     optionals
     attrsToList
     filter
+    mkForce
     ;
 
   registryMap = inputs |> filterAttrs (const <| isType "flake");
-in
-{
-  nix.enable = true;
 
-  nix.distributedBuilds = true;
-  nix.buildMachines =
+  nixSettings = (
+    ((import (self + /flake.nix)).nixConfig or { })
+    |> flip removeAttrs (optionals config.isDarwin [ "use-cgroups" ])
+    |> mergeAttrs {
+      "extra-experimental-features" = [
+        "nix-command"
+        "flakes"
+      ];
+      "builders-use-substitutes" = true;
+    }
+    |> mapAttrs (
+      name: value:
+      if isList value then
+        concatStringsSep " " value
+      else if isBool value then
+        (if value then "true" else "false")
+      else
+        toString value
+    )
+    |> filterAttrs (name: value: value != "")
+    |> mapAttrsToList (name: value: "${name} = ${value}")
+    |> concatStringsSep "\n"
+  );
+
+  machinesList =
     self.machineMetadata
     |> attrsToList
     |> filter (
@@ -39,21 +62,51 @@ in
     )
     |> map (
       { name, value }:
-      {
-        hostName = name;
-        maxJobs = 20;
-        protocol = "ssh-ng";
-        sshUser = "build";
-        sshKey = config.secrets.ssh-misc-build.path;
-        supportedFeatures = [
+      let
+        systems = concatStringsSep "," value.build-architectures;
+        key = config.secrets.ssh-misc-build.path;
+        features = concatStringsSep "," [
           "benchmark"
           "big-parallel"
           "kvm"
           "nixos-test"
         ];
-        systems = value.build-architectures;
-      }
+      in
+      "ssh-ng://build@${name} ${systems} ${key} 20 1 ${features} - -"
     );
+
+  nixPathStr =
+    registryMap
+    |> mapAttrsToList (name: value: "${name}=${value}")
+    |> (if config.isDarwin then concatStringsSep ":" else id);
+
+  nixFileName = if config.isDarwin then "nix.custom.conf" else "nix.extra.conf";
+in
+{
+  nix.enable = config.isLinux;
+
+  environment.variables.NIX_PATH = mkForce nixPathStr;
+
+  secrets.github-token-nix-conf = {
+    file = ./github-token-nix-conf.age;
+    mode = "444";
+    owner = "root";
+  };
+
+  environment.etc.${nixFileName}.text = ''
+    # Managed by nix-darwin (Manual Shim)
+
+    ${nixSettings}
+
+    !include ${config.secrets.github-token-nix-conf.path}
+
+    auto-optimise-store = true
+  '';
+
+  environment.etc."nix/machines".text = concatStringsSep "\n" machinesList;
+
+  nix.registry =
+    registryMap // { default = inputs.nixpkgs; } |> mapAttrs (_: flake: { inherit flake; });
 
   environment.systemPackages =
     with pkgs;
@@ -65,49 +118,10 @@ in
       nixfmt-rfc-style
     ]
     ++ lib.lists.optionals config.isDev [
-      # (nil.override {
-      #   nix = inputs.nixpkgs.legacyPackages.${system}.nix;
-      # })
       nixd
     ];
 
-  nix.channel = disabled;
-
-  nix.gc =
-    merge {
-      automatic = true;
-      options = "--delete-older-than 3d";
-    }
-    <| optionalAttrs config.isLinux {
-      dates = "weekly";
-      persistent = true;
-    };
-
-  nix.nixPath =
-    registryMap
-    |> mapAttrsToList (name: value: "${name}=${value}")
-    |> (if config.isDarwin then concatStringsSep ":" else id);
-
-  nix.registry =
-    registryMap // { default = inputs.nixpkgs; } |> mapAttrs (_: flake: { inherit flake; });
-
-  nix.settings =
-    (import <| self + /flake.nix).nixConfig
-    |> flip removeAttrs (
-      optionals config.isDarwin [
-        "use-cgroups"
-      ]
-    );
-
-  secrets.github-token-nix-conf = {
-    file = ./github-token-nix-conf.age;
-    mode = "444";
-    owner = "root";
-  };
-
-  nix.extraOptions = ''
-    !include ${config.secrets.github-token-nix-conf.path}
+  nix.extraOptions = mkIf config.isLinux ''
+    !include ${nixFileName}
   '';
-
-  nix.optimise.automatic = true;
 }

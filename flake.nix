@@ -7,9 +7,11 @@
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
       "https://r3dlust.cachix.org"
+      "https://install.determinate.systems"
     ];
 
     extra-trusted-public-keys = [
+      "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
@@ -28,6 +30,7 @@
     flake-registry = "";
     http-connections = 50;
     max-substitution-jobs = 50;
+    eval-cores = 0;
     show-trace = true;
     trusted-users = [
       "root"
@@ -43,6 +46,8 @@
     self.submodules = true;
 
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
 
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
@@ -85,7 +90,6 @@
     rift = {
       # url = "github:acsandmann/rift";
       url = "github:gustavowidman/rift/feat/nix-compat";
-      # flake = false;
     };
 
     arion = {
