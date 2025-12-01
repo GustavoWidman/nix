@@ -50,6 +50,14 @@ in
           time.timeZone = "America/Sao_Paulo";
           system.stateVersion = "25.05";
 
+          networking.firewall = {
+            allowedTCPPorts = [
+              80
+              443
+            ];
+            allowedUDPPorts = [ 443 ];
+          };
+
           tailscale.exit-node = true;
         }
       );
