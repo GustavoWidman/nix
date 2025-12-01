@@ -11,25 +11,43 @@ let
     removePrefix
     removeSuffix
     replaceStrings
+    mapAttrsToList
     hasSuffix
     ;
   inherit (lib.filesystem)
     listFilesRecursive
     ;
 
-  mkSshSecret = ageFile: {
+  sshAgeFiles = listFilesRecursive ./ssh |> filter (p: hasSuffix ".age" (toString p));
+
+  hmUsers =
+    config.home-manager.users
+    |> mapAttrsToList (
+      userName: userConfig: {
+        name = userName;
+        home = userConfig.home.homeDirectory;
+      }
+    );
+
+  mkSystemSshSecret = ageFile: user: {
     name =
-      ageFile
-      |> toString
-      |> removePrefix "${toString ./ssh}/"
-      |> removeSuffix ".age"
-      |> replaceStrings [ "/" ] [ "-" ]
-      |> (name: "ssh-${name}");
+      let
+        baseName =
+          ageFile
+          |> toString
+          |> removePrefix "${toString ./ssh}/"
+          |> removeSuffix ".age"
+          |> replaceStrings [ "/" ] [ "-" ];
+      in
+      if user.name == config.mainUser then
+        "ssh-${baseName}" # Original name for compatibility
+      else
+        "ssh-${user.name}-${baseName}";
 
     value = {
       file = ageFile;
-      path = "${config.homeDir}/.ssh/${removeSuffix ".age" (removePrefix "${toString ./ssh}/" (toString ageFile))}";
-      owner = config.mainUser;
+      path = "${user.home}/.ssh/${removeSuffix ".age" (removePrefix "${toString ./ssh}/" (toString ageFile))}";
+      owner = user.name;
       mode = "0400";
       symlink = true;
     };
@@ -38,50 +56,61 @@ let
   controlPath = "~/.ssh/control";
 in
 {
-  secrets = (
-    listFilesRecursive ./ssh
-    |> filter (p: hasSuffix ".age" (toString p))
-    |> map mkSshSecret
-    |> listToAttrs
-  );
+  secrets =
+    sshAgeFiles
+    |> map (ageFile: map (user: mkSystemSshSecret ageFile user) hmUsers)
+    |> lib.flatten
+    |> listToAttrs;
 
   home-manager.sharedModules = [
-    {
-      home.activation.createControlPath = {
-        after = [ "writeBoundary" ];
-        before = [ ];
-        data = "mkdir --parents ${controlPath}";
-      };
+    (
+      { config, ... }:
+      {
+        home.activation.createControlPath = {
+          after = [ "writeBoundary" ];
+          before = [ ];
+          data = "mkdir --parents ${controlPath}";
+        };
 
-      programs.ssh = enabled {
-        enableDefaultConfig = false;
+        programs.ssh = enabled {
+          enableDefaultConfig = false;
 
-        includes =
-          config.secrets
-          |> builtins.attrNames
-          |> builtins.filter (name: lib.hasPrefix "ssh" name && lib.hasSuffix "config" name)
-          |> map (name: config.secrets.${name}.path);
+          includes =
+            let
+              sshConfigFiles =
+                sshAgeFiles
+                |> filter (p: hasSuffix "config.age" (toString p))
+                |> map (
+                  p:
+                  let
+                    relativePath = removeSuffix ".age" (removePrefix "${toString ./ssh}/" (toString p));
+                  in
+                  "${config.home.homeDirectory}/.ssh/${relativePath}"
+                );
+            in
+            sshConfigFiles;
 
-        matchBlocks = {
-          "*" = {
-            setEnv.COLORTERM = "truecolor";
-            setEnv.TERM = "xterm-256color";
+          matchBlocks = {
+            "*" = {
+              setEnv.COLORTERM = "truecolor";
+              setEnv.TERM = "xterm-256color";
 
-            forwardAgent = false;
-            compression = false;
-            addKeysToAgent = "no";
-            userKnownHostsFile = "~/.ssh/known_hosts";
-            hashKnownHosts = false;
+              forwardAgent = false;
+              compression = false;
+              addKeysToAgent = "no";
+              userKnownHostsFile = "~/.ssh/known_hosts";
+              hashKnownHosts = false;
 
-            controlMaster = "auto";
-            controlPath = "${controlPath}/%r@%n:%p";
-            controlPersist = "60m";
+              controlMaster = "auto";
+              controlPath = "${controlPath}/%r@%n:%p";
+              controlPersist = "60m";
 
-            serverAliveCountMax = 2;
-            serverAliveInterval = 60;
+              serverAliveCountMax = 2;
+              serverAliveInterval = 60;
+            };
           };
         };
-      };
-    }
+      }
+    )
   ];
 }
