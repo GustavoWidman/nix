@@ -1,127 +1,124 @@
 {
-  determinate,
-  self,
   config,
-  inputs,
   lib,
-  pkgs,
   ...
 }:
 let
   inherit (lib)
-    concatStringsSep
-    const
-    filterAttrs
-    flip
+    types
     mkIf
-    length
-    id
-    isType
-    isList
-    isBool
-    mapAttrs
-    mapAttrsToList
-    mergeAttrs
-    optionals
-    attrsToList
-    filter
-    mkForce
     ;
 
-  registryMap = inputs |> filterAttrs (const <| isType "flake");
-
-  nixSettings = (
-    ((import (self + /flake.nix)).nixConfig or { })
-    |> flip removeAttrs (optionals config.isDarwin [ "use-cgroups" ])
-    |> mergeAttrs {
-      "extra-experimental-features" = [
-        "nix-command"
-        "flakes"
-      ];
-      "builders-use-substitutes" = true;
-    }
-    |> mapAttrs (
-      name: value:
-      if isList value then
-        concatStringsSep " " value
-      else if isBool value then
-        (if value then "true" else "false")
-      else
-        toString value
-    )
-    |> filterAttrs (name: value: value != "")
-    |> mapAttrsToList (name: value: "${name} = ${value}")
-    |> concatStringsSep "\n"
-  );
-
-  machinesList =
-    self.machineMetadata
-    |> attrsToList
-    |> filter (
-      { name, value }: (name != config.networking.hostName) && (length value.build-architectures > 0)
-    )
-    |> map (
-      { name, value }:
-      let
-        systems = concatStringsSep "," value.build-architectures;
-        key = config.secrets.ssh-misc-build.path;
-        features = concatStringsSep "," [
-          "benchmark"
-          "big-parallel"
-          "kvm"
-          "nixos-test"
-        ];
-      in
-      "ssh-ng://build@${name} ${systems} ${key} 20 1 ${features} - -"
-    );
-
-  nixPathStr =
-    registryMap
-    |> mapAttrsToList (name: value: "${name}=${value}")
-    |> (if config.isDarwin then concatStringsSep ":" else id);
-
   nixFileName = if config.isDarwin then "nix.custom.conf" else "nix.extra.conf";
+
+  mkValueString =
+    v:
+    if v == null then
+      ""
+    else if builtins.isBool v then
+      lib.boolToString v
+    else if builtins.isInt v then
+      builtins.toString v
+    else if builtins.isFloat v then
+      lib.strings.floatToString v
+    # Convert lists of strings like `["foo" "bar"]` into space-separated strings like `foo bar`
+    else if builtins.isList v then
+      let
+        ensureStrings =
+          ls:
+          lib.forEach ls (
+            item:
+            if builtins.isString item then
+              item
+            else
+              throw "Expected all list items to be strings but got ${builtins.typeOf item} instead"
+          );
+      in
+      lib.concatStringsSep " " (ensureStrings v)
+    else if lib.isDerivation v then
+      builtins.toString v
+    else if builtins.isPath v then
+      builtins.toString v
+    else if builtins.isAttrs v then
+      builtins.toJSON v
+    else if builtins.isString v then
+      v
+    else if lib.strings.isCoercibleToString v then
+      builtins.toString v
+    else
+      abort "The Nix configuration value ${lib.generators.toPretty { } v} can't be encoded";
+
+  mkKeyValue = k: v: "${lib.escape [ "=" ] k} = ${mkValueString v}";
+  mkCustomConfig = attrs: lib.mapAttrsToList mkKeyValue attrs;
+
+  semanticConfType =
+    with types;
+    let
+      confAtom =
+        nullOr (oneOf [
+          bool
+          int
+          float
+          str
+          path
+          package
+        ])
+        // {
+          description = "Nix configuration atom (null, Boolean, integer, float, list, derivation, path, attribute set)";
+        };
+    in
+    attrsOf (either confAtom (listOf confAtom));
 in
 {
-  nix.enable = config.isLinux;
+  options.nix-settings = lib.mkOption {
+    type = types.submodule {
+      options = {
+        includes = lib.mkOption {
+          type = types.listOf types.str;
+          default = [ ];
+          description = "List of configuration files to include using !include directives";
+        };
 
-  environment.variables.NIX_PATH = mkForce nixPathStr;
+        extraLines = lib.mkOption {
+          type = types.lines;
+          default = "";
+          description = "Extra lines to add to the Nix configuration file";
+        };
+      };
 
-  secrets.github-token-nix-conf = {
-    file = ./github-token-nix-conf.age;
-    mode = "444";
-    owner = "root";
+      freeformType = semanticConfType;
+    };
+    default = { };
   };
 
-  environment.etc.${nixFileName}.text = ''
-    # Managed by nix-darwin (Manual Shim)
+  config = {
+    nix.enable = config.isLinux;
 
-    ${nixSettings}
+    environment.etc."nix/${nixFileName}".text =
+      let
+        settingsAttrs = builtins.removeAttrs config.nix-settings [
+          "includes"
+          "extraLines"
+        ];
 
-    !include ${config.secrets.github-token-nix-conf.path}
+        includeLines = map (path: "!include ${path}") config.nix-settings.includes;
 
-    auto-optimise-store = true
-  '';
+        extraLinesList = lib.optionals (config.nix-settings.extraLines != "") (
+          lib.splitString "\n" config.nix-settings.extraLines
+        );
+      in
+      lib.concatStringsSep "\n" (
+        [
+          "# Managed by nix-darwin (Manual Shim)"
+          ""
+        ]
+        ++ mkCustomConfig settingsAttrs
+        ++ includeLines
+        ++ extraLinesList
+      );
 
-  environment.etc."nix/machines".text = concatStringsSep "\n" machinesList;
-
-  nix.registry =
-    registryMap // { default = inputs.nixpkgs; } |> mapAttrs (_: flake: { inherit flake; });
-
-  environment.systemPackages =
-    with pkgs;
-    [
-      deploy-rs
-      nh
-      nix-index
-      nix-output-monitor
-      nixfmt-rfc-style
-    ]
-    ++ lib.lists.optionals config.isDev [
-      nixd
-    ];
-
-  nix.extraOptions = mkIf config.isLinux ''
-    !include ${nixFileName}
-  '';
+    nix.extraOptions = mkIf config.isLinux ''
+      !include ${nixFileName}
+    '';
+  };
 }
