@@ -15,11 +15,13 @@ let
     mkForce
     isType
     const
+    mkIf
     flip
     id
     ;
 
   registry = inputs |> filterAttrs (const <| isType "flake");
+
   settings =
     (import <| self + /flake.nix).nixConfig
     |> flip removeAttrs (
@@ -45,5 +47,25 @@ in
 
   nix-settings = settings // {
     includes = [ config.secrets.github-token-nix-conf.path ];
+  };
+
+  environment.etc."nix/registry.json" = mkIf config.isDarwin {
+    text = builtins.toJSON {
+      version = 2;
+      flakes =
+        registry // { default = inputs.nixpkgs; }
+        |> mapAttrsToList (
+          name: input: {
+            from = {
+              type = "indirect";
+              id = name;
+            };
+            to = {
+              type = "path";
+              path = input.outPath;
+            };
+          }
+        );
+    };
   };
 }
