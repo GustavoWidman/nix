@@ -11,14 +11,7 @@ let
   };
 in
 {
-  inputs = parent // {
-    dailybot = parent.lib.fetchGitFlake {
-      owner = "camelsec";
-      repo = "dailybot";
-      ssh = true;
-      rev = "2003410db12cf585577b6e42c663c0d403910a24";
-    };
-  };
+  inputs = parent;
 
   outputs = {
     inherit metadata;
