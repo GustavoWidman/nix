@@ -125,6 +125,7 @@ in
           metasploit
           mitmproxy
           nuclei
+          portaudio
           postgresql
           qemu
           radare2
