@@ -111,12 +111,10 @@ in
             aliases.push = [
               "git"
               "push"
-              "-N"
             ];
             aliases.p = [
               "git"
               "push"
-              "-N"
             ];
 
             aliases.clone = [
@@ -259,7 +257,7 @@ in
               "remote"
             ];
 
-            git.auto-local-bookmark = true;
+            remotes.origin.auto-track-bookmarks = "glob:*";
 
             git.fetch = [
               "origin"
