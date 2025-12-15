@@ -222,17 +222,41 @@ in
               "working"
             ];
 
-            aliases.nb = [
+            aliases.bc = [
               "bookmark"
               "create"
             ];
-            aliases.mb = [
+            aliases.bm = [
               "bookmark"
               "move"
             ];
-            aliases.sb = [
+            aliases.bs = [
               "bookmark"
               "set"
+            ];
+            aliases.br = [
+              "bookmark"
+              "rename"
+            ];
+            aliases.bt = [
+              "bookmark"
+              "track"
+            ];
+            aliases.but = [
+              "bookmark"
+              "untrack"
+            ];
+            aliases.bu = [
+              "bookmark"
+              "untracl"
+            ];
+            aliases.bf = [
+              "bookmark"
+              "forget"
+            ];
+            aliases.bl = [
+              "bookmark"
+              "list"
             ];
 
             aliases.tug = [
