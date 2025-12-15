@@ -96,7 +96,7 @@ let
           to = [
             {
               shell_command = "${pkgs.aerospace}/bin/aerospace workspace-back-and-forth";
-              # shell_command = "${pkgs.rift}/bin/rift-cli execute workspace last";
+              # shell_command = "${pkgs.rift-bin}/bin/rift-cli execute workspace last";
             }
           ];
           type = "basic";

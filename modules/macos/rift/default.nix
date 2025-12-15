@@ -4,11 +4,13 @@
 }:
 {
   environment.systemPackages = [
-    pkgs.rift
+    pkgs.rift-bin
   ];
 
   services.rift = {
+    # enable = true;
     config = ./config.toml;
+    package = pkgs.rift-bin;
   };
 
   # system.activationScripts.rift.text = ''
