@@ -42,7 +42,7 @@ in
       gamemode = 0;
       spawn-protection = 0;
       max-players = 25;
-      level-name = "Bedrock is Unbreakable 2 (World 2)";
+      # level-name = "Bedrock is Unbreakable 2 (World 2)";
       white-list = true;
       enforce-whitelist = true;
     };
