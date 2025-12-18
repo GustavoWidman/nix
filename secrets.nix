@@ -73,6 +73,7 @@ in
   "hosts/oracle-2/mail/postfix.age".publicKeys = [ oracle-2 ] ++ admins;
 
   "hosts/oracle-2/pinger/config.toml.age".publicKeys = [ oracle-2 ] ++ admins;
+  "hosts/oracle-2/telegram-fwd/config.toml.age".publicKeys = [ oracle-2 ] ++ admins;
 
   # Oracle-Xray Specific
   "hosts/oracle-xray/password.age".publicKeys = [ oracle-xray ] ++ admins;
