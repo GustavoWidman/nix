@@ -622,11 +622,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1766209203,
-        "narHash": "sha256-2fDpaOd8ANJo9AIQaHMeMNMkKx95OQxiRWJKGlB1GW0=",
+        "lastModified": 1767164669,
+        "narHash": "sha256-UwIMDqYEaISPnx8CwTpZ9e0Z4K9qhMw/UChFvUVytnI=",
         "owner": "GustavoWidman",
         "repo": "gemini-juggler",
-        "rev": "84d45b01e51a3d7649fd0cde45db47f20987098c",
+        "rev": "057e5315e3a7e462cb7bda3027fe4e5ab4aac76d",
         "type": "github"
       },
       "original": {
