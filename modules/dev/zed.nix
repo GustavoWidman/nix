@@ -102,8 +102,11 @@ in
               formatter = [
                 {
                   language_server = {
-                    name = "biome";
+                    name = "oxfmt";
                   };
+                }
+                {
+                  code_action = "source.fixAll.oxc";
                 }
               ];
             };
@@ -127,8 +130,11 @@ in
               formatter = [
                 {
                   language_server = {
-                    name = "biome";
+                    name = "oxfmt";
                   };
+                }
+                {
+                  code_action = "source.fixAll.oxc";
                 }
               ];
             };
@@ -136,8 +142,11 @@ in
               formatter = [
                 {
                   language_server = {
-                    name = "biome";
+                    name = "oxfmt";
                   };
+                }
+                {
+                  code_action = "source.fixAll.oxc";
                 }
               ];
             };
@@ -222,6 +231,30 @@ in
                 };
               };
             };
+            oxlint = {
+              initialization_options = {
+                settings = {
+                  disableNestedConfig = false;
+                  fixKind = "safe_fix";
+                  run = "onType";
+                  typeAware = true;
+                  unusedDisableDirectives = "deny";
+                };
+              };
+            };
+            oxfmt = {
+              initialization_options = {
+                settings = {
+                  configPath = null;
+                  flags = { };
+                  "fmt.configPath" = null;
+                  "fmt.experimental" = true;
+                  run = "onSave";
+                  typeAware = false;
+                  unusedDisableDirectives = false;
+                };
+              };
+            };
           };
         };
         userKeymaps = [
@@ -282,7 +315,6 @@ in
             "assembly"
             "base16"
             "basher"
-            "biome"
             "caddyfile"
             "discord-presence"
             "env"
@@ -291,6 +323,7 @@ in
             "html"
             "ini"
             "make"
+            "oxc"
             "dockerfile"
             "docker-compose"
             "java"

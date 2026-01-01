@@ -125,6 +125,8 @@ in
           metasploit
           mitmproxy
           nuclei
+          oxfmt
+          oxlint
           portaudio
           postgresql
           qemu
