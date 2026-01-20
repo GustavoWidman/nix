@@ -3,8 +3,9 @@ let
     lab
     home-vm
     oracle-2
-    oracle-xray
     laptop-mac
+    oracle-xray
+    desktop-nixos
 
     linux
     darwin
@@ -79,4 +80,7 @@ in
   # Oracle-Xray Specific
   "hosts/oracle-xray/password.age".publicKeys = [ oracle-xray ] ++ admins;
   "hosts/oracle-xray/xray/config.json.age".publicKeys = [ oracle-xray ] ++ admins;
+
+  # Desktop-Nixos Specific
+  "hosts/desktop-nixos/password.age".publicKeys = [ desktop-nixos ] ++ admins;
 }
