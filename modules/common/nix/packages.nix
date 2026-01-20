@@ -18,7 +18,7 @@ in
       nix-output-monitor
     ]
     ++ optionals config.isDev [
-      nixfmt-rfc-style
+      nixfmt
       deploy-rs
       nixd
     ];
