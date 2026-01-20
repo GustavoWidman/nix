@@ -263,6 +263,7 @@ def rebuild-local [
     ]
 
     mut nix_flags = [
+        "--extra-experimental-features" "pipe-operators"
         "--option" "accept-flake-config" "true"
     ]
 
