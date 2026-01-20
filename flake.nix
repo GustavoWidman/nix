@@ -97,6 +97,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    copyparty.url = "github:9001/copyparty";
+
     zed.url = "github:GustavoWidman/zed-autobuild";
     gemini-juggler.url = "github:GustavoWidman/gemini-juggler";
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
