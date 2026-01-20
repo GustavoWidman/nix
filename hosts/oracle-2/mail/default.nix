@@ -46,9 +46,10 @@ in
     enableSubmission = true; # port 587
     enableSubmissionSsl = true; # port 465
 
-    certificateScheme = "manual";
-    certificateFile = config.networking.certificates."mail.r3dlust.com".paths.cert;
-    keyFile = config.networking.certificates."mail.r3dlust.com".paths.key;
+    x509 = {
+      certificateFile = config.networking.certificates."mail.r3dlust.com".paths.cert;
+      privateKeyFile = config.networking.certificates."mail.r3dlust.com".paths.key;
+    };
 
     openFirewall = true;
 
