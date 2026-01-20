@@ -232,7 +232,7 @@ def rebuild-remote [
         [
             "nix-channel --add https://nixos.org/channels/nixpkgs-unstable"
             "nix-channel --update"
-            $'NIX_CONFIG="experimental-features = nix-command flakes" NH_BYPASS_ROOT_CHECK=true nix-shell -p nushell -p nh --run "cd .nix && ($rebuild_cmd)"'
+            $'NIX_CONFIG="experimental-features = nix-command flakes" NH_BYPASS_ROOT_CHECK=true nix-shell -p nushell -p nh -p git --run "cd .nix && ($rebuild_cmd)"'
             "rm -rf ~/.nix"
         ] | str join " && "
     } else {
