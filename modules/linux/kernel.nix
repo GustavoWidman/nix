@@ -120,9 +120,6 @@
     "jfs" # Journaled File System - only useful for VMWare sessions
     "ksmbd" # SMB3 Kernel Server
     "minix" # minix fs - used by the minix OS
-    "nfs" # Network File System
-    "nfsv3" # Network File System (v3)
-    "nfsv4" # Network File System (v4)
     "nilfs2" # New Implementation of a Log-structured File System
     "omfs" # Optimized MPEG Filesystem
     "qnx4" # Extent-based file system used by the QNX4 OS.
