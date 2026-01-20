@@ -1,8 +1,9 @@
-{ lib, config, ... }:
+{ lib, ... }:
 let
-  inherit (lib) enabled mergeIf;
+  inherit (lib) enabled;
 in
-mergeIf (config.isServer || config.isDevServer) {
+
+{
   services.openssh = enabled {
     settings = {
       PasswordAuthentication = false;
