@@ -111,7 +111,7 @@ in
           exploitdb
           feroxbuster # TODO make own config of this
           ffuf
-          gdb
+          # gdb
           gradle
           hashcat
           jdk
