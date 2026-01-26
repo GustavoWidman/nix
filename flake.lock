@@ -1231,11 +1231,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1765037635,
-        "narHash": "sha256-MfPvzJxw95+I8IhDYMI+z/20QO+kZv2dvA5Ojxb477Y=",
+        "lastModified": 1769465158,
+        "narHash": "sha256-ifcaG5ERtsBDifZqEZZJvgiKlpPpGqV+mCCE3vmQ934=",
         "owner": "GustavoWidman",
         "repo": "portfolio",
-        "rev": "1f323d4cd7e7295021d99481219dfa67d8d84152",
+        "rev": "34fc2f3039ba18980c4dfba3e55e5ef63baaaf12",
         "type": "github"
       },
       "original": {
@@ -1287,7 +1287,8 @@
         "portfolio": "portfolio",
         "rift": "rift",
         "telegram-fwd": "telegram-fwd",
-        "zed": "zed"
+        "zed": "zed",
+        "zen-browser": "zen-browser"
       }
     },
     "rust-analyzer-src": {
@@ -1569,6 +1570,26 @@
         "owner": "zed-industries",
         "ref": "v0.218.7",
         "repo": "zed",
+        "type": "github"
+      }
+    },
+    "zen-browser": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1769315176,
+        "narHash": "sha256-w1aX0LxNLdhAB4nGsD+3U4XBzr1nfKza/LxT3cD4h28=",
+        "owner": "youwen5",
+        "repo": "zen-browser-flake",
+        "rev": "0c4d40528c156b00067df5e90e5dca8dfe2e2735",
+        "type": "github"
+      },
+      "original": {
+        "owner": "youwen5",
+        "repo": "zen-browser-flake",
         "type": "github"
       }
     }
