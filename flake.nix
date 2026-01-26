@@ -98,6 +98,10 @@
     };
 
     copyparty.url = "github:9001/copyparty";
+    zen-browser = {
+      url = "github:youwen5/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     zed.url = "github:GustavoWidman/zed-autobuild";
     gemini-juggler.url = "github:GustavoWidman/gemini-juggler";
