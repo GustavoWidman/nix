@@ -133,6 +133,7 @@ in
           radare2
           # retdec #! TODO not compatible with macos
           sqlmap
+          tectonic
           terraform
           termshark
           testdisk
