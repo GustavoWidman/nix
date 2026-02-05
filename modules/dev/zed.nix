@@ -152,7 +152,10 @@ in
             };
           };
           diagnostics.inline.enabled = true;
-          features.edit_prediction_provider = "copilot";
+          features.edit_prediction = {
+            provider = "copilot";
+            mode = "subtle";
+          };
           show_edit_predictions = false;
           lsp = {
             discord_presence.initialization_options = {
