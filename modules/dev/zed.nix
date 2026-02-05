@@ -341,6 +341,7 @@ in
             "python-requirements"
             "neocmake"
             "svelte"
+            "tex"
           ]
           |> subtractLists (optionals config.isDevServer [ "discord-presence" ]);
       };
