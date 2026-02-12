@@ -59,7 +59,7 @@ let
     "backslash"
     "semicolon"
     "quote"
-    "grave_accent_and_tilde"
+    # "grave_accent_and_tilde"
     "comma"
     "period"
     "slash"
