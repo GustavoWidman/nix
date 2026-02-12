@@ -258,6 +258,11 @@ in
                 };
               };
             };
+            clangd = {
+              initialization_options = {
+                fallbackFlags = [ "-nostdinc++" ];
+              };
+            };
           };
         };
         userKeymaps = [
