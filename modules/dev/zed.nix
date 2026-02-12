@@ -317,6 +317,18 @@ in
               ];
             };
           }
+          {
+            context = "(Editor && edit_prediction)";
+            bindings = {
+              "alt-`" = "editor::AcceptEditPrediction";
+            };
+          }
+          {
+            context = "(Editor && edit_prediction_conflict)";
+            bindings = {
+              "alt-`" = "editor::AcceptEditPrediction";
+            };
+          }
         ];
         extensions =
           [
