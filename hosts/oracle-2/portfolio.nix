@@ -6,7 +6,7 @@
 }:
 
 let
-  inherit (lib) genAttrs concatMap;
+  inherit (lib) genAttrs;
 
   domains = [
     "guswid.com"
@@ -28,6 +28,13 @@ let
       path *.html /
     }
     header @html Cache-Control "no-cache, no-store, must-revalidate"
+
+    # Search index JSON (no file extension)
+    handle /api/search {
+      header Content-Type application/json
+      rewrite * /api/search
+      file_server
+    }
   '';
 
   mkCertConfig = domain: {
@@ -50,8 +57,20 @@ let
 
         ${commonHeaders}
 
-        try_files {path} {path}/index.html /index.html
+        @pt {
+           query lang=pt
+        }
 
+        # Portfolio root with ?lang=pt -> pt.html
+        handle @pt {
+           try_files /pt.html
+           file_server
+        }
+
+        # Portfolio root (EN default) + static assets
+        handle {
+           try_files {path} {path}.html /index.html
+        }
         file_server
       }
     '';
@@ -66,19 +85,39 @@ let
 
         ${commonHeaders}
 
-        handle / {
-           rewrite * /blog/index.html
-           file_server
+        @pt {
+          query lang=pt
         }
+
+        # Blog root: blog.domain.com/
+        handle / {
+          handle @pt {
+            rewrite * /blog/pt.html
+            file_server
+          }
+          handle {
+            rewrite * /blog.html
+            file_server
+          }
+        }
+
+        # Blog posts: blog.domain.com/{slug}
+        # Maps /{slug} -> /blog/{slug}.html (EN) or /blog/{slug}/pt.html (PT)
         handle {
-           try_files {path} {path}/index.html /index.html
+          handle @pt {
+            try_files /blog{path}/pt.html /blog{path}.html /blog.html
+            file_server
+          }
+          handle {
+            try_files /blog{path}.html /blog{path} {path} /blog.html
+            file_server
+          }
         }
 
         file_server
       }
     '';
   };
-
 in
 {
   networking.certificates = genAttrs domains mkCertConfig;
