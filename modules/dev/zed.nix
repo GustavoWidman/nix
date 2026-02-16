@@ -137,6 +137,12 @@ in
                   code_action = "source.fixAll.oxc";
                 }
               ];
+              language_servers = [
+                "!biome"
+                "!eslint"
+                "oxlint"
+                "vtsls"
+              ];
             };
             TypeScript = {
               formatter = [
@@ -148,6 +154,50 @@ in
                 {
                   code_action = "source.fixAll.oxc";
                 }
+              ];
+              language_servers = [
+                "!biome"
+                "!eslint"
+                "oxlint"
+                "tailwindcss-language-server"
+                "emmet-language-server"
+                "vtsls"
+              ];
+            };
+            TSX = {
+              formatter = [
+                {
+                  language_server = {
+                    name = "oxfmt";
+                  };
+                }
+                {
+                  code_action = "source.fixAll.oxc";
+                }
+              ];
+              language_servers = [
+                "!biome"
+                "!eslint"
+                "oxlint"
+                "tailwindcss-language-server"
+                "emmet-language-server"
+              ];
+            };
+            Markdown = {
+              formatter = [
+                {
+                  language_server = {
+                    name = "oxfmt";
+                  };
+                }
+                {
+                  code_action = "source.fixAll.oxc";
+                }
+              ];
+              language_servers = [
+                "!biome"
+                "!eslint"
+                "oxlint"
               ];
             };
           };
