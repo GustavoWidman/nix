@@ -410,6 +410,7 @@ in
             "prisma"
             "python-requirements"
             "neocmake"
+            "markdown-oxide"
             "svelte"
             "tex"
           ]
