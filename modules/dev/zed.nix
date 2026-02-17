@@ -404,6 +404,7 @@ in
             "lua"
             "nginx"
             "git-firefly"
+            "npm-package-json-checker"
             "material-icon-theme"
             "xml"
             "php"
