@@ -23,7 +23,7 @@ in
     port = 48822;
     domain = "derp.r3dlust.com";
     openFirewall = false;
-    verifyClients = false; # TODO check if this works
+    verifyClients = true;
     configureNginx = false; # we use caddy in this house
   };
 
