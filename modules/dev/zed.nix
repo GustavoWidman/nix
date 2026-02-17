@@ -75,7 +75,7 @@ in
           };
           agent.enabled = true;
           languages = {
-            "Nix" = {
+            Nix = {
               formatter.external = {
                 command = "nixfmt";
                 arguments = [ "-q" ];
@@ -86,7 +86,7 @@ in
                 "discord_presence"
               ];
             };
-            "Python" = {
+            Python = {
               language_servers = [
                 "ruff"
                 "pyright"
@@ -110,7 +110,7 @@ in
                 }
               ];
             };
-            "Assembly" = {
+            Assembly = {
               formatter = [
                 {
                   external = {
