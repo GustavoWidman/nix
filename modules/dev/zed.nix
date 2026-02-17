@@ -73,7 +73,7 @@ in
             show_onboarding_banner = false;
             show_user_picture = false;
           };
-          agent.enabled = false;
+          agent.enabled = true;
           languages = {
             "Nix" = {
               formatter.external = {
@@ -206,7 +206,7 @@ in
             provider = "copilot";
             mode = "subtle";
           };
-          show_edit_predictions = false;
+          show_edit_predictions = true;
           lsp = {
             discord_presence.initialization_options = {
               application_id = "1263505205522337886";
