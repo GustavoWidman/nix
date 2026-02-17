@@ -1,12 +1,14 @@
 {
-  portfolio,
   config,
   lib,
   ...
 }:
 
 let
-  inherit (lib) genAttrs;
+  inherit (lib)
+    genAttrs
+    enabled
+    ;
 
   domains = [
     "guswid.com"
@@ -19,21 +21,6 @@ let
       X-Frame-Options SAMEORIGIN
       X-XSS-Protection "1; mode=block"
       Referrer-Policy strict-origin-when-cross-origin
-    }
-    @static {
-      path *.js *.css *.woff *.woff2 *.ttf *.otf *.png *.jpg *.jpeg *.gif *.svg *.ico
-    }
-    header @static Cache-Control "public, max-age=31536000, immutable"
-    @html {
-      path *.html /
-    }
-    header @html Cache-Control "no-cache, no-store, must-revalidate"
-
-    # Search index JSON (no file extension)
-    handle /api/search {
-      header Content-Type application/json
-      rewrite * /api/search
-      file_server
     }
   '';
 
@@ -48,100 +35,58 @@ let
     reloadServices = [ "caddy.service" ];
   };
 
-  mkMainConfig = domain: {
+  mkReverseProxyConfig = domain: {
     extraConfig = ''
       ${config.networking.certificates."${domain}".paths.caddy}
 
-      handle {
-        root * ${portfolio.packages.${config.metadata.architecture}.default}
+      ${commonHeaders}
 
-        ${commonHeaders}
-
-        @pt {
-           query lang=pt
-        }
-
-        # Portfolio root with ?lang=pt -> pt.html
-        handle @pt {
-           try_files /pt.html
-           file_server
-        }
-
-        # Portfolio root (EN default) + static assets
-        handle {
-           try_files {path} {path}.html /index.html
-        }
-        file_server
-      }
+      reverse_proxy http://127.0.0.1:${toString config.services.portfolio.port}
     '';
   };
 
-  mkBlogConfig = domain: {
+  mkBlogReverseProxyConfig = domain: {
     extraConfig = ''
       ${config.networking.certificates."${domain}".paths.caddy}
 
-      handle {
-        root * ${portfolio.packages.${config.metadata.architecture}.default}
+      ${commonHeaders}
 
-        ${commonHeaders}
+      @blog path_regexp blog ^/blog(/(.*))?$
+      redir @blog /{re.blog.2} 301
 
-        @pt {
-          query lang=pt
-        }
+      @root path /
+      rewrite @root /blog
 
-        # Blog root: blog.domain.com/
-        handle / {
-          handle @pt {
-            rewrite * /blog/pt.html
-            file_server
-          }
-          handle {
-            rewrite * /blog.html
-            file_server
-          }
-        }
+      @notStatic not path /_next/* /api/* *.js *.css *.woff *.woff2 *.ttf *.otf *.png *.jpg *.jpeg *.gif *.svg *.ico *.pdf
+      rewrite @notStatic /blog{path}
 
-        # Blog posts: blog.domain.com/{slug}
-        # Maps /{slug} -> /blog/{slug}.html (EN) or /blog/{slug}/pt.html (PT)
-        handle {
-          handle @pt {
-            try_files /blog{path}/pt.html /blog{path}.html /blog.html
-            file_server
-          }
-          handle {
-            try_files /blog{path}.html /blog{path} {path} /blog.html
-            file_server
-          }
-        }
-
-        file_server
-      }
+      reverse_proxy http://127.0.0.1:${toString config.services.portfolio.port}
     '';
   };
 in
 {
+  services.portfolio = enabled {
+    port = 30209;
+  };
+
   networking.certificates = genAttrs domains mkCertConfig;
 
   services.caddy.virtualHosts =
     let
-      # Generate main domain configs
-      mainConfigs = genAttrs domains (d: mkMainConfig d);
-
-      # Generate www configs (same as main)
+      mainConfigs = genAttrs domains (d: mkReverseProxyConfig d);
       wwwConfigs = genAttrs (map (d: "www.${d}") domains) (
         host:
         let
           domain = lib.removePrefix "www." host;
         in
-        mkMainConfig domain
+        mkReverseProxyConfig domain
       );
-      # Generate blog configs (specialized)
       blogConfigs = genAttrs (map (d: "blog.${d}") domains) (
         host:
         let
           domain = lib.removePrefix "blog." host;
         in
-        mkBlogConfig domain
+        mkBlogReverseProxyConfig domain
       );
     in
     mainConfigs // wwwConfigs // blogConfigs;
