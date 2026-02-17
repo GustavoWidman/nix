@@ -394,6 +394,7 @@ in
             "ini"
             "make"
             "oxc"
+            "opencode"
             "dockerfile"
             "docker-compose"
             "java"
