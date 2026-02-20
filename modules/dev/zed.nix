@@ -208,7 +208,7 @@ in
             };
           };
           diagnostics.inline.enabled = true;
-          features.edit_prediction = {
+          edit_predictions = {
             provider = "copilot";
             mode = "subtle";
           };
