@@ -186,6 +186,7 @@ in
                 "oxlint"
                 "tailwindcss-language-server"
                 "emmet-language-server"
+                "vtsls"
               ];
             };
             Markdown = {
