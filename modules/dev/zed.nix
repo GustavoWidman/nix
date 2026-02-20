@@ -109,6 +109,11 @@ in
                   code_action = "source.fixAll.oxc";
                 }
               ];
+              language_servers = [
+                "!biome"
+                "json-language-server"
+                "oxlint"
+              ];
             };
             Assembly = {
               formatter = [
