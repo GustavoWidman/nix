@@ -102,8 +102,8 @@ in
 
       on-window-detected = [
         (mkFloatTitle "app.zen-browser.zen" "bitwarden" true)
-        (mkFloatTitle "dev.zed.Zed" "settings" true)
-        (mkFloatTitle "dev.zed.Zed-Nightly" "settings" true)
+        (mkFloatTitle "dev.zed.Zed" "Zed — Settings" true)
+        (mkFloatTitle "dev.zed.Zed-Nightly" "Zed — Settings" true)
         (mkFloatTitle "net.whatsapp.WhatsApp" "call" true)
         (mkFloatTitle "com.hnc.Discord" "call" true)
 
