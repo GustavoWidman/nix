@@ -112,6 +112,9 @@ in
 
           # Rust
           "target/"
+
+          # Local Stuff
+          ".unused"
         ];
       };
     }
