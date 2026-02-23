@@ -1,18 +1,21 @@
 {
+  fenix,
   pkgs,
   ...
 }:
 
 {
-  environment.systemPackages = with pkgs; [
-    rustc
-    cargo
-    clippy
-    rustfmt
-    rust-analyzer
-    cargo-info
-    # rust-src
-    sqlx-cli
+  nixpkgs.overlays = [ fenix.overlays.default ];
+  environment.systemPackages = [
+    (pkgs.fenix.complete.withComponents [
+      "cargo"
+      "clippy"
+      "rustc"
+      "rustfmt"
+    ])
+    pkgs.cargo-info
+    pkgs.rust-analyzer
+    pkgs.sqlx-cli
   ];
 
   home-manager.sharedModules = [
