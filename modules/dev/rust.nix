@@ -14,6 +14,7 @@
       "rust-analyzer"
     ])
     pkgs.sccache
+    pkgs.cargo-sweep
     pkgs.cargo-info
     pkgs.sqlx-cli
   ];
