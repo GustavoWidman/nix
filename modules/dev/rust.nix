@@ -5,7 +5,6 @@
 }:
 
 {
-  nixpkgs.overlays = [ fenix.overlays.default ];
   environment.systemPackages = [
     (pkgs.fenix.complete.withComponents [
       "cargo"

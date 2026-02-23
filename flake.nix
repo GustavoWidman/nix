@@ -82,10 +82,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    fenix = {
-      url = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    fenix.url = "github:nix-community/fenix";
     crane.url = "github:ipetkov/crane";
     rift = {
       # url = "github:acsandmann/rift";
