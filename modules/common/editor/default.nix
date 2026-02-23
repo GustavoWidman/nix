@@ -218,8 +218,7 @@ in
       pkgs.basedpyright
 
       # RUST
-      pkgs.rust-analyzer
-      # pkgs.lldb
+      # see `modules/dev/rust.nix` for this
 
       # TYPESCRIPT & OTHERS
       pkgs.deno
