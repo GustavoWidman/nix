@@ -11,9 +11,9 @@
       "clippy"
       "rustc"
       "rustfmt"
+      "rust-analyzer"
     ])
     pkgs.cargo-info
-    pkgs.rust-analyzer
     pkgs.sqlx-cli
   ];
 
