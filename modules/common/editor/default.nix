@@ -63,7 +63,7 @@ in
                 "tsx"
               ])
               {
-                language-servers = [ "deno" ];
+                language-servers = mkIf config.isDev [ "deno" ];
               }
         )
         |> attrValues;
@@ -83,7 +83,7 @@ in
       {
         name = "python";
         auto-format = true;
-        language-servers = [ "basedpyright" ];
+        language-servers = mkIf config.isDev [ "basedpyright" ];
         file-types = [
           "py"
           { glob = "*.py.*"; }
@@ -102,7 +102,7 @@ in
       {
         name = "rust";
         auto-format = true;
-        language-servers = [ "rust-analyzer" ];
+        language-servers = mkIf config.isDev [ "rust-analyzer" ];
         file-types = [
           "rs"
           { glob = "*.rs.*"; }
@@ -182,7 +182,7 @@ in
   };
 
   config.environment = {
-    systemPackages = mkIf config.isDesktop [
+    systemPackages = mkIf config.isDev [
       # BASH
       pkgs.bash-language-server
 
