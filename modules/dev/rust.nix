@@ -13,6 +13,7 @@
       "rustfmt"
       "rust-analyzer"
     ])
+    pkgs.sccache
     pkgs.cargo-info
     pkgs.sqlx-cli
   ];
@@ -23,6 +24,9 @@
         text = ''
           [net]
           git-fetch-with-cli = true
+
+          [build]
+          rustc-wrapper="sccache"
         '';
         force = true;
       };
