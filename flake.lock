@@ -1266,11 +1266,11 @@
         "nixpkgs": "nixpkgs_9"
       },
       "locked": {
-        "lastModified": 1771909737,
-        "narHash": "sha256-hPVlHpmhWDrz7YOkEAuRG3vBukwlX2a2rO+dr/3eHRw=",
+        "lastModified": 1772139947,
+        "narHash": "sha256-2hzElsVBFJn7jBaK8u9Ik00MFwisUhu54zZoGi3eRG8=",
         "owner": "GustavoWidman",
         "repo": "portfolio",
-        "rev": "61bdf7822f434cc80345e1df8fb0343b67089ebb",
+        "rev": "213863882ec22b4cc9841ddf4bab012b1c1eb61d",
         "type": "github"
       },
       "original": {
