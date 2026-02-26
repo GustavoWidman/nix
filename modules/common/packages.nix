@@ -111,7 +111,7 @@ in
           exploitdb
           feroxbuster # TODO make own config of this
           ffuf
-          # gdb
+          # gdb # TODO broken on nixpkgs
           gradle
           hashcat
           jdk
@@ -124,7 +124,7 @@ in
           maven
           manix
           metasploit
-          mitmproxy
+          # mitmproxy # TODO broken on nixpkgs
           nuclei
           oxfmt
           oxlint
@@ -144,7 +144,7 @@ in
           typstyle
           wireshark
           yq
-          yt-dlp
+          # yt-dlp # TODO broken on nixpkgs
           ;
         inherit (pkgs.llvmPackages)
           llvm
