@@ -421,6 +421,7 @@ in
             "markdown-oxide"
             "svelte"
             "tex"
+            "typst"
           ]
           |> subtractLists (optionals config.isDevServer [ "discord-presence" ]);
       };
