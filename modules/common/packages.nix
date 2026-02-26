@@ -139,6 +139,8 @@ in
           testdisk
           tshark
           tldr
+          typst
+          typstyle
           wireshark
           yq
           yt-dlp
