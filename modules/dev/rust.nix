@@ -1,4 +1,5 @@
 {
+  config,
   fenix,
   pkgs,
   ...
@@ -6,7 +7,7 @@
 
 {
   environment.systemPackages = [
-    (pkgs.fenix.complete.withComponents [
+    (fenix.packages.${config.metadata.architecture}.complete.withComponents [
       "cargo"
       "clippy"
       "rustc"
