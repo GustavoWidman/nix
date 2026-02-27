@@ -404,6 +404,7 @@ in
             "dockerfile"
             "docker-compose"
             "java"
+            "just"
             "sql"
             "nix"
             "nu"
