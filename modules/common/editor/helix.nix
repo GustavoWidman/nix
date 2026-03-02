@@ -35,6 +35,8 @@ in
           text-width = 100;
         };
 
+        settings.editor.soft-wrap.enable = true;
+
         settings.editor.cursor-shape = {
           insert = "bar";
           normal = "block";
