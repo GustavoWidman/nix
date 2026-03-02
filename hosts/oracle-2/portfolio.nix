@@ -57,7 +57,7 @@ let
       @root path /
       rewrite @root /blog
 
-      @notStatic not path /_next/* /api/* *.js *.css *.woff *.woff2 *.ttf *.otf *.png *.jpg *.jpeg *.gif *.svg *.ico *.pdf
+      @notStatic not path /_next/* /api/* /llms.mdx/* *.js *.css *.woff *.woff2 *.ttf *.otf *.png *.jpg *.jpeg *.gif *.svg *.ico *.pdf *.txt
       rewrite @notStatic /blog{path}
 
       reverse_proxy http://127.0.0.1:${toString config.services.portfolio.port}
