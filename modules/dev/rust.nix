@@ -13,6 +13,7 @@
       "rustc"
       "rustfmt"
       "rust-analyzer"
+      "rust-src"
     ])
     pkgs.sccache
     pkgs.cargo-sweep
