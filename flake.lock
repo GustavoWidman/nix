@@ -1319,11 +1319,11 @@
         "nixpkgs": "nixpkgs_10"
       },
       "locked": {
-        "lastModified": 1772692211,
-        "narHash": "sha256-gQFFFlFKq6EN4nlDVDz/6QlLqYqU/FZpmjMWiGteTcU=",
+        "lastModified": 1772754003,
+        "narHash": "sha256-n1/1ItBH9nwvkubIlAgtqLXkuUOyD7zNrwJ8lOvo6r4=",
         "owner": "GustavoWidman",
         "repo": "portfolio",
-        "rev": "0f377556550721ce229647a7714c13545f7d01c5",
+        "rev": "477eaad40614e024e080f7dd27e57b98ed75763a",
         "type": "github"
       },
       "original": {
