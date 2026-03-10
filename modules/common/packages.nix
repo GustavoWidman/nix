@@ -106,7 +106,6 @@ in
           cmake
           cyme
           dalfox
-          dbeaver-bin
           # discord # TODO make own config of this maybe? #! THIS IS BROKEN ON MAC FOR SOME REASON
           exploitdb
           feroxbuster # TODO make own config of this
@@ -142,7 +141,6 @@ in
           tldr
           typst
           typstyle
-          wireshark
           yq
           yt-dlp
           ;
@@ -152,7 +150,9 @@ in
       }
       // optionalAttrs config.isDesktop {
         inherit (pkgs)
+          dbeaver-bin
           pandoc
+          wireshark
           ;
         inherit (pkgs.texlive.combined)
           scheme-full
