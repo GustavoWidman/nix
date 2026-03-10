@@ -15,7 +15,7 @@ in
         inherit (pkgs)
           attic-client
           age
-          # awscli2 # TODO broken
+          awscli2 # TODO broken
           bash
           binwalk
           cachix
@@ -124,7 +124,7 @@ in
           maven
           manix
           metasploit
-          # mitmproxy # TODO broken on nixpkgs
+          mitmproxy
           nuclei
           oxfmt
           oxlint
@@ -144,7 +144,7 @@ in
           typstyle
           wireshark
           yq
-          # yt-dlp # TODO broken on nixpkgs
+          yt-dlp
           ;
         inherit (pkgs.llvmPackages)
           llvm
