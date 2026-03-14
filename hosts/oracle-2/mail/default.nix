@@ -90,6 +90,25 @@ in
     };
   };
 
+  systemd.services.postfix-setup.restartTriggers = [
+    config.secrets.mail-postfix.path
+    config.secrets.mail-sasl-passwd.path
+  ];
+
+  systemd.services.postfix = {
+    restartTriggers = [
+      config.secrets.mail-postfix.path
+      config.secrets.mail-sasl-passwd.path
+    ];
+
+    preStart = ''
+      ${pkgs.postfix}/bin/postmap /var/lib/postfix/conf/valias
+      ${pkgs.postfix}/bin/postmap /var/lib/postfix/conf/vaccounts
+      ${pkgs.postfix}/bin/postmap /var/lib/postfix/conf/virtual
+      ${pkgs.postfix}/bin/postmap /var/lib/postfix/conf/sasl_passwd
+    '';
+  };
+
   virtualisation.arion.projects.roundcube.settings = {
     services = {
       app.service = {
