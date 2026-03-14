@@ -139,6 +139,7 @@ in
           testdisk
           tshark
           tldr
+          typescript-language-server
           typst
           typstyle
           yq
