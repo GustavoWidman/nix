@@ -31,10 +31,10 @@ in
         includeCoAuthoredBy = false;
         permissions = {
           defaultMode = "bypassPermissions";
-          deny = [
-            "Bash(*git push*)"
-            "Bash(*jj push*)"
-          ];
+          # deny = [
+          #   "Bash(*git push*)"
+          #   "Bash(*jj push*)"
+          # ];
         };
         enabledPlugins = {
           "frontend-design@claude-plugins-official" = true;
@@ -47,7 +47,8 @@ in
           "skill-creator@claude-plugins-official" = true;
         };
         skipDangerousModePermissionPrompt = true;
-        effortLevel = "medium";
+        model = "sonnet";
+        effortLevel = "high";
         hooks = {
           Stop = [
             {
