@@ -90,11 +90,6 @@ in
     };
   };
 
-  systemd.services.postfix-setup.restartTriggers = [
-    config.secrets.mail-postfix.path
-    config.secrets.mail-sasl-passwd.path
-  ];
-
   systemd.services.postfix = {
     restartTriggers = [
       config.secrets.mail-postfix.path
