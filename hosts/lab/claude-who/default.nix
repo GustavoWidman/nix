@@ -36,6 +36,12 @@
     };
   };
 
+  # Extend the claude-who service PATH with user-managed tool envs.
+  # systemd's `path` option appends /bin to each entry.
+  systemd.services.claude-who.path = [
+    "/home/oracle/.browser-use-env" # browser-use CLI (installed via pip into user venv)
+  ];
+
   # add oracle as a home-manager user
   home-manager.users = {
     ${config.services.claude-who.user}.home = {
