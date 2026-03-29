@@ -290,7 +290,7 @@ in
 
             signing.backend = "ssh";
             signing.behavior = "own";
-            signing.key = config.secrets.ssh-id_ed25519.path;
+            signing.key = "${config'.home.homeDirectory}/.ssh/id_ed25519";
           };
         };
       }

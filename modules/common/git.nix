@@ -11,113 +11,119 @@ let
 in
 {
   home-manager.sharedModules = [
-    {
-      programs.git = enabled {
-        lfs = enabled;
+    (
+      homeArgs:
+      let
+        config' = homeArgs.config;
+      in
+      {
+        programs.git = enabled {
+          lfs = enabled;
 
-        settings = {
-          user = {
-            name = "GustavoWidman (${config.networking.hostName})";
-            email = "admin@r3dlust.com";
+          settings = {
+            user = {
+              name = "GustavoWidman (${config.networking.hostName})";
+              email = "admin@r3dlust.com";
+            };
+
+            init.defaultBranch = "main";
+
+            column.ui = "auto";
+
+            branch.sort = "-committerdate";
+            tag.sort = "version:refname";
+
+            diff.algorithm = "histogram";
+            diff.colorMoved = "default";
+
+            pull.rebase = true;
+            push.autoSetupRemote = true;
+
+            merge.conflictStyle = "zdiff3";
+
+            rebase.autoSquash = true;
+            rebase.autoStash = true;
+            rebase.updateRefs = true;
+            rerere.enabled = true;
+
+            fetch.fsckObjects = true;
+            receive.fsckObjects = true;
+            transfer.fsckobjects = true;
+
+            url."ssh://git@github.com/".insteadOf = "https://github.com/";
+
+            commit.gpgSign = true;
+            tag.gpgSign = true;
+
+            gpg.format = "ssh";
+            user.signingKey = "${config'.home.homeDirectory}/.ssh/id_ed25519";
+
           };
 
-          init.defaultBranch = "main";
+          ignores = [
+            # macOS
+            ".DS_Store"
+            ".AppleDouble"
+            ".LSOverride"
 
-          column.ui = "auto";
+            # The usual culprits
+            ".env"
 
-          branch.sort = "-committerdate";
-          tag.sort = "version:refname";
+            # direnv
+            ".direnv"
 
-          diff.algorithm = "histogram";
-          diff.colorMoved = "default";
+            # devenv
+            ".devenv"
 
-          pull.rebase = true;
-          push.autoSetupRemote = true;
+            # Claude
+            ".claude/"
+            "CLAUDE.md"
 
-          merge.conflictStyle = "zdiff3";
+            # IDEs
+            ".vscode/"
+            ".idea/"
+            "*.swp"
+            "*.swo"
+            "*~"
 
-          rebase.autoSquash = true;
-          rebase.autoStash = true;
-          rebase.updateRefs = true;
-          rerere.enabled = true;
+            # Mise
+            "mise.toml"
 
-          fetch.fsckObjects = true;
-          receive.fsckObjects = true;
-          transfer.fsckobjects = true;
+            # NodeJS
+            "node_modules/"
+            ".docusaurus"
+            ".cache-loader"
 
-          url."ssh://git@github.com/".insteadOf = "https://github.com/";
+            # Nix
+            "result"
+            "result-*"
 
-          commit.gpgSign = true;
-          tag.gpgSign = true;
+            # Python
+            "*.pyc"
+            "__pypackages__/"
+            "__pycache__/"
+            ".ruff_cache/"
+            ".ropeproject"
+            ".venv"
+            "env/"
+            "venv/"
+            "ENV"
+            "env.bak/"
+            "venv.bak/"
+            ".python-version"
+            ".pdm.toml"
+            ".pdm-python"
+            ".pdm-build/"
 
-          gpg.format = "ssh";
-          user.signingKey = config.secrets.ssh-id_ed25519.path;
+            # Rust
+            "target/"
 
+            # Local Stuff
+            ".unused"
+          ];
         };
-
-        ignores = [
-          # macOS
-          ".DS_Store"
-          ".AppleDouble"
-          ".LSOverride"
-
-          # The usual culprits
-          ".env"
-
-          # direnv
-          ".direnv"
-
-          # devenv
-          ".devenv"
-
-          # Claude
-          ".claude/"
-          "CLAUDE.md"
-
-          # IDEs
-          ".vscode/"
-          ".idea/"
-          "*.swp"
-          "*.swo"
-          "*~"
-
-          # Mise
-          "mise.toml"
-
-          # NodeJS
-          "node_modules/"
-          ".docusaurus"
-          ".cache-loader"
-
-          # Nix
-          "result"
-          "result-*"
-
-          # Python
-          "*.pyc"
-          "__pypackages__/"
-          "__pycache__/"
-          ".ruff_cache/"
-          ".ropeproject"
-          ".venv"
-          "env/"
-          "venv/"
-          "ENV"
-          "env.bak/"
-          "venv.bak/"
-          ".python-version"
-          ".pdm.toml"
-          ".pdm-python"
-          ".pdm-build/"
-
-          # Rust
-          "target/"
-
-          # Local Stuff
-          ".unused"
-        ];
-      };
-    }
+      }
+    )
 
     (mkIf config.isDev {
       programs.gh = enabled {
