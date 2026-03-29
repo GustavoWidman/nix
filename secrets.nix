@@ -67,9 +67,6 @@ in
   "hosts/oracle-2/adguard/config.yaml.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/password.age".publicKeys = [ oracle-2 ] ++ admins;
 
-  "hosts/oracle-2/lynx/db.env.age".publicKeys = [ oracle-2 ] ++ admins;
-  "hosts/oracle-2/lynx/app.env.age".publicKeys = [ oracle-2 ] ++ admins;
-
   "hosts/oracle-2/mail/sasl_passwd.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/mail/dovecot.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/mail/postfix.age".publicKeys = [ oracle-2 ] ++ admins;
