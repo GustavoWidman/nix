@@ -129,7 +129,7 @@ ed25519 host key into the `keys.nix` file during the initial deployment.
 ## custom flakes
 
 this repository pulls in a bunch of my own custom flakes directly from github,
-like `kemono-pinger`, `gemini-juggler`, `telegram-fwd`, `portfolio`, and a
+like `kemono-pinger`, `gemini-juggler`, `portfolio`, and a
 custom autobuild of `zed`. nix automatically builds and caches these for my
 machines to avoid waiting 40 minutes every time zed nightly updates.
 
