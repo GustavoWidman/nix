@@ -29,6 +29,8 @@
     environment = {
       PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig:${pkgs.onnxruntime.dev}/lib/pkgconfig";
       OPENSSL_DIR = "${pkgs.openssl.dev}";
+      OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
+      OPENSSL_INCLUDE_DIR = "${pkgs.openssl.dev}/include";
       ORT_DYLIB_PATH = "${pkgs.onnxruntime}/lib/libonnxruntime.so";
       LD_LIBRARY_PATH = "${pkgs.openssl.out}/lib:${pkgs.onnxruntime}/lib";
     };
