@@ -107,6 +107,7 @@
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
     telegram-fwd.url = "github:GustavoWidman/telegram-fwd";
     portfolio.url = "github:GustavoWidman/portfolio";
+    claude-who.url = "git+ssh://git@github.com/GustavoWidman/claude-who";
   };
 
   outputs =

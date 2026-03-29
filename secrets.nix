@@ -60,6 +60,7 @@ in
   # Lab Specific
   "hosts/lab/password.age".publicKeys = [ lab ] ++ admins;
   "hosts/lab/cliproxyapi/config.yaml.age".publicKeys = [ lab ] ++ admins;
+  "hosts/lab/claude-who/settings.json.age".publicKeys = [ lab ] ++ admins;
 
   # Oracle-2 Specific
   "hosts/oracle-2/juggler/config.toml.age".publicKeys = [ oracle-2 ] ++ admins;
