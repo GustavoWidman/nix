@@ -23,7 +23,15 @@
       jujutsu
       openssh
       bun
+      pkg-config
     ];
+
+    environment = {
+      PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig:${pkgs.onnxruntime.dev}/lib/pkgconfig";
+      OPENSSL_DIR = "${pkgs.openssl.dev}";
+      ORT_DYLIB_PATH = "${pkgs.onnxruntime}/lib/libonnxruntime.so";
+      LD_LIBRARY_PATH = "${pkgs.openssl.out}/lib:${pkgs.onnxruntime}/lib";
+    };
   };
 
   # add oracle as a home-manager user
