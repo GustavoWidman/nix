@@ -39,11 +39,6 @@ in
         enabledPlugins = {
           "frontend-design@claude-plugins-official" = true;
           "superpowers@claude-plugins-official" = true;
-          "typescript-lsp@claude-plugins-official" = true;
-          "pyright-lsp@claude-plugins-official" = true;
-          "gopls-lsp@claude-plugins-official" = true;
-          "rust-analyzer-lsp@claude-plugins-official" = true;
-          "clangd-lsp@claude-plugins-official" = true;
           "skill-creator@claude-plugins-official" = true;
         };
         skipDangerousModePermissionPrompt = true;
