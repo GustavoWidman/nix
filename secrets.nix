@@ -63,7 +63,6 @@ in
   "hosts/lab/claude-who/settings.json.age".publicKeys = [ lab ] ++ admins;
 
   # Oracle-2 Specific
-  "hosts/oracle-2/juggler/config.toml.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/adguard/config.yaml.age".publicKeys = [ oracle-2 ] ++ admins;
   "hosts/oracle-2/password.age".publicKeys = [ oracle-2 ] ++ admins;
 

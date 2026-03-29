@@ -103,7 +103,6 @@
     cliproxyapi.url = "github:benjaminkitt/nix-cliproxyapi";
 
     zed.url = "github:GustavoWidman/zed-autobuild";
-    gemini-juggler.url = "github:GustavoWidman/gemini-juggler";
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
     portfolio.url = "github:GustavoWidman/portfolio";
     claude-who.url = "git+ssh://git@github.com/GustavoWidman/claude-who";
