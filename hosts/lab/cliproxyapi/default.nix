@@ -17,5 +17,7 @@
     configFile = config.secrets.cliproxyapi.path;
   };
 
-  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ config.services.cliproxyapi.port ];
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+    config.services.cliproxyapi.port
+  ];
 }
