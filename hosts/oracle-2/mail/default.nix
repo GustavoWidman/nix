@@ -37,7 +37,7 @@ in
 
     localDnsResolver = false;
 
-    loginAccounts = { };
+    accounts = { };
 
     enableImap = true; # port 143
     enableImapSsl = true; # port 993
