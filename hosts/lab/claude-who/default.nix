@@ -20,10 +20,11 @@
     settings = config.secrets.claude-who.path;
 
     extraPackages = with pkgs; [
+      pkg-config
       jujutsu
       openssh
+      codex
       bun
-      pkg-config
     ];
 
     environment = {
