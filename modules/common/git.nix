@@ -116,6 +116,11 @@ in
 
             # Local Stuff
             ".unused"
+
+            # OMC/OMX/OMO
+            ".omc/"
+            ".omx/"
+            ".omo/"
           ];
         };
       }
