@@ -158,5 +158,10 @@ in
         inherit (pkgs.texlive.combined)
           scheme-full
           ;
+      }
+      // optionalAttrs (config.isDarwin && config.isDesktop) {
+        inherit (pkgs)
+          terminal-notifier
+          ;
       };
 }
