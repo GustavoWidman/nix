@@ -123,6 +123,20 @@ def sync-nix-config [
     }
 }
 
+def notify [
+    hostname: string
+    action: string
+] {
+    let system = (uname | get kernel-name)
+    if $system == "Darwin" {
+        try {
+            terminal-notifier -title "nix" -message $"build complete for ($hostname), applying ($action)..." -sound default
+        } catch {
+            log debug "terminal-notifier not available, skipping notification"
+        }
+    }
+}
+
 def ensure-host-key [
     hostname: string
     remote: string
@@ -218,6 +232,8 @@ def rebuild-remote [
 ] {
     sync-nix-config $remote --key $key
 
+    let action = if ($boot or $initial) { "boot" } else { "switch" }
+
     let rebuild_args = [
         $hostname
         (if $initial { "--initial" } else { "" })
@@ -225,27 +241,40 @@ def rebuild-remote [
         (if $dry_run { "--dry-run" } else { "" })
     ] | where {|x| $x != ""} | str join " "
 
-    let rebuild_cmd = $"IN_REMOTE=true ./deploy.nu ($rebuild_args)"
-
-    let remote_cmd = if $initial {
+    if $initial {
         log info "initial setup on remote host needed, please be patient..."
-        [
+        let remote_cmd = [
             "nix-channel --add https://nixos.org/channels/nixpkgs-unstable"
             "nix-channel --update"
-            $'NIX_CONFIG="experimental-features = nix-command flakes" NH_BYPASS_ROOT_CHECK=true nix-shell -p nushell -p nh -p git --run "cd .nix && ($rebuild_cmd)"'
+            $'NIX_CONFIG="experimental-features = nix-command flakes" NH_BYPASS_ROOT_CHECK=true nix-shell -p nushell -p nh -p git --run "cd .nix && IN_REMOTE=true ./deploy.nu ($rebuild_args)"'
             "rm -rf ~/.nix"
         ] | str join " && "
+
+        log info "executing rebuild on remote host"
+        ssh-exec $remote $remote_cmd --key $key
+        notify $hostname $action
     } else {
-        [
+        # build
+        let build_remote_cmd = [
             "cd .nix"
-            $rebuild_cmd
+            $"IN_REMOTE=true ./deploy.nu ($rebuild_args) --build-only"
         ] | str join " \n "
+
+        log info "executing build on remote host"
+        ssh-exec $remote $build_remote_cmd --key $key
+
+        # notify locally
+        notify $hostname $action
+
+        # apply
+        let apply_remote_cmd = [
+            "cd .nix"
+            $"IN_REMOTE=true ./deploy.nu ($rebuild_args) --apply-only"
+        ] | str join " \n "
+
+        log info "applying configuration on remote host"
+        ssh-exec $remote $apply_remote_cmd --key $key
     }
-
-    log info "executing rebuild on remote host"
-    ssh-exec $remote $remote_cmd --key $key
-
-    return
 }
 
 def rebuild-local [
@@ -253,6 +282,8 @@ def rebuild-local [
     --boot (-b)                 # Use boot instead of switch
     --dry-run (-d)              # Perform dry run
     --initial (-i)              # Initial setup for new host
+    --build-only                # Only build, don't apply
+    --apply-only                # Only apply, don't build
 ] {
     let system = (uname | get kernel-name)
     let action = if ($boot or $initial) { "boot" } else { "switch" }
@@ -283,15 +314,32 @@ def rebuild-local [
     }
 
     try {
-        if $system == "Darwin" {
-            nh darwin switch . ...$nh_flags -- ...$nix_flags
-        } else {
-            nh os $action . ...$nh_flags -- ...$nix_flags
-            if $initial {
-                log warn "initial build complete. please reboot the system."
+        if not $apply_only {
+            log info "building configuration"
+            if $system == "Darwin" {
+                nh darwin build . ...$nh_flags -- ...$nix_flags
+            } else {
+                nh os build . ...$nh_flags -- ...$nix_flags
             }
+            log success "build completed"
         }
-        log success "rebuild completed successfully"
+
+        if not $build_only and not $apply_only {
+            notify $hostname $action
+        }
+
+        if not $build_only {
+            log info $"applying configuration \(($action)\)"
+            if $system == "Darwin" {
+                nh darwin switch . ...$nh_flags -- ...$nix_flags
+            } else {
+                nh os $action . ...$nh_flags -- ...$nix_flags
+                if $initial {
+                    log warn "initial build complete. please reboot the system."
+                }
+            }
+            log success "rebuild completed successfully"
+        }
     } catch {
         log error -e $"rebuild failed, please check logs."
     }
@@ -335,6 +383,8 @@ export def main --env [
 
     # Advanced options
     --no-git                        # Skip git operations
+    --build-only                    # Only build, don't apply
+    --apply-only                    # Only apply, don't build
 ]: nothing -> nothing {
     let in_remote = ("IN_REMOTE" in $env)
 
@@ -372,7 +422,7 @@ export def main --env [
             log info $"starting local rebuild for (ansi $LOG_COLORS.host)($target)(ansi reset)"
         }
 
-        rebuild-local $target --boot=$boot --dry-run=$dry_run --initial=$initial
+        rebuild-local $target --boot=$boot --dry-run=$dry_run --initial=$initial --build-only=$build_only --apply-only=$apply_only
     }
 }
 
