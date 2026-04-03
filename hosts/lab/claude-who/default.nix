@@ -19,6 +19,8 @@
 
     settings = config.secrets.claude-who.path;
 
+    browser.chromiumPackage = pkgs.chromium;
+
     extraPackages = with pkgs; [
       pkg-config
       jujutsu
@@ -53,6 +55,5 @@
 
   environment.systemPackages = with pkgs; [
     claude-who.packages.${config.metadata.architecture}.default
-    chromium # make chromium available system-wide for the playwright MCP
   ];
 }
