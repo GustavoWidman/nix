@@ -100,7 +100,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    cliproxyapi.url = "github:benjaminkitt/nix-cliproxyapi";
+    cliproxyapi.url = "github:GustavoWidman/nix-cliproxyapi";
 
     zed.url = "github:GustavoWidman/zed-autobuild";
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
