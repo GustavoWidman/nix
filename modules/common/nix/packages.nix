@@ -19,7 +19,6 @@ in
     ]
     ++ optionals config.isDev [
       nixfmt
-      deploy-rs
       nixd
     ];
 }
