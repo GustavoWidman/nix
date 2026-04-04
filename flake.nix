@@ -105,7 +105,7 @@
     zed.url = "github:GustavoWidman/zed-autobuild";
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
     portfolio.url = "github:GustavoWidman/portfolio";
-    claude-who.url = "git+ssh://git@github.com/GustavoWidman/claude-who";
+    hermes-agent.url = "github:NousResearch/hermes-agent";
   };
 
   outputs =
