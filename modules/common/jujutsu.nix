@@ -248,7 +248,7 @@ in
             ];
             aliases.bu = [
               "bookmark"
-              "untracl"
+              "untrack"
             ];
             aliases.bf = [
               "bookmark"
