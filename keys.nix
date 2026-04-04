@@ -13,6 +13,7 @@ keys
   admins = [
     keys.desktop-nixos
     keys.laptop-mac
+    keys.lab
   ];
   linux = [
     keys.desktop-nixos
