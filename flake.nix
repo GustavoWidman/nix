@@ -106,6 +106,7 @@
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
     portfolio.url = "github:GustavoWidman/portfolio";
     hermes-agent.url = "github:NousResearch/hermes-agent";
+    rocky-bot.url = "git+ssh://git@github.com/GustavoWidman/rocky-bot";
   };
 
   outputs =

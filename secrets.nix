@@ -75,6 +75,8 @@ in
 
   "hosts/oracle-2/copyparty/password.age".publicKeys = [ oracle-2 ] ++ admins;
 
+  "hosts/oracle-2/rocky-bot/rocky-bot.toml.age".publicKeys = [ oracle-2 ] ++ admins;
+
   # Oracle-Xray Specific
   "hosts/oracle-xray/password.age".publicKeys = [ oracle-xray ] ++ admins;
   "hosts/oracle-xray/xray/config.json.age".publicKeys = [ oracle-xray ] ++ admins;
