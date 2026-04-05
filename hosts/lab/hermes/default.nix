@@ -47,7 +47,7 @@ in
       BUN_INSTALL = "/home/${config.services.hermes-agent.user}/.bun";
     };
     extraPackages = with pkgs; [
-      claude-code
+      # claude-code
       chromium
       jujutsu
       openssh
