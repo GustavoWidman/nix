@@ -57,7 +57,8 @@ export def --env true_home [] {
      			^grep '/home/' /etc/passwd
         				| each {|str| $str | ^cut -d: -f6 | str trim}
         				| where {|str| not ($str =~ "build")}
-        				| first
+                        | lines
+        				| last
     			}
             };
 
