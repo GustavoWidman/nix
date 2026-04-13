@@ -1,7 +1,6 @@
 let
   keys = {
     desktop-nixos = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJEhKl6wG2mU+3lEm1b7WjXMX/QicjkzWGZPnd2F6+VX root@nixos";
-    oracle-xray = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILa5bzp16gMJGQtRt1WnCHX24KwPTS05W88VkMRg4zsL";
     home-vm = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOhOFxXLG0mwiEQb9L8JcJpA6YL2Io2ACxst4ZutR3cS root@nixos";
     oracle-1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB5b0huhIgxXA2toMoeZg7wslf9r3izay7ROC3Q3Fixk root@nixos";
     oracle-2 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE/dj27jlY8FgNflMPk91Wza8M/Gjm+2c4A2hopshHl5 root@nixos";
@@ -18,7 +17,6 @@ keys
   ];
   linux = [
     keys.desktop-nixos
-    keys.oracle-xray
     keys.lab
     keys.home-vm
     keys.oracle-1
@@ -30,7 +28,6 @@ keys
     keys.laptop-mac
   ];
   server = [
-    keys.oracle-xray
     keys.oracle-1
     keys.oracle-2
     keys.lab
