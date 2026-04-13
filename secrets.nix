@@ -2,6 +2,7 @@ let
   inherit (import ./keys.nix)
     lab
     home-vm
+    oracle-1
     oracle-2
     laptop-mac
     oracle-xray
@@ -63,6 +64,9 @@ in
   # "hosts/lab/hermes/hermes.env.age".publicKeys = [ lab ] ++ admins;
   # "hosts/lab/hermes/auth.json.age".publicKeys = [ lab ] ++ admins;
   "hosts/lab/claude-who/settings.json.age".publicKeys = [ lab ] ++ admins;
+
+  # Oracle-1 Specific
+  "hosts/oracle-1/password.age".publicKeys = [ oracle-1 ] ++ admins;
 
   # Oracle-2 Specific
   "hosts/oracle-2/adguard/config.yaml.age".publicKeys = [ oracle-2 ] ++ admins;
