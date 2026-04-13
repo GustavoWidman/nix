@@ -56,8 +56,6 @@ in
   # Lab Specific
   "hosts/lab/password.age".publicKeys = [ lab ] ++ admins;
   "hosts/lab/cliproxyapi/config.yaml.age".publicKeys = [ lab ] ++ admins;
-  # "hosts/lab/hermes/hermes.env.age".publicKeys = [ lab ] ++ admins;
-  # "hosts/lab/hermes/auth.json.age".publicKeys = [ lab ] ++ admins;
   "hosts/lab/claude-who/settings.json.age".publicKeys = [ lab ] ++ admins;
 
   # Oracle-1 Specific
