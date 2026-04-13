@@ -1,7 +1,6 @@
 let
   inherit (import ./keys.nix)
     lab
-    home-vm
     oracle-1
     oracle-2
     laptop-mac
@@ -53,9 +52,6 @@ in
 
   # Linux Specific
   "modules/linux/tailscale/auth-key.age".publicKeys = linux ++ admins;
-
-  # Home VM Specific
-  "hosts/home-vm/password.age".publicKeys = [ home-vm ] ++ admins;
 
   # Lab Specific
   "hosts/lab/password.age".publicKeys = [ lab ] ++ admins;
