@@ -26,12 +26,14 @@
       pkg-config
       jujutsu
       openssh
+      nodejs
       codex
       bun
     ];
 
     environment = {
       BUN_INSTALL = "/home/${config.services.claude-who.user}/.bun";
+      NPM_CONFIG_PREFIX = "/home/${config.services.claude-who.user}/.npm-global";
     };
   };
 
