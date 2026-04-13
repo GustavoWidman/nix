@@ -77,7 +77,9 @@
     };
 
     nixos-mailserver = {
-      url = "gitlab:simple-nixos-mailserver/nixos-mailserver/main";
+      # pinned: commits after this migrate to `services.dovecot2.settings`,
+      # which isn't in our nixpkgs rev yet. unpin once nixpkgs catches up.
+      url = "gitlab:simple-nixos-mailserver/nixos-mailserver/ffb64609";
 
       inputs.nixpkgs.follows = "nixpkgs";
     };
