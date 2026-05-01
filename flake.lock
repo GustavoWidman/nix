@@ -142,11 +142,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1777741591,
-        "narHash": "sha256-2K5uzAQYpEWj19yU/csQnW4R4weRQcgO1XzwzbddHe8=",
+        "lastModified": 1777753157,
+        "narHash": "sha256-OpepkpIRWJX8gORVDxyoz0oFsFW/tCB3l7yJEAsG/zo=",
         "ref": "refs/heads/master",
-        "rev": "60c212a41557d1cf4916d0029bc6a3f7b12dc61e",
-        "revCount": 661,
+        "rev": "4e0e6da84b9d36ca07e75ec2c75776f5438b386c",
+        "revCount": 663,
         "type": "git",
         "url": "ssh://git@github.com/GustavoWidman/claude-who"
       },
@@ -161,11 +161,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1775977805,
-        "narHash": "sha256-Dg1GK2kFhoHUVwIrLmeipiqCAPtV/leGaidn45Mg5mo=",
+        "lastModified": 1777795074,
+        "narHash": "sha256-eIPLnSnR8hNUDgVeCLtBmaN+a6+/oWS4hh3gVusNwKY=",
         "owner": "GustavoWidman",
         "repo": "nix-cliproxyapi",
-        "rev": "be385ed2dae4fe91d4cab90c4a8ab0af2a9105a1",
+        "rev": "0d34214b2ba46b11d24fbab44c58231731b50e94",
         "type": "github"
       },
       "original": {
