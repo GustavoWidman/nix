@@ -13,7 +13,6 @@
 
   services.cliproxyapi = {
     enable = true;
-    package = cliproxyapi.packages.${config.metadata.architecture}.cliproxyapi-plus;
     configFile = config.secrets.cliproxyapi.path;
   };
 
