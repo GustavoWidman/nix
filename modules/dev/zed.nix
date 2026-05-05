@@ -32,6 +32,7 @@ in
                 projects = [ ];
               }
             );
+          cli_default_open_behavior = "new_window";
           icon_theme = "Material Icon Theme";
           autosave = "on_focus_change";
           theme = "Base16 Gruvbox dark, medium";
