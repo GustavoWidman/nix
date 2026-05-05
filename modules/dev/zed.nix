@@ -69,7 +69,7 @@ in
             quick_actions = false;
           };
           title_bar = {
-            show_branch_icon = true;
+            show_branch_status_icon = true;
             show_onboarding_banner = false;
             show_user_picture = false;
           };
