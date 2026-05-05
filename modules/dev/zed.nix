@@ -73,7 +73,7 @@ in
             show_onboarding_banner = false;
             show_user_picture = false;
           };
-          agent.enabled = true;
+          agent.enabled = false;
           languages = {
             Nix = {
               formatter.external = {
