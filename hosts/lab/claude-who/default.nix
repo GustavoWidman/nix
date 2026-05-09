@@ -45,6 +45,11 @@
     };
   };
 
+  # add oracle's user to the "docker" group
+  users.users.${config.services.claude-who.user} = {
+    extraGroups = [ "docker" ];
+  };
+
   environment.systemPackages = [
     claude-who.packages.${config.metadata.architecture}.default
   ];
