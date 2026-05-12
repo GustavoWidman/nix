@@ -1,0 +1,3 @@
+{
+  networking.resolvconf.enable = false;
+}
