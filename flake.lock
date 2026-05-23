@@ -161,11 +161,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1778574899,
-        "narHash": "sha256-SDhiAmHQJ/OmtRmIlImTsL5tVBvn2Eb/gVwh1Iq30f8=",
+        "lastModified": 1779356092,
+        "narHash": "sha256-fc7aVlNEqn0N1m9QzM4s0q17dRzBG2Mi03huTSFMeNU=",
         "owner": "GustavoWidman",
         "repo": "nix-cliproxyapi",
-        "rev": "8737e82be0abaebe16f59321bb0986cb8a6f36bc",
+        "rev": "829d764148574b0c548a3f47e08c224c8cee419b",
         "type": "github"
       },
       "original": {
