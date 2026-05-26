@@ -90,24 +90,24 @@ in
             in
             sshConfigFiles;
 
-          matchBlocks = {
-            "*" = {
-              setEnv.COLORTERM = "truecolor";
-              setEnv.TERM = "xterm-256color";
-
-              forwardAgent = false;
-              compression = false;
-              addKeysToAgent = "no";
-              userKnownHostsFile = "~/.ssh/known_hosts";
-              hashKnownHosts = false;
-
-              controlMaster = "auto";
-              controlPath = "${controlPath}/%r@%n:%p";
-              controlPersist = "60m";
-
-              serverAliveCountMax = 2;
-              serverAliveInterval = 60;
+          settings."*" = {
+            SetEnv = {
+              COLORTERM = "truecolor";
+              TERM = "xterm-256color";
             };
+
+            ForwardAgent = false;
+            Compression = false;
+            AddKeysToAgent = "no";
+            UserKnownHostsFile = "~/.ssh/known_hosts";
+            HashKnownHosts = false;
+
+            ControlMaster = "auto";
+            ControlPath = "${controlPath}/%r@%n:%p";
+            ControlPersist = "60m";
+
+            ServerAliveCountMax = 2;
+            ServerAliveInterval = 60;
           };
         };
       }
