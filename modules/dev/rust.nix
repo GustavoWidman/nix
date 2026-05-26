@@ -30,7 +30,10 @@
 
           [build]
           rustc-wrapper="sccache"
+          incremental = false
         '';
+        # sccache doesn't support incremental compilation,
+        # so disable it to avoid sccache never working at all
         force = true;
       };
     }
