@@ -142,11 +142,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1777753157,
-        "narHash": "sha256-OpepkpIRWJX8gORVDxyoz0oFsFW/tCB3l7yJEAsG/zo=",
+        "lastModified": 1779826932,
+        "narHash": "sha256-uDzdmlrC2pivAJf7kSYi35w6gdqIHNcApUvxaz+QTdY=",
         "ref": "refs/heads/master",
-        "rev": "4e0e6da84b9d36ca07e75ec2c75776f5438b386c",
-        "revCount": 663,
+        "rev": "fabfe68d52377ae8f2dae35a6e194a947e27abed",
+        "revCount": 670,
         "type": "git",
         "url": "ssh://git@github.com/GustavoWidman/claude-who"
       },
