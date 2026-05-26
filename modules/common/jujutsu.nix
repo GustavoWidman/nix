@@ -43,24 +43,16 @@ in
             merge.hunk-level = "word";
 
             revset-aliases = {
+              "close" = "closest_bookmark(@-)";
               "immutable_heads()" = "builtin_immutable_heads() | remote_bookmarks()";
               "working_changes" = "heads(mutable()) & description(exact:'')";
               "closest_bookmark(x)" = "heads(::x & bookmarks())";
               "closest_remote_bookmark(x)" = "heads(::x & remote_bookmarks())";
             };
 
-            aliases.resolve-ast = [
-              "resolve"
-              "--tool"
-              "mergiraf"
-            ];
-            aliases.resa = [ "resolve-ast" ];
+            templates.file_annotate = ''join(" ", commit.change_id().shortest(8), pad_end(16, truncate_end(16, commit.author().name())), pad_start(4, line_number)) ++ ": " ++ content'';
 
-            aliases.ls = [
-              "log"
-              "--summary"
-            ];
-
+            # back & forth
             aliases.".." = [
               "edit"
               "@-"
@@ -70,169 +62,47 @@ in
               "@+"
             ];
 
-            aliases.r = [
-              "rebase"
-            ];
-            aliases."r!" = [
-              "rebase"
-              "--ignore-immutable"
-            ];
-            aliases."rebase!" = [
-              "rebase"
-              "--ignore-immutable"
-            ];
-
-            aliases.a = [
-              "abandon"
-            ];
+            # abandon
+            aliases.a = [ "abandon" ];
             aliases."a!" = [
-              "abandon"
+              "a"
               "--ignore-immutable"
             ];
-            aliases."abandon!" = [
-              "abandon"
-              "--ignore-immutable"
-            ];
+            aliases."abandon!" = [ "a!" ];
+
+            # arrange
+            aliases."arr" = [ "arrange" ];
 
             aliases.back = [
               "edit"
               "reachable(@::, working_changes)"
             ];
 
-            aliases.fetch = [
-              "git"
-              "fetch"
-            ];
-            aliases.f = [
-              "git"
-              "fetch"
-            ];
-
-            aliases.push = [
-              "git"
-              "push"
-            ];
-            aliases.p = [
-              "git"
-              "push"
-            ];
-
-            aliases.clone = [
-              "git"
-              "clone"
-              "--colocate"
-            ];
-            aliases.cl = [
-              "git"
-              "clone"
-              "--colocate"
-            ];
-
-            aliases.init = [
-              "git"
-              "init"
-              "--colocate"
-            ];
-            aliases.i = [
-              "git"
-              "init"
-              "--colocate"
-            ];
-
-            aliases.s = [ "squash" ];
-            aliases."s!" = [
-              "squash"
-              "--ignore-immutable"
-            ];
-            aliases."squash!" = [
-              "squash"
-              "--ignore-immutable"
-            ];
-
-            aliases.si = [
-              "squash"
-              "--interactive"
-            ];
-            aliases."si!" = [
-              "squash"
-              "--interactive"
-              "--ignore-immutable"
-            ];
-            aliases.squashi = [
-              "squash"
-              "--interactive"
-            ];
-            aliases."squashi!" = [
-              "squash"
-              "--interactive"
-              "--ignore-immutable"
-            ];
-
-            aliases."split!" = [
-              "split"
-              "--ignore-immutable"
-            ];
-
-            aliases.c = [ "commit" ];
-            aliases.ci = [
-              "commit"
-              "--interactive"
-            ];
-            aliases.comi = [
-              "commit"
-              "--interactive"
-            ];
-
-            aliases.e = [ "edit" ];
-            aliases."e!" = [
-              "edit"
-              "--ignore-immutable"
-            ];
-            aliases."edit!" = [
-              "edit"
-              "--ignore-immutable"
-            ];
-
-            aliases.d = [ "describe" ];
-            aliases."d!" = [
-              "describe"
-              "--ignore-immutable"
-            ];
-            aliases."describe!" = [
-              "describe"
-              "--ignore-immutable"
-            ];
-
-            aliases.history = [
-              "log"
-              "-r"
-              "all()"
-            ];
-            aliases.pov = [
-              "log"
-              "-r"
-              "closest_bookmark(@)::@"
-            ];
-            aliases.working = [
-              "log"
-              "-r"
-              "working_changes"
-            ];
-            aliases.wc = [
-              "working"
-            ];
-
+            # bookmark operations
             aliases.bc = [
               "bookmark"
               "create"
             ];
-            aliases.bm = [
+            aliases.bn = [
               "bookmark"
-              "move"
+              "create"
             ];
-            aliases.bs = [
+            aliases.cb = [
               "bookmark"
-              "set"
+              "create"
+            ];
+            aliases.nb = [
+              "bookmark"
+              "create"
+            ];
+
+            aliases.bf = [
+              "bookmark"
+              "forget"
+            ];
+            aliases.bl = [
+              "bookmark"
+              "list"
             ];
             aliases.br = [
               "bookmark"
@@ -242,32 +112,93 @@ in
               "bookmark"
               "track"
             ];
-            aliases.but = [
-              "bookmark"
-              "untrack"
-            ];
             aliases.bu = [
               "bookmark"
               "untrack"
             ];
-            aliases.bf = [
-              "bookmark"
-              "forget"
-            ];
-            aliases.bl = [
-              "bookmark"
-              "list"
-            ];
 
-            aliases.tug = [
+            aliases.bm = [
               "bookmark"
               "move"
-              "--from"
-              "closest_bookmark(@-)"
-              "--to"
-              "@-"
             ];
-            aliases.t = [ "tug" ];
+            aliases."bm!" = [
+              "bm"
+              "--allow-backwards"
+            ];
+
+            aliases.bs = [
+              "bookmark"
+              "set"
+            ];
+            aliases."bs!" = [
+              "bs"
+              "--allow-backwards"
+            ];
+
+            # commit
+            aliases.c = [ "commit" ];
+            aliases.ci = [
+              "commit"
+              "--interactive"
+            ];
+            aliases.comi = [ "ci" ];
+
+            # describe
+            aliases.d = [ "describe" ];
+            aliases."d!" = [
+              "d"
+              "--ignore-immutable"
+            ];
+            aliases."describe!" = [ "d!" ];
+
+            # edit
+            aliases.e = [ "edit" ];
+            aliases."e!" = [
+              "e"
+              "--ignore-immutable"
+            ];
+            aliases."edit!" = [ "e!" ];
+
+            # linear history
+            aliases.history = [
+              "log"
+              "-r"
+              "all()"
+            ];
+            aliases.h = [ "history" ];
+
+            aliases.ls = [
+              "log"
+              "--summary"
+            ];
+            aliases.pov = [
+              "log"
+              "-r"
+              "closest_bookmark(@)::@"
+            ];
+
+            aliases.working = [
+              "log"
+              "-r"
+              "working_changes"
+            ];
+            aliases.wc = [ "working" ];
+
+            aliases.mutable = [
+              "log"
+              "-r"
+              "mutable()"
+            ];
+
+            # rebase
+            aliases.r = [
+              "rebase"
+            ];
+            aliases."r!" = [
+              "r"
+              "--ignore-immutable"
+            ];
+            aliases."rebase!" = [ "r!" ];
 
             aliases.bring = [
               "rebase"
@@ -276,9 +207,112 @@ in
               "-d"
             ];
 
+            # make a github merge commit.
+            # usage "jj merge main"
+            # merges "current branch" with the tip of another branch (or many branches),
+            # making @ the "merge commit" and leaving potential conflicts in @ to be commited.
+            # @ should then be described and pushed as a "merge" commit
+            aliases.merge = [
+              "new"
+              "close"
+            ];
+
+            # git
             aliases.remote = [
               "git"
               "remote"
+            ];
+
+            aliases.push = [
+              "git"
+              "push"
+            ];
+            aliases.p = [ "push" ];
+
+            aliases.fetch = [
+              "git"
+              "fetch"
+            ];
+            aliases.f = [ "fetch" ];
+
+            aliases.init = [
+              "git"
+              "init"
+              "--colocate"
+            ];
+            aliases.i = [ "init" ];
+
+            aliases.clone = [
+              "git"
+              "clone"
+              "--colocate"
+            ];
+            aliases.cl = [ "clone" ];
+
+            # resolve
+            aliases.resolve-ast = [
+              "resolve"
+              "--tool"
+              "mergiraf"
+            ];
+            aliases.resa = [ "resolve-ast" ];
+
+            # squash
+            aliases.s = [ "squash" ];
+            aliases."s!" = [
+              "s"
+              "--ignore-immutable"
+            ];
+            aliases."squash!" = [ "s!" ];
+
+            aliases.si = [
+              "s"
+              "--interactive"
+            ];
+            aliases."si!" = [
+              "si"
+              "--ignore-immutable"
+            ];
+
+            aliases.squashi = [ "si" ];
+            aliases."squashi!" = [ "si!" ];
+
+            aliases."split!" = [
+              "split"
+              "--ignore-immutable"
+            ];
+
+            aliases.tug = [
+              "bookmark"
+              "move"
+              "--to"
+              "@-"
+              "--from"
+            ];
+            aliases.t = [ "tug" ];
+
+            aliases.blame = [
+              "file"
+              "annotate"
+            ];
+
+            aliases.untrack = [
+              "file"
+              "untrack"
+            ];
+            aliases.u = [ "untrack" ];
+
+            # syncs the local with the remote and places '@' on top of the bookmark we are tracking,
+            # which is usually the "closest" bookmark to our current position.
+            # used to quickly update our local branch to the latest remote changes,
+            # while keeping our local commits on top of the updated bookmark.
+            aliases.sync = [
+              "util"
+              "exec"
+              "--"
+              "sh"
+              "-c"
+              "bookmark=$(jj log -r 'closest_bookmark(@)' -T 'bookmarks' --no-graph) && jj fetch && jj new $bookmark"
             ];
 
             remotes.origin.auto-track-bookmarks = "glob:*";
