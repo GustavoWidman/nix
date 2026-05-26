@@ -28,6 +28,7 @@
       openssh
       nodejs
       codex
+      ruby # for OMC's ralph plugin
       bun
     ];
 
