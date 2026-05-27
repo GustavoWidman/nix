@@ -100,7 +100,7 @@ in
 
         port_https = 3443;
         port_dns_over_tls = 853;
-        port_dns_over_quic = 0;
+        port_dns_over_quic = 853;
         port_dnscrypt = 0;
 
         allow_unencrypted_doh = true;
@@ -158,5 +158,6 @@ in
       443
       853
     ];
+    allowedUDPPorts = [ 853 ];
   };
 }
