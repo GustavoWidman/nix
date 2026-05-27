@@ -159,6 +159,11 @@ in
   systemd.services.copyparty = {
     after = [ "mnt-lab.mount" ];
     requires = [ "mnt-lab.mount" ];
+
+    serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = "30s";
+    };
   };
 
   services.caddy.virtualHosts."files.r3dlust.com".extraConfig = ''
