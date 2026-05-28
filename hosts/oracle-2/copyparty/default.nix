@@ -131,7 +131,7 @@ in
           e2d = true;
           e2t = true;
           fk = 8;
-          scan = 300;
+          scan = 3600;
         };
       };
 
@@ -144,7 +144,7 @@ in
           e2d = true;
           e2t = true;
           fk = 8;
-          scan = 300;
+          scan = 3600;
         };
       };
     };
