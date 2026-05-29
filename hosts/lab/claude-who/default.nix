@@ -49,6 +49,7 @@
   # add oracle's user to the "docker" group
   users.users.${config.services.claude-who.user} = {
     extraGroups = [ "docker" ];
+    linger = true;
   };
 
   environment.systemPackages = [
