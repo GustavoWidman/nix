@@ -805,11 +805,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779726696,
-        "narHash": "sha256-/p37CB5n6Wpw250b0Lq0CYwNq2D8uGKzDoBulyLcQqA=",
+        "lastModified": 1780408569,
+        "narHash": "sha256-s7Tv6FUQThRAvW8En8XVC6HMb0uiikzVccCcCo9u/Bg=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "1a95e2efb477959b70b4a14c51035975c0481df6",
+        "rev": "f384af1bec6423a0d4ba1855917ab948f64e5808",
         "type": "github"
       },
       "original": {
@@ -1314,11 +1314,11 @@
     },
     "nixpkgs_9": {
       "locked": {
-        "lastModified": 1779560665,
-        "narHash": "sha256-tpyBcxPpcQb8ukyNF7DoCwfSY3VPsxHoYwj00Cayv5o=",
+        "lastModified": 1780243769,
+        "narHash": "sha256-x5UQuRsH3MqI0U9afaXSNqzTPSeZlRLvFAav2Ux1pNw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "64c08a7ca051951c8eae34e3e3cb1e202fe36786",
+        "rev": "331800de5053fcebacf6813adb5db9c9dca22a0c",
         "type": "github"
       },
       "original": {
@@ -1658,11 +1658,11 @@
         "zed": "zed_2"
       },
       "locked": {
-        "lastModified": 1779744120,
-        "narHash": "sha256-VF/R/JW7sbGvL5vDXle3aq6G1p9DSTs31CRGFS1L3mE=",
+        "lastModified": 1780073190,
+        "narHash": "sha256-FJBlTLbg3j7K5DKOIvbVAFvUMh2LTFI6xsRsvNWghRg=",
         "owner": "GustavoWidman",
         "repo": "zed-autobuild",
-        "rev": "872fcd4839853649a97d5a60e2fe766765090775",
+        "rev": "afeffeb4a7f02c0da99ca3ec47ccb78fa39e45de",
         "type": "github"
       },
       "original": {
@@ -1679,16 +1679,16 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1779730791,
-        "narHash": "sha256-zEKRWKoazR2LLei3ug+w8zq2YawVc3CYMiblTKJ7e6c=",
+        "lastModified": 1779902484,
+        "narHash": "sha256-kd5QAoW1DJz3e0hHo++FqiqJWwJy1mhjIAq/eInJUEM=",
         "owner": "zed-industries",
         "repo": "zed",
-        "rev": "29542ace02a1b17b6805fd0b9674a8154360feb6",
+        "rev": "ce85db149e4b1125769e8e4fc9f5f7f7c07ac7de",
         "type": "github"
       },
       "original": {
         "owner": "zed-industries",
-        "ref": "v1.4.2-pre",
+        "ref": "v1.4.2",
         "repo": "zed",
         "type": "github"
       }
