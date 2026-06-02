@@ -65,7 +65,7 @@ mergeIf (config.isDesktop) {
         wofi # App launcher/search
         waybar # Status bar
         hyprpaper # Wallpaper
-        swww # Alternative wallpaper if needed
+        awww # Alternative wallpaper if needed
         dunst # Notifications (better than default)
         libnotify # For notify-send testing
 
@@ -118,15 +118,16 @@ mergeIf (config.isDesktop) {
           ipc = "on";
           splash = false;
           preload = [
-            "${toString ./f40-wpp.png}"
+            "${./f40-wpp.png}"
           ];
-          wallpaper = [ ",${toString ./f40-wpp.png}" ]; # "," for all monitors
+          wallpaper = [ ",${./f40-wpp.png}" ]; # "," for all monitors
         };
       };
 
       # Enable Hyprland in Home Manager
       wayland.windowManager.hyprland = {
         enable = true;
+        configType = "hyprlang";
         xwayland.enable = true; # For compatibility
         settings = {
           # Mod key: ALT (like your Aerospace; change to "SUPER" if conflicts)
