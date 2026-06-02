@@ -14,7 +14,7 @@ cache: true
 fallback:
   - "https://1.1.1.1/dns-query"
 upstream:
-  - "https://dns.r3dlust.com/dns-query"
+  - "quic://dns.r3dlust.com:853"
   - "[/ts.net/]100.100.100.100"
   - "[/tailnet.camelsec.com/]100.100.100.100"
   - "[/staging.camelsec.com/]100.100.100.100"
