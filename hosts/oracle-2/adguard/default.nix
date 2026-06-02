@@ -70,10 +70,8 @@ in
         port = 0;
 
         upstream_dns = [
-          "https://dns.cloudflare.com/dns-query"
-          "tls://one.one.one.one"
-          "https://dns.google/dns-query"
-          "tls://dns.google"
+          "h3://cloudflare-dns.com/dns-query"
+          "h3://dns.google/dns-query"
         ];
         upstream_mode = "load_balance";
         bootstrap_dns = [
