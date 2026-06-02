@@ -2,6 +2,7 @@
   config,
   self,
   pkgs,
+  zed,
   lib,
   ...
 }:
@@ -19,7 +20,7 @@ in
   home-manager.sharedModules = [
     {
       programs.zed-editor = enabled {
-        package = pkgs.zed-editor;
+        package = zed.packages.${pkgs.stdenv.hostPlatform.system}.default;
         userSettings = {
           ssh_connections =
             self.machineMetadata

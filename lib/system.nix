@@ -1,7 +1,7 @@
 _: self: super:
 let
   inherit (self)
-    attrValues
+    attrsToList
     filter
     getAttrFromPath
     hasAttrByPath
@@ -18,7 +18,7 @@ let
   collectInputsFrom =
     inputSet:
     let
-      inputs' = attrValues inputSet;
+      inputs' = inputSet |> attrsToList |> filter ({ name, ... }: name != "zed") |> map ({ value, ... }: value);
     in
     path: inputs' |> filter (hasAttrByPath path) |> map (getAttrFromPath path);
 in
