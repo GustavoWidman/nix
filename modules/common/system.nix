@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (lib)
     attrNames
@@ -37,7 +42,7 @@ in
             "aarch64-darwin"
             "x86_64-darwin"
           ];
-          default = config.nixpkgs.hostPlatform.system;
+          default = pkgs.stdenv.hostPlatform.system;
         };
         options.build-architectures = mkOption {
           type = lib.types.listOf (
@@ -48,7 +53,7 @@ in
               "x86_64-darwin"
             ]
           );
-          default = [ config.nixpkgs.hostPlatform.system ];
+          default = [ pkgs.stdenv.hostPlatform.system ];
         };
       };
     };
