@@ -26,7 +26,7 @@
         resolution = "1920x1080";
         helpHidden = true;
         branding = "r3dlust's workstation";
-        brandingColor = 6;
+        brandingColor = "6";
       };
     };
   };
