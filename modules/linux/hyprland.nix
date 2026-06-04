@@ -54,7 +54,6 @@ mergeIf (config.isDesktop) {
       home.packages = with pkgs; [
         # Terminals/Browsers/Editors
         ghostty # Your terminal
-        zed-editor # Zed
         vscode # VSCode
         inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default # Zen Browser
         google-chrome # Chrome
