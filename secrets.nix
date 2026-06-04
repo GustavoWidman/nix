@@ -60,6 +60,7 @@ in
 
   # Oracle-1 Specific
   "hosts/oracle-1/password.age".publicKeys = [ oracle-1 ] ++ admins;
+  "hosts/oracle-1/rocky-bot/rocky-bot.toml.age".publicKeys = [ oracle-1 ] ++ admins;
   "hosts/oracle-1/lavalink/environment.env.age".publicKeys = [ oracle-1 ] ++ admins;
 
   # Oracle-2 Specific
@@ -73,8 +74,6 @@ in
   "hosts/oracle-2/pinger/config.toml.age".publicKeys = [ oracle-2 ] ++ admins;
 
   "hosts/oracle-2/copyparty/password.age".publicKeys = [ oracle-2 ] ++ admins;
-
-  "hosts/oracle-2/rocky-bot/rocky-bot.toml.age".publicKeys = [ oracle-2 ] ++ admins;
 
   # Desktop-Nixos Specific
   "hosts/desktop-nixos/password.age".publicKeys = [ desktop-nixos ] ++ admins;
