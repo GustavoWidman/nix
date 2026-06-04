@@ -60,6 +60,7 @@ in
 
   # Oracle-1 Specific
   "hosts/oracle-1/password.age".publicKeys = [ oracle-1 ] ++ admins;
+  "hosts/oracle-1/lavalink/environment.env.age".publicKeys = [ oracle-1 ] ++ admins;
 
   # Oracle-2 Specific
   "hosts/oracle-2/adguard/config.yaml.age".publicKeys = [ oracle-2 ] ++ admins;
