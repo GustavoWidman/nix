@@ -1335,11 +1335,11 @@
         "nixpkgs": "nixpkgs_10"
       },
       "locked": {
-        "lastModified": 1780424837,
-        "narHash": "sha256-ub4in5ZHzPZI1G/aAn8qXGLSxDIOvKpbZB4rd45RL4g=",
+        "lastModified": 1780682573,
+        "narHash": "sha256-YE3siQcvDwJHr+7YqKELmW5RVB8xM7k27LUVxuTqs8I=",
         "owner": "GustavoWidman",
         "repo": "portfolio",
-        "rev": "80179657051ce6fd72860e4ab57c7f1b18ac5237",
+        "rev": "4811da81244160cdfec0282e5f0ee41e3c8c15c5",
         "type": "github"
       },
       "original": {
