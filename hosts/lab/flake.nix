@@ -48,6 +48,8 @@ in
           nix.settings.extra-platforms = extra-platforms;
           boot.binfmt.emulatedSystems = extra-platforms;
 
+          services.netbird.enable = true;
+
           tailscale = {
             exit-node = true;
             advertise-routes = [
