@@ -17,7 +17,7 @@ in
     "/etc/ssh/ssh_host_ed25519_key"
   ];
 
-  environment = mkIf config.isDesktop {
+  environment = mkIf config.isDev {
     systemPackages = with pkgs; [
       agenix
     ];
