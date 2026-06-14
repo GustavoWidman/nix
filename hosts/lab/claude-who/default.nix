@@ -36,6 +36,10 @@
       BUN_INSTALL = "/home/${config.services.claude-who.user}/.bun";
       NPM_CONFIG_PREFIX = "/home/${config.services.claude-who.user}/.npm-global";
     };
+
+    extraReadWritePaths = [
+      "/mnt/encrypted"
+    ];
   };
 
   # add oracle as a home-manager user
