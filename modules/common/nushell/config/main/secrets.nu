@@ -20,7 +20,7 @@ export def --env "edit" [
         false => "/root"
     }
 
-    with-env { HOME: $home, EDITOR: $editor } { sudo agenix -i /etc/ssh/ssh_host_ed25519_key -e $path }
+    sudo env $"HOME=($home)" $"EDITOR=($editor)" agenix -i /etc/ssh/ssh_host_ed25519_key -e $path
 }
 
 export def "cat" [path: path@existing-secrets] {
