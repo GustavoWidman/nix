@@ -28,6 +28,7 @@
       openssh
       nodejs
       codex
+      sccache
       ruby # for OMC's ralph plugin
       bun
     ];
@@ -35,6 +36,10 @@
     environment = {
       BUN_INSTALL = "/home/${config.services.claude-who.user}/.bun";
       NPM_CONFIG_PREFIX = "/home/${config.services.claude-who.user}/.npm-global";
+      RUSTC_WRAPPER = "${pkgs.sccache}/bin/sccache";
+      CARGO_INCREMENTAL = "0";
+      SCCACHE_CACHE_SIZE = "20G";
+      SCCACHE_DIR = "/home/${config.services.claude-who.user}/.cache/sccache";
     };
 
     extraReadWritePaths = [

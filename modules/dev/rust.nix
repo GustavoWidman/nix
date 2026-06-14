@@ -22,20 +22,30 @@
   ];
 
   home-manager.sharedModules = [
-    {
-      home.file.".cargo/config.toml" = {
-        text = ''
-          [net]
-          git-fetch-with-cli = true
+    (
+      { config, ... }:
+      {
+        home.sessionVariables = {
+          RUSTC_WRAPPER = "sccache";
+          CARGO_INCREMENTAL = "0";
+          SCCACHE_CACHE_SIZE = "20G";
+          SCCACHE_DIR = "${config.home.homeDirectory}/.cache/sccache";
+        };
 
-          [build]
-          rustc-wrapper="sccache"
-          incremental = false
-        '';
-        # sccache doesn't support incremental compilation,
-        # so disable it to avoid sccache never working at all
-        force = true;
-      };
-    }
+        home.file.".cargo/config.toml" = {
+          text = ''
+            [net]
+            git-fetch-with-cli = true
+
+            [build]
+            rustc-wrapper="sccache"
+            incremental = false
+          '';
+          # sccache doesn't support incremental compilation,
+          # so disable it to avoid sccache never working at all
+          force = true;
+        };
+      }
+    )
   ];
 }
