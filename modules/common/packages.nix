@@ -24,7 +24,6 @@ in
           dig
           dosfstools
           e2fsprogs
-          exfat
           eza
           fastfetch
           file
@@ -65,6 +64,7 @@ in
       }
       // optionalAttrs config.isLinux {
         inherit (pkgs)
+          exfat # temporarily moved to isLinux due to failing build on darwin
           inotify-tools
           tailscale
           usbutils
