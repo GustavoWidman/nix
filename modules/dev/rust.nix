@@ -6,6 +6,17 @@
 }:
 
 {
+  services.kache = {
+    enable = true;
+    daemon.enable = true;
+    rustcWrapper = true;
+    settings.cache = {
+      local_max_size = "20G";
+      clean_incremental = true;
+      daemon_idle_timeout_secs = 600;
+    };
+  };
+
   environment.systemPackages = [
     (fenix.packages.${config.metadata.architecture}.complete.withComponents [
       "cargo"
@@ -15,7 +26,6 @@
       "rust-analyzer"
       "rust-src"
     ])
-    pkgs.sccache
     pkgs.cargo-sweep
     pkgs.cargo-info
     pkgs.sqlx-cli
