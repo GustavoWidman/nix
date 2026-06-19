@@ -5,6 +5,9 @@
   ...
 }:
 
+let
+  kacheExe = "${config.services.kache.package}/bin/kache";
+in
 {
   services.kache = {
     enable = true;
@@ -33,13 +36,13 @@
 
   home-manager.sharedModules = [
     (
-      { config, ... }:
+      { ... }:
       {
         home.sessionVariables = {
-          RUSTC_WRAPPER = "sccache";
+          RUSTC_WRAPPER = kacheExe;
           CARGO_INCREMENTAL = "0";
-          SCCACHE_CACHE_SIZE = "20G";
-          SCCACHE_DIR = "${config.home.homeDirectory}/.cache/sccache";
+          CC = "${kacheExe} cc";
+          CXX = "${kacheExe} c++";
         };
 
         home.file.".cargo/config.toml" = {
@@ -48,11 +51,9 @@
             git-fetch-with-cli = true
 
             [build]
-            rustc-wrapper="sccache"
+            rustc-wrapper="${kacheExe}"
             incremental = false
           '';
-          # sccache doesn't support incremental compilation,
-          # so disable it to avoid sccache never working at all
           force = true;
         };
       }
