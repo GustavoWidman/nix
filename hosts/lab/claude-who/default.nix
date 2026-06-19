@@ -4,7 +4,18 @@
   pkgs,
   ...
 }:
+let
+  kacheCacheDir = "/mnt/encrypted/oracle/kache";
+in
 {
+  services.kache.settings.cache.local_store = kacheCacheDir;
+
+  users.groups.kache = { };
+
+  systemd.tmpfiles.rules = [
+    "d ${kacheCacheDir} 0775 ${config.services.claude-who.user} kache - -"
+  ];
+
   secrets.claude-who = {
     file = ./settings.json.age;
     mode = "400"; # read-only for owner
@@ -57,9 +68,14 @@
 
   # add oracle's user to the "docker" group
   users.users.${config.services.claude-who.user} = {
-    extraGroups = [ "docker" ];
+    extraGroups = [
+      "docker"
+      "kache"
+    ];
     linger = true;
   };
+
+  users.users.r3dlust.extraGroups = [ "kache" ];
 
   environment.systemPackages = [
     claude-who.packages.${config.metadata.architecture}.default
