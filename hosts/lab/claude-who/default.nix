@@ -6,6 +6,7 @@
 }:
 let
   kacheCacheDir = "/mnt/encrypted/oracle/kache";
+  kacheExe = "${config.services.kache.package}/bin/kache";
 in
 {
   services.kache.settings.cache.local_store = kacheCacheDir;
@@ -39,7 +40,7 @@ in
       openssh
       nodejs
       codex
-      sccache
+      config.services.kache.package
       ruby # for OMC's ralph plugin
       bun
     ];
@@ -47,10 +48,11 @@ in
     environment = {
       BUN_INSTALL = "/home/${config.services.claude-who.user}/.bun";
       NPM_CONFIG_PREFIX = "/home/${config.services.claude-who.user}/.npm-global";
-      RUSTC_WRAPPER = "${pkgs.sccache}/bin/sccache";
+      RUSTC_WRAPPER = kacheExe;
       CARGO_INCREMENTAL = "0";
-      SCCACHE_CACHE_SIZE = "20G";
-      SCCACHE_DIR = "/home/${config.services.claude-who.user}/.cache/sccache";
+      KACHE_CACHE_DIR = kacheCacheDir;
+      CC = "${kacheExe} cc";
+      CXX = "${kacheExe} c++";
     };
 
     extraReadWritePaths = [
