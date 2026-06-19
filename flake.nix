@@ -103,6 +103,7 @@
     };
 
     cliproxyapi.url = "github:GustavoWidman/nix-cliproxyapi";
+    kache.url = "github:kunobi-ninja/kache";
 
     zed.url = "github:GustavoWidman/zed-autobuild";
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
