@@ -16,7 +16,7 @@ in
     daemon.enable = true;
     rustcWrapper = true;
     settings.cache = {
-      local_max_size = "20G";
+      local_max_size = "50G";
       clean_incremental = true;
       daemon_idle_timeout_secs = 600;
     };
