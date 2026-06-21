@@ -1,12 +1,14 @@
 {
   config,
   fenix,
+  lib,
   pkgs,
   ...
 }:
 
 let
   kacheExe = "${config.services.kache.package}/bin/kache";
+  cargoTargetDir = "/mnt/encrypted/oracle/cargo-target";
 in
 {
   services.kache = {
@@ -36,7 +38,7 @@ in
 
   home-manager.sharedModules = [
     (
-      { ... }:
+      { config, osConfig, ... }:
       {
         home.sessionVariables = {
           RUSTC_WRAPPER = kacheExe;
@@ -53,6 +55,9 @@ in
             [build]
             rustc-wrapper="${kacheExe}"
             incremental = false
+            ${lib.optionalString (osConfig.metadata.hostname == "lab") ''
+              target-dir = "${cargoTargetDir}/${config.home.username}"
+            ''}
           '';
           force = true;
         };

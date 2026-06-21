@@ -16,6 +16,9 @@ in
 
   systemd.tmpfiles.rules = [
     "d ${kacheCacheDir} 0775 ${config.services.claude-who.user} kache - -"
+    "d /mnt/encrypted/oracle/cargo-target 0755 ${config.services.claude-who.user} ${config.services.claude-who.group} - -"
+    "d /mnt/encrypted/oracle/cargo-target/${config.services.claude-who.user} 0755 ${config.services.claude-who.user} ${config.services.claude-who.group} - -"
+    "d /mnt/encrypted/oracle/cargo-target/r3dlust 0755 r3dlust users - -"
   ];
 
   secrets.claude-who = {
