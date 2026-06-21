@@ -36,6 +36,13 @@ in
     pkgs.sqlx-cli
   ];
 
+  environment.variables = {
+    RUSTC_WRAPPER = kacheExe;
+    CARGO_INCREMENTAL = "0";
+    CC = "${kacheExe} cc";
+    CXX = "${kacheExe} c++";
+  };
+
   home-manager.sharedModules = [
     (
       { config, osConfig, ... }:
