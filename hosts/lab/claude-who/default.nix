@@ -11,7 +11,8 @@ in
 {
   services.kache.settings.cache.local_store = kacheCacheDir;
 
-  users.groups.kache = { };
+  users.groups.kache = { gid = 987; };
+  users.groups.oracle = { gid = 991; };
 
   systemd.tmpfiles.rules = [
     "d ${kacheCacheDir} 0775 ${config.services.claude-who.user} kache - -"
@@ -70,6 +71,7 @@ in
 
   # add oracle's user to the "docker" group
   users.users.${config.services.claude-who.user} = {
+    uid = 993;
     extraGroups = [
       "docker"
       "kache"
@@ -82,4 +84,5 @@ in
   environment.systemPackages = [
     claude-who.packages.${config.metadata.architecture}.default
   ];
+
 }
