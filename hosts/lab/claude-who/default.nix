@@ -7,6 +7,12 @@
 let
   kacheCacheDir = "/mnt/encrypted/oracle/kache";
   kacheExe = "${config.services.kache.package}/bin/kache";
+  ccWrapper = "${pkgs.writeShellScriptBin "kache-cc" ''
+    exec ${kacheExe} cc "$@"
+  ''}/bin/kache-cc";
+  cxxWrapper = "${pkgs.writeShellScriptBin "kache-cxx" ''
+    exec ${kacheExe} c++ "$@"
+  ''}/bin/kache-cxx";
 in
 {
   services.kache.settings.cache.local_store = kacheCacheDir;
@@ -55,8 +61,8 @@ in
       RUSTC_WRAPPER = kacheExe;
       CARGO_INCREMENTAL = "0";
       KACHE_CACHE_DIR = kacheCacheDir;
-      CC = "${kacheExe} cc";
-      CXX = "${kacheExe} c++";
+      CC = ccWrapper;
+      CXX = cxxWrapper;
     };
 
     extraReadWritePaths = [

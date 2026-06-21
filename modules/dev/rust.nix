@@ -9,6 +9,12 @@
 let
   kacheExe = "${config.services.kache.package}/bin/kache";
   cargoTargetDir = "/mnt/encrypted/oracle/cargo-target";
+  ccWrapper = "${pkgs.writeShellScriptBin "kache-cc" ''
+    exec ${kacheExe} cc "$@"
+  ''}/bin/kache-cc";
+  cxxWrapper = "${pkgs.writeShellScriptBin "kache-cxx" ''
+    exec ${kacheExe} c++ "$@"
+  ''}/bin/kache-cxx";
 in
 {
   services.kache = {
@@ -39,8 +45,8 @@ in
   environment.variables = {
     RUSTC_WRAPPER = kacheExe;
     CARGO_INCREMENTAL = "0";
-    CC = "${kacheExe} cc";
-    CXX = "${kacheExe} c++";
+    CC = ccWrapper;
+    CXX = cxxWrapper;
   };
 
   home-manager.sharedModules = [
@@ -50,8 +56,8 @@ in
         home.sessionVariables = {
           RUSTC_WRAPPER = kacheExe;
           CARGO_INCREMENTAL = "0";
-          CC = "${kacheExe} cc";
-          CXX = "${kacheExe} c++";
+          CC = ccWrapper;
+          CXX = cxxWrapper;
         };
 
         home.file.".cargo/config.toml" = {
