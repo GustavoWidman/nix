@@ -39,6 +39,7 @@ in
   "modules/common/ssh/main/config.age".publicKeys = all;
   "modules/common/ssh/main/desktop.age".publicKeys = all;
   "modules/common/ssh/main/lab.age".publicKeys = all;
+  "modules/common/ssh/main/laptop.age".publicKeys = all;
 
   "modules/common/ssh/github/config.age".publicKeys = all;
   "modules/common/ssh/github/inteli.age".publicKeys = all;

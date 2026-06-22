@@ -22,7 +22,12 @@ in
         ...
       }:
       inputs.lib.darwinDesktopSystem inputs (
-        { lib, pkgs, ... }:
+        {
+          lib,
+          pkgs,
+          config,
+          ...
+        }:
         let
           inherit (lib)
             collectNix
@@ -45,6 +50,7 @@ in
               home = "/Users/r3dlust";
               isMainUser = true;
               shell = pkgs.nushell;
+              authorizedKey = config.secrets.ssh-main-laptop.path;
             };
 
             root = {
