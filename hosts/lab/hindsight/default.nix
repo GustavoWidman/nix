@@ -16,14 +16,13 @@
       PORT = "9999";
     };
     environmentFiles = [ config.secrets.hindsight-environment.path ];
-    ports = [
-      "8888:8888"
-      "9999:9999"
-    ];
     volumes = [
       "hindsight-data:/home/hindsight/.pg0"
     ];
-    extraOptions = [ "--pull=always" ];
+    extraOptions = [
+      "--pull=always"
+      "--network=host"
+    ];
   };
 
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
