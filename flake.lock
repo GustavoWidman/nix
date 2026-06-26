@@ -116,15 +116,16 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1781475856,
-        "narHash": "sha256-PxA3EcZLENCyqp7SIlb+mrVRxSAzrGJ9M4QKR+wlLcU=",
-        "ref": "refs/heads/master",
-        "rev": "553c79876af3e435f8df799b04e77adb8b50dc0f",
-        "revCount": 684,
+        "lastModified": 1782474990,
+        "narHash": "sha256-vvHjSIpOBfgBjDLaD5lwOzNL5dW5n/sBqEwM+lrLVD4=",
+        "ref": "claude-who-yggdrasil-integration",
+        "rev": "b3f828a16e1c63ed1c6151d7b3926a518daa7751",
+        "revCount": 739,
         "type": "git",
         "url": "ssh://git@github.com/GustavoWidman/claude-who"
       },
       "original": {
+        "ref": "claude-who-yggdrasil-integration",
         "type": "git",
         "url": "ssh://git@github.com/GustavoWidman/claude-who"
       }
