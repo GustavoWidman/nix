@@ -116,11 +116,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1782474990,
-        "narHash": "sha256-vvHjSIpOBfgBjDLaD5lwOzNL5dW5n/sBqEwM+lrLVD4=",
+        "lastModified": 1782478793,
+        "narHash": "sha256-tfRygoI6eigVPI20UE5Bho2/zIbS47O5YlRQfltkwww=",
         "ref": "claude-who-yggdrasil-integration",
-        "rev": "b3f828a16e1c63ed1c6151d7b3926a518daa7751",
-        "revCount": 739,
+        "rev": "9cb49a0ac21b5175119077ef4f290eb454b0dbe2",
+        "revCount": 740,
         "type": "git",
         "url": "ssh://git@github.com/GustavoWidman/claude-who"
       },
