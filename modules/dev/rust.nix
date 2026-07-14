@@ -9,12 +9,8 @@
 let
   kacheExe = "${config.services.kache.package}/bin/kache";
   cargoTargetDir = "/mnt/encrypted/oracle/cargo-target";
-  ccWrapper = "${pkgs.writeShellScriptBin "kache-cc" ''
-    exec ${kacheExe} cc "$@"
-  ''}/bin/kache-cc";
-  cxxWrapper = "${pkgs.writeShellScriptBin "kache-cxx" ''
-    exec ${kacheExe} c++ "$@"
-  ''}/bin/kache-cxx";
+  ccWrapper = "${kacheExe} cc";
+  cxxWrapper = "${kacheExe} c++";
 in
 {
   services.kache = {
