@@ -11,6 +11,14 @@ let
   cargoTargetDir = "/mnt/encrypted/oracle/cargo-target";
   ccWrapper = "${kacheExe} cc";
   cxxWrapper = "${kacheExe} c++";
+  rustToolchain = fenix.packages.${config.metadata.architecture}.complete.withComponents [
+    "cargo"
+    "clippy"
+    "rustc"
+    "rustfmt"
+    "rust-analyzer"
+    "rust-src"
+  ];
 in
 {
   services.kache = {
@@ -25,14 +33,7 @@ in
   };
 
   environment.systemPackages = [
-    (fenix.packages.${config.metadata.architecture}.complete.withComponents [
-      "cargo"
-      "clippy"
-      "rustc"
-      "rustfmt"
-      "rust-analyzer"
-      "rust-src"
-    ])
+    rustToolchain
     pkgs.cargo-sweep
     pkgs.cargo-info
     pkgs.sqlx-cli
@@ -43,6 +44,8 @@ in
     CARGO_INCREMENTAL = "0";
     CC = ccWrapper;
     CXX = cxxWrapper;
+  } // lib.optionalAttrs config.isDarwin {
+    DYLD_FALLBACK_LIBRARY_PATH = "${rustToolchain}/lib";
   };
 
   home-manager.sharedModules = [
@@ -54,6 +57,8 @@ in
           CARGO_INCREMENTAL = "0";
           CC = ccWrapper;
           CXX = cxxWrapper;
+        } // lib.optionalAttrs osConfig.isDarwin {
+          DYLD_FALLBACK_LIBRARY_PATH = "${rustToolchain}/lib";
         };
 
         home.file.".cargo/config.toml" = {
