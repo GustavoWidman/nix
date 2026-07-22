@@ -9,8 +9,6 @@
 let
   kacheExe = "${config.services.kache.package}/bin/kache";
   cargoTargetDir = "/mnt/encrypted/oracle/cargo-target";
-  ccWrapper = "${kacheExe} cc";
-  cxxWrapper = "${kacheExe} c++";
   rustToolchain = fenix.packages.${config.metadata.architecture}.complete.withComponents [
     "cargo"
     "clippy"
@@ -42,8 +40,6 @@ in
   environment.variables = {
     RUSTC_WRAPPER = kacheExe;
     CARGO_INCREMENTAL = "0";
-    CC = ccWrapper;
-    CXX = cxxWrapper;
   } // lib.optionalAttrs config.isDarwin {
     DYLD_FALLBACK_LIBRARY_PATH = "${rustToolchain}/lib";
   };
@@ -55,8 +51,6 @@ in
         home.sessionVariables = {
           RUSTC_WRAPPER = kacheExe;
           CARGO_INCREMENTAL = "0";
-          CC = ccWrapper;
-          CXX = cxxWrapper;
         } // lib.optionalAttrs osConfig.isDarwin {
           DYLD_FALLBACK_LIBRARY_PATH = "${rustToolchain}/lib";
         };
