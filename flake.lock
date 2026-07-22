@@ -890,11 +890,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1783964859,
-        "narHash": "sha256-AbXYd2e+eKmtkM712h0y6rrCZfPr5HZHUkFdmR8FEr0=",
+        "lastModified": 1784747599,
+        "narHash": "sha256-Fwtm56wZ/WATJpahpDxvJ4ySN556BAWpvHD5d7cdwzk=",
         "owner": "kunobi-ninja",
         "repo": "kache",
-        "rev": "772fee8335c7991e0354601ae92c4ba8c1ef5b89",
+        "rev": "e274acda61c1f6977c868b654e125f7f28279373",
         "type": "github"
       },
       "original": {
