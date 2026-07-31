@@ -64,6 +64,7 @@ in
       cp ${config.secrets.mail-dovecot.path} /run/dovecot2/passwd
       ${pkgs.gawk}/bin/awk -F: '{print $1 ":::::::;"}' /run/dovecot2/passwd > /run/dovecot2/userdb
       chmod 600 /run/dovecot2/passwd /run/dovecot2/userdb
+      chown dovecot2:dovecot2 /run/dovecot2/passwd /run/dovecot2/userdb
     '';
 
     restartTriggers = [
