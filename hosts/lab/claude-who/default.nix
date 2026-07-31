@@ -17,13 +17,18 @@ in
 {
   services.kache.settings.cache.local_store = kacheCacheDir;
 
-  users.groups.kache = { gid = 987; };
-  users.groups.oracle = { gid = 991; };
+  users.groups.kache = {
+    gid = 987;
+  };
+  users.groups.oracle = {
+    gid = 991;
+  };
 
   systemd.tmpfiles.rules = [
     "d ${kacheCacheDir} 2775 ${config.services.claude-who.user} kache - -"
     "d /mnt/encrypted/oracle/cargo-target 0755 ${config.services.claude-who.user} ${config.services.claude-who.group} - -"
     "d /mnt/encrypted/oracle/cargo-target/${config.services.claude-who.user} 0755 ${config.services.claude-who.user} ${config.services.claude-who.group} - -"
+    "d /mnt/encrypted/oracle/misc 0755 ${config.services.claude-who.user} ${config.services.claude-who.group} - -"
     "d /mnt/encrypted/oracle/cargo-target/r3dlust 0755 r3dlust users - -"
   ];
 
