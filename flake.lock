@@ -1435,11 +1435,11 @@
         "systems": "systems_8"
       },
       "locked": {
-        "lastModified": 1781545285,
-        "narHash": "sha256-NZFVCv7UhebhqGtzO0tQjqAmXOpEyyQGxuBbqwvzbm8=",
+        "lastModified": 1785597739,
+        "narHash": "sha256-ux4pihjvaSmROD2NuZi8k96BwjK85ARWatL16Tkeu8o=",
         "ref": "refs/heads/main",
-        "rev": "c505c2d7120150ee2e05d074ce9871afb39a84e9",
-        "revCount": 43,
+        "rev": "7d6d17ac1029a36e2bb9a6d7dafbf8da3135b4bf",
+        "revCount": 44,
         "type": "git",
         "url": "ssh://git@github.com/GustavoWidman/rocky-bot"
       },
