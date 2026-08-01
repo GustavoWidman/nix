@@ -18,9 +18,9 @@
 
     plugins = [
       {
-        dependency = "dev.lavalink.youtube:youtube-plugin:1.18.1";
+        dependency = "dev.lavalink.youtube:youtube-plugin:1.18.2";
         repository = "https://maven.lavalink.dev/releases";
-        hash = "sha256-DGJgXQ4B3JVApn++25umsGnEQjcxe02YwWupkl4L4Yg=";
+        hash = "sha256-/BEotga1T9oSS3jSYcOHgZgRYCi68A970BT0S6uV130=";
         configName = "youtube";
         extraConfig = {
           enabled = true;
