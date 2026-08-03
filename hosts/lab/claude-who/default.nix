@@ -40,7 +40,7 @@ in
   };
 
   services.claude-who = {
-    enable = true;
+    enable = false;
     user = "oracle";
     group = "oracle";
 
@@ -86,6 +86,11 @@ in
   # add oracle's user to the "docker" group
   users.users.${config.services.claude-who.user} = {
     uid = 993;
+    isSystemUser = true;
+    group = config.services.claude-who.group;
+    home = "/home/${config.services.claude-who.user}";
+    createHome = true;
+    shell = pkgs.bash;
     extraGroups = [
       "docker"
       "kache"
