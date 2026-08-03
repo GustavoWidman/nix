@@ -11,6 +11,10 @@ const LOG_COLORS = {
     cmd: "white_dimmed"
 }
 
+# Override stale cache settings left by an older system generation.
+const CLEAN_SUBSTITUTERS = "https://cache.nixos.org https://nix-community.cachix.org https://r3dlust.cachix.org https://install.determinate.systems"
+const CLEAN_TRUSTED_PUBLIC_KEYS = "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= r3dlust.cachix.org-1:/R3S8pW/nr7kOBJKcGPsZ0zCepvldTUEgbrqa4O3cW0="
+
 def log [
     level: string
     message: string
@@ -229,6 +233,7 @@ def rebuild-remote [
     --boot (-b)                  # Use boot instead of switch
     --dry-run (-d)               # Perform dry run
     --initial (-i)               # Initial setup for new host
+    --clean-substituters         # Ignore stale substituters from the current system
 ] {
     sync-nix-config $remote --key $key
 
@@ -239,6 +244,7 @@ def rebuild-remote [
         (if $initial { "--initial" } else { "" })
         (if $boot { "--boot" } else { "" })
         (if $dry_run { "--dry-run" } else { "" })
+        (if $clean_substituters { "--clean-substituters" } else { "" })
     ] | where {|x| $x != ""} | str join " "
 
     if $initial {
@@ -282,6 +288,7 @@ def rebuild-local [
     --boot (-b)                 # Use boot instead of switch
     --dry-run (-d)              # Perform dry run
     --initial (-i)              # Initial setup for new host
+    --clean-substituters        # Ignore stale substituters from the current system
     --build-only                # Only build, don't apply
     --apply-only                # Only apply, don't build
 ] {
@@ -297,6 +304,15 @@ def rebuild-local [
         "--extra-experimental-features" "pipe-operators"
         "--option" "accept-flake-config" "true"
     ]
+
+    if $clean_substituters {
+        $nix_flags = ($nix_flags | append [
+            "--option" "substituters" $CLEAN_SUBSTITUTERS
+            "--option" "extra-substituters" ""
+            "--option" "trusted-public-keys" $CLEAN_TRUSTED_PUBLIC_KEYS
+            "--option" "extra-trusted-public-keys" ""
+        ])
+    }
 
     if $initial {
         $nix_flags = ($nix_flags | append [
@@ -376,6 +392,7 @@ export def main --env [
     --dry-run (-d)                  # Sets "eval-cache" to false in nix options
     --initial (-i)                  # Initial setup for new host
     --update (-u)                   # Update flake inputs before rebuild
+    --clean-substituters             # Ignore stale substituters from the current system
 
     # Remote options
     --remote (-r): string@hostnames # Remote host address or hostname
@@ -416,13 +433,13 @@ export def main --env [
         log info $"starting remote rebuild for (ansi $LOG_COLORS.host)($target)(ansi reset)(if ($target != $remote) { $' at (ansi $LOG_COLORS.host)($remote)(ansi reset)' } else { '' })"
 
         ensure-host-key $target $remote --key $key
-        rebuild-remote $target $remote --key $key --boot=$boot --dry-run=$dry_run --initial=$initial
+        rebuild-remote $target $remote --key $key --boot=$boot --dry-run=$dry_run --initial=$initial --clean-substituters=$clean_substituters
     } else {
         if not $in_remote {
             log info $"starting local rebuild for (ansi $LOG_COLORS.host)($target)(ansi reset)"
         }
 
-        rebuild-local $target --boot=$boot --dry-run=$dry_run --initial=$initial --build-only=$build_only --apply-only=$apply_only
+        rebuild-local $target --boot=$boot --dry-run=$dry_run --initial=$initial --clean-substituters=$clean_substituters --build-only=$build_only --apply-only=$apply_only
     }
 }
 
@@ -462,6 +479,7 @@ export def all --env [
     --boot (-b)                 # Boot instead of switch (for NixOS rebuilds only)
     --dry-run (-d)              # Sets "eval-cache" to false, skipping nix's eval cache and running "dry"
     --update (-u)               # Update flake inputs before any rebuilds
+    --clean-substituters        # Ignore stale substituters from the current system
 
     # Advanced options
     --continue-on-error         # Continue with other hosts if one fails
@@ -497,11 +515,11 @@ export def all --env [
         if $host.remote {
             log info $"starting remote rebuild for (ansi $LOG_COLORS.host)($host.name)(ansi reset)"
 
-            rebuild-remote $host.name $host.name --boot=$boot --dry-run=$dry_run
+            rebuild-remote $host.name $host.name --boot=$boot --dry-run=$dry_run --clean-substituters=$clean_substituters
         } else {
             log info $"starting local rebuild for (ansi $LOG_COLORS.host)($host.name)(ansi reset)"
 
-            rebuild-local $host.name --boot=$boot --dry-run=$dry_run
+            rebuild-local $host.name --boot=$boot --dry-run=$dry_run --clean-substituters=$clean_substituters
         }
     }
 }
