@@ -188,7 +188,7 @@ def ensure-host-key [
         | insert $type_line $'    keys.($hostname)'
 
         let is_dev = (input -n 1 (log info $"is this machine a dev environment? [(ansi green)y(ansi reset)/(ansi red)N(ansi reset)]: " --return-instead))
-        if ($is_dev | str downcase) == "y" {
+        if ($is_dev | str lowercase) == "y" {
             let dev_line = ($keys_content
                 | enumerate
                 | where item =~ dev
@@ -200,7 +200,7 @@ def ensure-host-key [
         }
 
         let is_admin = (input -n 1 (log info $"is this machine an admin? [(ansi green)y(ansi reset)/(ansi red)N(ansi reset)]: " --return-instead))
-        if ($is_admin | str downcase) == "y" {
+        if ($is_admin | str lowercase) == "y" {
             let admin_line = ($keys_content
                 | enumerate
                 | where item =~ admins
@@ -371,7 +371,7 @@ def validate-hostname [
         let response = (input -n 1 $"continue? [(ansi green)y(ansi reset)/(ansi red)N(ansi reset)]: ")
         print ""
 
-        if ($response | str downcase) != "y" {
+        if ($response | str lowercase) != "y" {
             log info -e "operation cancelled"
         }
     }

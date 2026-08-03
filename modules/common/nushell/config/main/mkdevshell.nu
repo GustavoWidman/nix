@@ -60,9 +60,9 @@ def check-replace [] {
             are you sure you want to continue and replace it? \((ansi green)y(ansi reset)/(ansi red)n(ansi reset)\): ")
             print "" # newline
 
-            match (($choice | str downcase) != "y") {
+            match (($choice | str lowercase) != "y") {
                 true => {
-                    match (($choice | str downcase) != "n") {
+                    match (($choice | str lowercase) != "n") {
                         true => {log warn "invalid choice, exiting..."}
                         false => {log info "exiting without making any changes..."}
                     }
@@ -79,8 +79,8 @@ def check-replace [] {
 def envrc [] {
     let choice = input -n 1 -s (log info --return-instead $"would you like to create a `(ansi cyan).envrc(ansi reset)` file as well? \((ansi green)y(ansi reset)/(ansi red)n(ansi reset)\): ")
     print "" # newline
-    if ($choice | str downcase) != "y" {
-        match (($choice | str downcase) != "n") {
+    if ($choice | str lowercase) != "y" {
+        match (($choice | str lowercase) != "n") {
             true => (log warn $"invalid choice, skipping `(ansi cyan).envrc(ansi reset)` creation...")
             false => (log info $"skipping `(ansi cyan).envrc(ansi reset)` creation...")
         }
@@ -96,8 +96,8 @@ def envrc [] {
 def patch [type] {
     let choice = input -n 1 -s (log info --return-instead $"would you like to apply any patches for `(ansi cyan)($type)(ansi reset)`? \((ansi green)y(ansi reset)/(ansi red)n(ansi reset)\): ")
     print "" # newline
-    if ($choice | str downcase) != "y" {
-        match (($choice | str downcase) != "n") {
+    if ($choice | str lowercase) != "y" {
+        match (($choice | str lowercase) != "n") {
             true => (log warn $"invalid choice, skipping patches for `(ansi cyan)($type)(ansi reset)` flake...")
             false => (log info $"skipping patches for `(ansi cyan)($type)(ansi reset)` flake...")
         }

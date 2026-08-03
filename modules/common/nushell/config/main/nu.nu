@@ -88,7 +88,7 @@ export def --env "activate" [
                 false => (input -n 1 -s (log warn --return-instead $"you already have a nu environment activated, but this one is different. activate? [(ansi green)y(ansi reset)/(ansi red)N(ansi reset)]: "))
             }
             if not $quiet { print "" }
-            if ($choice | str downcase) == "y" {
+            if ($choice | str lowercase) == "y" {
                 deactivate --quiet=$quiet
             } else {
                 log warn "exiting without doing anything..." --exit

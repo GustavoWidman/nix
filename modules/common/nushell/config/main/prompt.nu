@@ -2,7 +2,7 @@ def get-cwd [] {
     let pwd = match $env.OS {
         "Darwin" => ((do { pwd })
             | str replace $env.HOME '~'
-            | str downcase),
+            | str lowercase),
         _ => ((do { pwd })
             | str replace $env.HOME '~')
     }

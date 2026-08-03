@@ -62,7 +62,7 @@ export def --env main [
             let pid = $parts.1
                 | into int
             let protocol = $parts.7
-                | str downcase
+                | str lowercase
             let state = $parts
                 | get -o 9
                 | default "LISTEN"
