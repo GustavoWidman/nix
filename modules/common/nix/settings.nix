@@ -3,6 +3,7 @@
   config,
   self,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -29,6 +30,14 @@ let
         "use-cgroups"
       ]
     );
+
+  determinateNix = inputs.determinate.inputs.nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  determinateNixRuntime = pkgs.symlinkJoin {
+    pname = "determinate-nix";
+    version = determinateNix.version;
+    name = "determinate-nix-${determinateNix.version}";
+    paths = [ (lib.getOutput "out" determinateNix) ];
+  };
 in
 {
   secrets.github-token-nix-conf = {
@@ -44,6 +53,9 @@ in
   );
 
   nix.registry = registry // { default = inputs.nixpkgs; } |> mapAttrs (_: flake: { inherit flake; });
+
+  # Determinate's cache publishes the runtime output, not Nix's auxiliary outputs.
+  nix.package = mkIf config.isLinux (mkForce determinateNixRuntime);
 
   nix-settings = settings // {
     includes = [ config.secrets.github-token-nix-conf.path ];
