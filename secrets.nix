@@ -59,8 +59,6 @@ in
   "hosts/lab/cliproxyapi/config.yaml.age".publicKeys = [ lab ] ++ admins;
   "hosts/lab/claude-who/settings.json.age".publicKeys = [ lab ] ++ admins;
   "hosts/lab/hindsight/environment.env.age".publicKeys = [ lab ] ++ admins;
-  "hosts/lab/honcho/environment.env.age".publicKeys = [ lab ] ++ admins;
-  "hosts/lab/honcho/database.env.age".publicKeys = [ lab ] ++ admins;
   "hosts/lab/rustfs/environment.env.age".publicKeys = [ lab ] ++ admins;
   "hosts/lab/rustfs/iam.env.age".publicKeys = [ lab ] ++ admins;
 
