@@ -9,11 +9,19 @@ let
   apiPort = 9000;
 in
 {
-  secrets.rustfs-environment = {
-    file = ./environment.env.age;
-    owner = config.services.rustfs.user;
-    group = config.services.rustfs.group;
-    mode = "0400";
+  secrets = {
+    rustfs-environment = {
+      file = ./environment.env.age;
+      owner = config.services.rustfs.user;
+      group = config.services.rustfs.group;
+      mode = "0400";
+    };
+    rustfs-iam-environment = {
+      file = ./iam.env.age;
+      owner = config.services.rustfs.user;
+      group = config.services.rustfs.group;
+      mode = "0400";
+    };
   };
 
   services.rustfs = {
@@ -46,6 +54,10 @@ in
       fi
     '';
     serviceConfig = {
+      EnvironmentFile = lib.mkForce [
+        config.secrets.rustfs-environment.path
+        config.secrets.rustfs-iam-environment.path
+      ];
       UMask = "0077";
       CapabilityBoundingSet = "";
       LockPersonality = true;
