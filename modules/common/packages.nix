@@ -153,6 +153,7 @@ in
       // optionalAttrs config.isDesktop {
         inherit (pkgs)
           dbeaver-bin
+          obsidian
           pandoc
           wireshark
           ;
