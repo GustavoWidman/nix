@@ -112,6 +112,7 @@ in
           ffuf
           # gdb # TODO broken on nixpkgs
           gradle
+          glab
           hashcat
           jdk
           john
