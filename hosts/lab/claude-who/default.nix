@@ -96,6 +96,7 @@ in
       "kache"
     ];
     linger = true;
+    authorizedKey = config.secrets.ssh-main-lab.path;
   };
 
   users.users.r3dlust.extraGroups = [ "kache" ];
