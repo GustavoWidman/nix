@@ -5,6 +5,8 @@
     mode = "400";
   };
 
+  virtualisation.oci-containers.backend = "docker";
+
   virtualisation.oci-containers.containers.hindsight = {
     image = "ghcr.io/vectorize-io/hindsight:latest";
     autoStart = true;
