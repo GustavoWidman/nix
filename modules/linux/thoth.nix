@@ -1,4 +1,10 @@
-{ config, lib, pkgs, thoth, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  thoth,
+  ...
+}:
 let
   inherit (lib)
     concatStringsSep
@@ -7,6 +13,7 @@ let
     mkOption
     optionalAttrs
     types
+    unique
     ;
 
   cfg = config.services.thoth;
@@ -14,6 +21,13 @@ let
 
   workspace = if cfg.workspace != null then cfg.workspace else cfg.home;
   agentDir = if cfg.agentDir != null then cfg.agentDir else "${cfg.home}/.prime/agent";
+  writableDirectories = unique [
+    cfg.home
+    cfg.statePath
+    cfg.cachePath
+    workspace
+    agentDir
+  ];
   environmentFiles = cfg.environmentFiles;
   pythonEnv = pkgs.python313.withPackages (
     ps: with ps; [
@@ -54,7 +68,8 @@ let
     createHome = true;
     shell = pkgs.bash;
     extraGroups = cfg.extraGroups;
-  } // optionalAttrs (cfg.uid != null) { uid = cfg.uid; };
+  }
+  // optionalAttrs (cfg.uid != null) { uid = cfg.uid; };
 in
 {
   options.services.thoth = {
@@ -136,7 +151,12 @@ in
     };
 
     extraPackages = mkOption {
-      type = types.listOf (types.oneOf [ types.path types.package ]);
+      type = types.listOf (
+        types.oneOf [
+          types.path
+          types.package
+        ]
+      );
       default = [ ];
       description = "Extra tools available to the gateway, Python skills, and child processes.";
     };
@@ -193,6 +213,12 @@ in
     users.users.${cfg.user} = mkIf (cfg.enable && cfg.createUser) userOptions;
     users.groups.${cfg.group} = mkIf (cfg.enable && cfg.createUser) { };
 
+    # Create ReadWritePaths before systemd builds the service namespace.
+    # ExecStartPre runs too late for ProtectSystem=strict.
+    systemd.tmpfiles.rules = mkIf cfg.enable (
+      map (path: "d ${path} 0700 ${cfg.user} ${cfg.group} - -") writableDirectories
+    );
+
     systemd.services.thoth = mkIf cfg.enable {
       description = "Thoth Prime Agent Discord gateway";
       wantedBy = [ "multi-user.target" ];
@@ -214,7 +240,8 @@ in
         pkgs.openssh
         pkgs.ripgrep
         pkgs.tailscale
-      ] ++ cfg.extraPackages;
+      ]
+      ++ cfg.extraPackages;
 
       environment = {
         HOME = cfg.home;
@@ -223,13 +250,17 @@ in
         PRIME_AGENT_CODING_AGENT_DIR = agentDir;
         PRIME_AGENT_DIR = agentDir;
         XDG_CACHE_HOME = cfg.cachePath;
-        PYTHONPATH = lib.concatStringsSep ":" (map (skill: "${resolvedPackage}/share/thoth/agent/skills/${skill}/src") [
-          "browser"
-          "tailscale-serve"
-          "vault-memory"
-          "websearch"
-        ]);
-      } // cfg.environment // optionalAttrs (cfg.configFile != null) {
+        PYTHONPATH = lib.concatStringsSep ":" (
+          map (skill: "${resolvedPackage}/share/thoth/agent/skills/${skill}/src") [
+            "browser"
+            "tailscale-serve"
+            "vault-memory"
+            "websearch"
+          ]
+        );
+      }
+      // cfg.environment
+      // optionalAttrs (cfg.configFile != null) {
         THOTH_CONFIG_FILE = cfg.configFile;
       };
 
@@ -261,7 +292,14 @@ in
         NoNewPrivileges = true;
         PrivateTmp = true;
         ProtectSystem = "strict";
-        ReadWritePaths = [ cfg.home cfg.statePath cfg.cachePath workspace agentDir ] ++ cfg.readWritePaths;
+        ReadWritePaths = [
+          cfg.home
+          cfg.statePath
+          cfg.cachePath
+          workspace
+          agentDir
+        ]
+        ++ cfg.readWritePaths;
         EnvironmentFile = environmentFiles;
       };
     };
