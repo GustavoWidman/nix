@@ -108,6 +108,10 @@
     portfolio.url = "github:GustavoWidman/portfolio";
     claude-who.url = "git+ssh://git@github.com/GustavoWidman/claude-who";
     rocky-bot.url = "git+ssh://git@github.com/GustavoWidman/rocky-bot";
+    thoth = {
+      url = "git+ssh://git@github.com/GustavoWidman/thoth";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

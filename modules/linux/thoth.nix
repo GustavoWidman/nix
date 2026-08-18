@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, thoth, ... }:
 let
   inherit (lib)
     concatStringsSep
@@ -10,18 +10,7 @@ let
     ;
 
   cfg = config.services.thoth;
-
-  resolvedPackage =
-    if cfg.package != null then
-      cfg.package
-    else if cfg.source != null && cfg.npmDepsHash != null && cfg.primeAgentPackage != null then
-      pkgs.callPackage ../../packages/thoth.nix {
-        src = cfg.source;
-        npmDepsHash = cfg.npmDepsHash;
-        primeAgent = cfg.primeAgentPackage;
-      }
-    else
-      null;
+  resolvedPackage = cfg.package;
 
   workspace = if cfg.workspace != null then cfg.workspace else cfg.home;
   agentDir = if cfg.agentDir != null then cfg.agentDir else "${cfg.home}/.prime/agent";
@@ -72,36 +61,11 @@ in
     enable = mkEnableOption "Thoth Prime Agent Discord gateway";
 
     package = mkOption {
-      type = types.nullOr types.package;
-      default = null;
-      description = ''
-        Reproducible Thoth package override. Set this when the private Prime Agent
-        source is supplied by another flake or package set.
-      '';
-    };
-
-    source = mkOption {
-      type = types.nullOr types.path;
-      default = null;
-      description = ''
-        Fixed-output source tree for the Prime Agent AIO repository. It must contain
-        integrations/discord-bot/package.json and package-lock.json. A working-tree
-        path is not a reproducible package input and is intentionally not a default.
-      '';
-    };
-
-    npmDepsHash = mkOption {
-      type = types.nullOr types.str;
-      default = "sha256-wP8Lvr5JbE5zKn0YWc18Opce7fEymgaAOtTYv2J6piE=";
-      description = "Hash for the source repository's pinned Discord npm dependency tree.";
-    };
-
-    primeAgentPackage = mkOption {
       type = types.package;
-      default = pkgs.callPackage ../../packages/prime-agent.nix { };
+      default = thoth.packages.${pkgs.system}.thoth;
       description = ''
-        Pinned Prime Agent npm package root. Override it only when a different
-        audited release is required. The package is built inside Nix.
+        Thoth package from the pinned Thoth flake input. Override this only when
+        an audited package variant is required.
       '';
     };
 
@@ -208,14 +172,6 @@ in
 
   config = {
     assertions = [
-      {
-        assertion = !cfg.enable || resolvedPackage != null;
-        message = ''
-          services.thoth.enable requires services.thoth.package, or all of
-          services.thoth.source, npmDepsHash, and primeAgentPackage. The private
-          Prime Agent source is not silently read from /home/oracle/prime-agent-aio.
-        '';
-      }
       {
         assertion = !cfg.enable || cfg.configFile != null;
         message = "services.thoth.enable requires services.thoth.configFile pointing to an age-decrypted TOML file.";

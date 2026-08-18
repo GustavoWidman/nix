@@ -1,8 +1,7 @@
 { ... }:
 {
-  # The service remains disabled until the AIO source tree is pinned as a flake
-  # input or supplied through `services.thoth.source`. The Prime Agent 0.7.3
-  # runtime itself is already pinned and built by packages/prime-agent.nix.
+  # The package and Prime Agent runtime come from the pinned Thoth flake input.
+  # Keep the service disabled until the age-encrypted config is provisioned.
   services.thoth = {
     enable = false;
     # When enabled, point configFile at an agenix-decrypted thoth.toml.
