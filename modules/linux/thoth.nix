@@ -5,7 +5,6 @@ let
     mkEnableOption
     mkIf
     mkOption
-    optional
     optionalAttrs
     types
     ;
@@ -26,7 +25,7 @@ let
 
   workspace = if cfg.workspace != null then cfg.workspace else cfg.home;
   agentDir = if cfg.agentDir != null then cfg.agentDir else "${cfg.home}/.prime/agent";
-  environmentFiles = cfg.environmentFiles ++ optional (cfg.hindsight.environmentFile != null) cfg.hindsight.environmentFile;
+  environmentFiles = cfg.environmentFiles;
   pythonEnv = pkgs.python313.withPackages (
     ps: with ps; [
       beautifulsoup4
@@ -93,7 +92,7 @@ in
 
     npmDepsHash = mkOption {
       type = types.nullOr types.str;
-      default = "sha256-lIqh5Rd0MoT/MJ7oph4XeCO0xVfLvCtaahBX03s4ZPc=";
+      default = "sha256-wP8Lvr5JbE5zKn0YWc18Opce7fEymgaAOtTYv2J6piE=";
       description = "Hash for the source repository's pinned Discord npm dependency tree.";
     };
 
@@ -184,6 +183,15 @@ in
       description = "Python environment for the bundled Python skills.";
     };
 
+    configFile = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+      description = ''
+        Age-decrypted TOML configuration file read by Thoth at startup. Use an
+        agenix secret path here. The file must be readable only by the service user.
+      '';
+    };
+
     environment = mkOption {
       type = types.attrsOf types.str;
       default = { };
@@ -193,28 +201,9 @@ in
     environmentFiles = mkOption {
       type = types.listOf types.path;
       default = [ ];
-      description = "Protected systemd EnvironmentFile paths for Discord and provider credentials.";
+      description = "Legacy protected dotenv EnvironmentFile paths. Prefer configFile for Thoth configuration and secrets.";
     };
 
-    hindsight = {
-      url = mkOption {
-        type = types.str;
-        default = "http://127.0.0.1:8888";
-        description = "External Hindsight API URL used by Prime Memory.";
-      };
-
-      bankId = mkOption {
-        type = types.str;
-        default = "prime-memory";
-        description = "Hindsight bank ID used by Prime Memory.";
-      };
-
-      environmentFile = mkOption {
-        type = types.nullOr types.path;
-        default = null;
-        description = "Protected file containing the optional Hindsight API key and auth scheme.";
-      };
-    };
   };
 
   config = {
@@ -226,6 +215,10 @@ in
           services.thoth.source, npmDepsHash, and primeAgentPackage. The private
           Prime Agent source is not silently read from /home/oracle/prime-agent-aio.
         '';
+      }
+      {
+        assertion = !cfg.enable || cfg.configFile != null;
+        message = "services.thoth.enable requires services.thoth.configFile pointing to an age-decrypted TOML file.";
       }
       {
         assertion = !cfg.enable || lib.hasPrefix "/" cfg.home;
@@ -274,15 +267,15 @@ in
         PRIME_AGENT_CODING_AGENT_DIR = agentDir;
         PRIME_AGENT_DIR = agentDir;
         XDG_CACHE_HOME = cfg.cachePath;
-        PRIME_MEMORY_HINDSIGHT_URL = cfg.hindsight.url;
-        PRIME_MEMORY_HINDSIGHT_BANK_ID = cfg.hindsight.bankId;
         PYTHONPATH = lib.concatStringsSep ":" (map (skill: "${resolvedPackage}/share/thoth/agent/skills/${skill}/src") [
           "browser"
           "tailscale-serve"
           "vault-memory"
           "websearch"
         ]);
-      } // cfg.environment;
+      } // cfg.environment // optionalAttrs (cfg.configFile != null) {
+        THOTH_CONFIG_FILE = cfg.configFile;
+      };
 
       serviceConfig = {
         Type = "simple";

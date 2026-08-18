@@ -4,7 +4,7 @@
   makeWrapper,
   nodejs_22,
   src ? null,
-  npmDepsHash ? "sha256-lIqh5Rd0MoT/MJ7oph4XeCO0xVfLvCtaahBX03s4ZPc=",
+  npmDepsHash ? "sha256-wP8Lvr5JbE5zKn0YWc18Opce7fEymgaAOtTYv2J6piE=",
   primeAgent ? null,
 }:
 assert lib.assertMsg (src != null) ''

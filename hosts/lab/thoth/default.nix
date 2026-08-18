@@ -5,11 +5,6 @@
   # runtime itself is already pinned and built by packages/prime-agent.nix.
   services.thoth = {
     enable = false;
-
-    # Hindsight remains an explicit external client. It is not a Thoth child.
-    hindsight = {
-      url = "http://127.0.0.1:8888";
-      bankId = "prime-memory";
-    };
+    # When enabled, point configFile at an agenix-decrypted thoth.toml.
   };
 }
