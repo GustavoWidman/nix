@@ -1,5 +1,29 @@
-{ config, ... }:
 {
+  config,
+  lib,
+  modulesPath,
+  ...
+}:
+let
+  # Nix POSIX ERE rejects upstream's `.*?` lazy quantifier; remove this after it is fixed upstream.
+  upstreamRegex = "^(.*?:(.*?):)([0-9]+\\.[0-9]+\\.[0-9]+)$";
+  replacementRegex = "^([^:]+:([^:]+):)([0-9]+\\.[0-9]+\\.[0-9]+)$";
+  upstreamModule = builtins.readFile "${modulesPath}/services/audio/lavalink.nix";
+  upstreamRegexOccurrences = builtins.length (
+    builtins.filter builtins.isList (builtins.split (lib.escapeRegex upstreamRegex) upstreamModule)
+  );
+in
+{
+  imports = [
+    (builtins.toFile "lavalink.nix" (
+      if upstreamRegexOccurrences == 1 then
+        builtins.replaceStrings [ upstreamRegex ] [ replacementRegex ] upstreamModule
+      else
+        throw "Expected the upstream Lavalink regex exactly once, found ${toString upstreamRegexOccurrences}."
+    ))
+  ];
+  disabledModules = [ "services/audio/lavalink.nix" ];
+
   secrets.lavalink-environment = {
     file = ./environment.env.age;
     owner = "lavalink";
