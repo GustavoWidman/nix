@@ -11,15 +11,20 @@ let
     optionalAttrs
     enabled
     concatMapStringsSep
-    filter
     ;
 
-  devPackages = filter (pkg: builtins.pathExists "${pkg}/lib") config.environment.systemPackages;
+  devIncludePackages = with pkgs; [
+    krb5.dev
+    openssl.dev
+    freetds
+  ];
 
-  # Get all packages with include directories
-  devPackagesWithHeaders = filter (
-    pkg: builtins.pathExists "${pkg}/include"
-  ) config.environment.systemPackages;
+  devLibraryPackages = with pkgs; [
+    krb5.lib
+    openssl.out
+    freetds
+    llvmPackages.libcxx
+  ];
 
   nushellPath = "${
     if config.isDarwin then "Library/Application Support/nushell" else ".config/nushell"
@@ -44,18 +49,13 @@ in
       ];
 
       variables = mkIf config.isDev {
-        NIX_LDFLAGS = concatMapStringsSep " " (pkg: "-L${pkg}/lib") devPackages;
-        NIX_CFLAGS_COMPILE = concatMapStringsSep " " (
-          pkg: "-isystem ${pkg}/include"
-        ) devPackagesWithHeaders;
+        NIX_LDFLAGS = concatMapStringsSep " " (pkg: "-L${pkg}/lib") devLibraryPackages;
+        NIX_CFLAGS_COMPILE = concatMapStringsSep " " (pkg: "-isystem ${pkg}/include") devIncludePackages;
 
-        LDFLAGS = concatMapStringsSep " " (pkg: "-L${pkg}/lib") devPackages;
-        CPPFLAGS = concatMapStringsSep " " (pkg: "-I${pkg}/include") devPackagesWithHeaders;
+        LDFLAGS = concatMapStringsSep " " (pkg: "-L${pkg}/lib") devLibraryPackages;
+        CPPFLAGS = concatMapStringsSep " " (pkg: "-I${pkg}/include") devIncludePackages;
 
-        LIBRARY_PATH = concatMapStringsSep ":" (pkg: "${pkg}/lib") devPackages;
-        # PKG_CONFIG_PATH = concatMapStringsSep ":" (pkg: "${pkg}/lib/pkgconfig") (
-        #   filter (pkg: builtins.pathExists "${pkg}/lib/pkgconfig") devPackages
-        # );
+        LIBRARY_PATH = concatMapStringsSep ":" (pkg: "${pkg}/lib") devLibraryPackages;
       };
 
       etc."environment" = {
