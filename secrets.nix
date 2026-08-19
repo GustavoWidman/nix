@@ -63,6 +63,7 @@ in
   "hosts/lab/rustfs/iam.env.age".publicKeys = [ lab ] ++ admins;
   "hosts/lab/thoth/config.toml.age".publicKeys = [ lab ] ++ admins;
   "hosts/lab/honcho/environment.env.age".publicKeys = [ lab ] ++ admins;
+  "hosts/lab/honcho/hombre.env.age".publicKeys = [ lab ] ++ admins;
   "hosts/lab/honcho/database.env.age".publicKeys = [ lab ] ++ admins;
 
   # Oracle-1 Specific

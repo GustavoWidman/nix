@@ -7,6 +7,40 @@
 let
   apiPort = 8000;
   network = "honcho";
+
+  hombreSource = pkgs.fetchFromGitHub {
+    owner = "lovethatbrandx";
+    repo = "hombre";
+    rev = "db597b41db4a3c06391c3a4d6bbe47ae2ddcff93";
+    hash = "sha256-tSwgVPdfZJ+BFLZsf7Tzayf24aCdTy/lpCCGRTp8ZPA=";
+  };
+  hombrePython = pkgs.python312.withPackages (ps: with ps; [
+    (fastapi.overridePythonAttrs (_: {
+      doCheck = false;
+      nativeCheckInputs = [ ];
+    }))
+    httpx
+    python-multipart
+    uvicorn
+  ]);
+  hombreApp = pkgs.runCommand "hombre-app" { } ''
+    mkdir -p $out/app
+    cp -R ${hombreSource}/. $out/app/
+  '';
+  hombreImage = pkgs.dockerTools.buildImage {
+    name = "hombre";
+    tag = "db597b41db4a3c06391c3a4d6bbe47ae2ddcff93";
+    copyToRoot = pkgs.buildEnv {
+      name = "hombre-root";
+      paths = [ hombrePython hombreApp pkgs.bashInteractive ];
+      pathsToLink = [ "/bin" "/app" ];
+    };
+    config = {
+      Cmd = [ "${hombrePython}/bin/python" "/app/app.py" ];
+      WorkingDir = "/app";
+      Env = [ "PYTHONUNBUFFERED=1" ];
+    };
+  };
   environmentFile = config.secrets.honcho-environment.path;
   databaseEnvironmentFile = config.secrets.honcho-database-environment.path;
   databaseInit = pkgs.writeText "honcho-database-init.sql" ''
@@ -92,6 +126,10 @@ in
             file = ./database.env.age;
             mode = "400";
           };
+          hombre-environment = {
+            file = ./hombre.env.age;
+            mode = "400";
+          };
         };
 
         virtualisation.oci-containers.backend = "docker";
@@ -134,6 +172,25 @@ in
               "honcho-redis"
             ];
             extraOptions = applicationOptions ++ [ "--no-healthcheck" ];
+          };
+
+          hombre = {
+            image = "hombre:db597b41db4a3c06391c3a4d6bbe47ae2ddcff93";
+            imageFile = hombreImage;
+            autoStart = true;
+            environment = {
+              HONCHO_URL = "http://honcho-api:8000";
+            };
+            environmentFiles = [ config.secrets.hombre-environment.path ];
+            ports = [ "5000:5000" ];
+            dependsOn = [ "honcho-api" ];
+            extraOptions = commonOptions ++ [
+              "--health-cmd=${hombrePython}/bin/python -c \"import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health', timeout=3).read()\""
+              "--health-interval=10s"
+              "--health-timeout=5s"
+              "--health-retries=3"
+              "--health-start-period=10s"
+            ];
           };
 
           honcho-database = {
@@ -188,9 +245,21 @@ in
               ExecStart = pkgs.writeShellScript "honcho-firewall-start" ''
                 ${pkgs.iptables}/bin/iptables -C DOCKER-USER ! -i tailscale0 -p tcp --dport ${toString apiPort} -j DROP 2>/dev/null \
                   || ${pkgs.iptables}/bin/iptables -I DOCKER-USER 1 ! -i tailscale0 -p tcp --dport ${toString apiPort} -j DROP
+                ${pkgs.iptables}/bin/iptables -C DOCKER-USER ! -i tailscale0 -p tcp --dport 5000 -j DROP 2>/dev/null \
+                  || ${pkgs.iptables}/bin/iptables -I DOCKER-USER 1 ! -i tailscale0 -p tcp --dport 5000 -j DROP
+                ${pkgs.iptables}/bin/iptables -C DOCKER-USER -i honcho0 -p tcp --dport ${toString apiPort} -j ACCEPT 2>/dev/null \
+                  || ${pkgs.iptables}/bin/iptables -I DOCKER-USER 1 -i honcho0 -p tcp --dport ${toString apiPort} -j ACCEPT
+                ${pkgs.iptables}/bin/iptables -C DOCKER-USER -i honcho0 -p tcp --dport 5000 -j ACCEPT 2>/dev/null \
+                  || ${pkgs.iptables}/bin/iptables -I DOCKER-USER 1 -i honcho0 -p tcp --dport 5000 -j ACCEPT
               '';
               ExecStop = pkgs.writeShellScript "honcho-firewall-stop" ''
                 ${pkgs.iptables}/bin/iptables -D DOCKER-USER ! -i tailscale0 -p tcp --dport ${toString apiPort} -j DROP 2>/dev/null \
+                  || true
+                ${pkgs.iptables}/bin/iptables -D DOCKER-USER ! -i tailscale0 -p tcp --dport 5000 -j DROP 2>/dev/null \
+                  || true
+                ${pkgs.iptables}/bin/iptables -D DOCKER-USER -i honcho0 -p tcp --dport ${toString apiPort} -j ACCEPT 2>/dev/null \
+                  || true
+                ${pkgs.iptables}/bin/iptables -D DOCKER-USER -i honcho0 -p tcp --dport 5000 -j ACCEPT 2>/dev/null \
                   || true
               '';
             };
@@ -205,6 +274,7 @@ in
             ];
             before = [
               "docker-honcho-api.service"
+              "docker-hombre.service"
               "docker-honcho-database.service"
               "docker-honcho-deriver.service"
               "docker-honcho-redis.service"
@@ -215,6 +285,16 @@ in
               ExecStart = "${pkgs.docker}/bin/docker network inspect ${network}";
               ExecStartPre = "-${pkgs.docker}/bin/docker network create --driver bridge --opt com.docker.network.bridge.name=honcho0 ${network}";
             };
+          };
+          docker-hombre = {
+            requires = [
+              "honcho-firewall.service"
+              "honcho-network.service"
+            ];
+            after = [
+              "honcho-firewall.service"
+              "honcho-network.service"
+            ];
           };
           docker-honcho-api = {
             requires = [
@@ -255,7 +335,7 @@ in
 
         networking.firewall.interfaces = {
           honcho0.allowedTCPPorts = [ config.services.cliproxyapi.port ];
-          tailscale0.allowedTCPPorts = [ apiPort ];
+          tailscale0.allowedTCPPorts = [ apiPort 5000 ];
         };
       };
 }
