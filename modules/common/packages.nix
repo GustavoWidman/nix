@@ -157,13 +157,14 @@ in
           pandoc
           wireshark
           ;
-        inherit (pkgs.texlive.combined)
-          scheme-full
-          ;
+      }
+      // optionalAttrs (config.isLinux && config.isDesktop) {
+        texliveSmall = pkgs.texliveSmall;
       }
       // optionalAttrs (config.isDarwin && config.isDesktop) {
         inherit (pkgs)
           terminal-notifier
           ;
+        texliveFull = pkgs.texliveFull;
       };
 }
