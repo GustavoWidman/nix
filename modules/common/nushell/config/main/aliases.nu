@@ -74,6 +74,33 @@ def "jj move" [
     jj rebase -s $"roots\(@-.. & ~@\)" -d @
 }
 
+def --env gitzip [output?: string, --dir (-C): string] {
+    if (($output | path type) != "dir") {
+        print "gitzip only works with dirs"
+        return 1
+    }
+
+    let target = (if ($dir == null) {
+        $output
+    } else {
+        $dir
+    })
+
+    let name = ($output | default ($target | path basename))
+    let zipname = if ($name | str ends-with ".zip") { $name } else { $name + ".zip" }
+
+    if ($zipname | path exists) {
+        print $"delete ($zipname) first" # todo offer to delete with a y/N prompt
+        return
+    }
+
+    git -C $target ls-files --cached --others --exclude-standard
+        | lines
+        | each {$"($target)/($in)"}
+        | str join "\n"
+        | ^zip $zipname -@
+}
+
 def psub [] {
   let tmp = (mktemp -t | str trim)
 
