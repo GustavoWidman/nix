@@ -8,7 +8,7 @@ in
     enable = lib.mkEnableOption "the TeamSpeak 6 server";
     image = lib.mkOption {
       type = lib.types.str;
-      default = "teamspeaksystems/teamspeak6-server:latest";
+      default = "docker.io/teamspeaksystems/teamspeak6-server:latest";
       description = "TeamSpeak 6 container image; pin to a digest for production.";
     };
     dataDir = lib.mkOption {
