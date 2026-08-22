@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   cfg = config.services.teamspeak6;
@@ -47,7 +47,10 @@ in
         TSSERVER_QUERY_HTTP_PORT = toString cfg.queryPort;
       };
     };
-    systemd.tmpfiles.rules = [ "d ${cfg.dataDir} 0750 root root - -" ];
+    systemd.tmpfiles.rules = [ "d ${cfg.dataDir} 0750 9987 9987 -" ];
+    systemd.services.podman-teamspeak6.preStart = lib.mkAfter ''
+      ${pkgs.coreutils}/bin/chown -R 9987:9987 ${cfg.dataDir}
+    '';
     networking.firewall.allowedUDPPorts = [ cfg.voicePort ];
     networking.firewall.allowedTCPPorts = [ cfg.fileTransferPort ]
       ++ lib.optional cfg.enableQuery cfg.queryPort;
