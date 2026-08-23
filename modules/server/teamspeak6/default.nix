@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.services.teamspeak6;
@@ -16,9 +21,23 @@ in
       default = "/var/lib/teamspeak6";
       description = "Persistent TeamSpeak data directory.";
     };
-    voicePort = lib.mkOption { type = lib.types.port; default = 9987; };
-    fileTransferPort = lib.mkOption { type = lib.types.port; default = 30033; };
-    queryPort = lib.mkOption { type = lib.types.port; default = 10080; };
+    bindAddress = lib.mkOption {
+      type = lib.types.str;
+      default = "0.0.0.0";
+      description = "Host address for the published TeamSpeak ports.";
+    };
+    voicePort = lib.mkOption {
+      type = lib.types.port;
+      default = 9987;
+    };
+    fileTransferPort = lib.mkOption {
+      type = lib.types.port;
+      default = 30033;
+    };
+    queryPort = lib.mkOption {
+      type = lib.types.port;
+      default = 10080;
+    };
     enableQuery = lib.mkOption {
       type = lib.types.bool;
       default = false;
@@ -33,16 +52,17 @@ in
       inherit (cfg) image;
       autoStart = true;
       ports = [
-        "${toString cfg.voicePort}:${toString cfg.voicePort}/udp"
-        "${toString cfg.fileTransferPort}:${toString cfg.fileTransferPort}/tcp"
-      ] ++ lib.optional cfg.enableQuery
-        "127.0.0.1:${toString cfg.queryPort}:${toString cfg.queryPort}/tcp";
+        "${cfg.bindAddress}:${toString cfg.voicePort}:${toString cfg.voicePort}/udp"
+        "${cfg.bindAddress}:${toString cfg.fileTransferPort}:${toString cfg.fileTransferPort}/tcp"
+      ]
+      ++ lib.optional cfg.enableQuery "127.0.0.1:${toString cfg.queryPort}:${toString cfg.queryPort}/tcp";
       volumes = [ "${cfg.dataDir}:/var/tsserver" ];
       environment = {
         TSSERVER_LICENSE_ACCEPTED = "accept";
         TSSERVER_DEFAULT_PORT = toString cfg.voicePort;
         TSSERVER_FILE_TRANSFER_PORT = toString cfg.fileTransferPort;
-      } // lib.optionalAttrs cfg.enableQuery {
+      }
+      // lib.optionalAttrs cfg.enableQuery {
         TSSERVER_QUERY_HTTP_ENABLED = "1";
         TSSERVER_QUERY_HTTP_PORT = toString cfg.queryPort;
       };
@@ -52,7 +72,9 @@ in
       ${pkgs.coreutils}/bin/chown -R 9987:9987 ${cfg.dataDir}
     '';
     networking.firewall.allowedUDPPorts = [ cfg.voicePort ];
-    networking.firewall.allowedTCPPorts = [ cfg.fileTransferPort ]
-      ++ lib.optional cfg.enableQuery cfg.queryPort;
+    networking.firewall.allowedTCPPorts = [
+      cfg.fileTransferPort
+    ]
+    ++ lib.optional cfg.enableQuery cfg.queryPort;
   };
 }
