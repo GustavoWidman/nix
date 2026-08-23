@@ -3,7 +3,7 @@
   secrets.thoth-config = {
     file = ./config.toml.age;
     owner = config.services.thoth.user;
-      group = config.services.thoth.group;
+    group = config.services.thoth.group;
     mode = "400";
   };
 
