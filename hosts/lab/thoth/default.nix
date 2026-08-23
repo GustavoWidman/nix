@@ -21,5 +21,10 @@
     agentDir = "/home/oracle/.thoth/agent";
 
     configFile = config.secrets.thoth-config.path;
+
+    environment = {
+      GH_CONFIG_DIR = "/home/oracle/.config/gh";
+      RLM_MAX_DEPTH = "5";
+    };
   };
 }
