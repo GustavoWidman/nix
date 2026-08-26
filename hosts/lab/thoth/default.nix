@@ -14,7 +14,7 @@
     group = "oracle";
     createUser = false;
 
-    home = "/home/oracle/.thoth";
+    home = "/home/oracle";
     workspace = "/home/oracle";
     statePath = "/home/oracle/.thoth/state";
     cachePath = "/home/oracle/.cache/thoth";
