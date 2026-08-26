@@ -22,6 +22,10 @@
 
     configFile = config.secrets.thoth-config.path;
 
+    readWritePaths = [
+      "/mnt/encrypted"
+    ];
+
     environment = {
       GH_CONFIG_DIR = "/home/oracle/.config/gh";
       RLM_MAX_DEPTH = "5";
