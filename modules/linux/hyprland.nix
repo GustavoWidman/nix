@@ -10,8 +10,9 @@ let
     mergeIf
     ;
 in
-mergeIf (config.isDesktop) {
-  # Optional: If you have NVIDIA, enable patches for better compatibility
+# mergeIf (config.isDesktop) {
+mergeIf false { # TODO fix this to true when we want to enable Hyprland on desktop
+   # Optional: If you have NVIDIA, enable patches for better compatibility
   # programs.hyprland.nvidiaPatches = true;
   programs.hyprland = {
     enable = true;
