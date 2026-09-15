@@ -210,7 +210,7 @@ def venv_activateable [ls_results] {
 def nuenv_activateable [ls_results] {
     let nu_files = $ls_results
         | where {|el| ($el | get type) == "file" }
-        | par-each { get name | path parse }
+        | each { get name | path parse }
         | where {|el| ($el | get extension) == "nu" }
 
     match (($nu_files | is-not-empty) and not (("NU_ENV" in $env) and ($env.NU_ENV != null))) {

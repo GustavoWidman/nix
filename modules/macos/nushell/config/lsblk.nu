@@ -100,7 +100,7 @@ def format_lsblk_output [disks: list] {
     # Print header
 	mut output = $"('NAME' | fill -a l -c ' ' -w 11) ('MAJ:MIN' | fill -a l -c ' ' -w 8) ('RM' | fill -a l -c ' ' -w 4)('SIZE' | fill -a r -c ' ' -w 6) ('RO' | fill -a l -c ' ' -w 2) ('TYPE' | fill -a l -c ' ' -w 4) ('MOUNTPOINTS' | fill -a l -c ' ' -w 12)"
 
-	let disk_lines = ($disks | enumerate | par-each -k {|item|
+	let disk_lines = ($disks | enumerate | each -k {|item|
 		let idx = $item.index
 		let disk = $item.item
 		let disk_name = $disk.name
@@ -117,7 +117,7 @@ def format_lsblk_output [disks: list] {
 		let disk_line = $"($disk_name | fill -a l -c ' ' -w 13) ($maj_min | fill -a l -c ' ' -w 7) 0 ($disk_size | fill -a r -c ' ' -w 7)  0 ($disk_type | fill -a l -c ' ' -w 5)"
 
 		# Create partition lines
-		let partition_lines = ($disk.partitions | where num != "0" | enumerate | par-each -k {|part_item|
+		let partition_lines = ($disk.partitions | where num != "0" | enumerate | each -k {|part_item|
 			let partition = $part_item.item
 			let part_name = $partition.identifier
 			let part_size = ($partition.size | str replace " " "")

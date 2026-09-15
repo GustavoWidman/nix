@@ -464,7 +464,7 @@ def discover-hosts [] {
     log info "found the following remotes:"
 
     $hosts
-    | par-each {|host|
+    | each {|host|
         {
             name: $host
             remote: ($host != $hostname)

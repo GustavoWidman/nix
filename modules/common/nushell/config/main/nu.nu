@@ -55,9 +55,9 @@ export def --env "activate" [
 
     let nu_files = ls -a err> /dev/null
         | where {|el| ($el | get type) == "file" }
-        | par-each { get name | path parse }
+        | each { get name | path parse }
         | where {|el| ($el | get extension) == "nu" }
-        | par-each {|el|
+        | each {|el|
             let path = (pwd | path join $"($el.stem).($el.extension)")
             {
                 stem: $el.stem

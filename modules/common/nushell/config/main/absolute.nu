@@ -16,7 +16,7 @@ def "nu-complete absolute" [commandline: string] {
 
 	return ($commands
 		| where {|cmd| $cmd | str starts-with $program}
-		| par-each -k {|cmd| {value: $cmd, description: ""}})
+		| each -k {|cmd| {value: $cmd, description: ""}})
 }
 
 
