@@ -77,7 +77,7 @@ in
           withAdditionalGuestAgents = true;
         };
         inherit (pkgs)
-          fuse-ext2
+          # fuse-ext2
           iproute2mac
           libiconv
           lima-additional-guestagents
