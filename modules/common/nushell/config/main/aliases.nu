@@ -1,4 +1,5 @@
 use "../main/absolute.nu"
+use "../utils/log.nu"
 
 alias grun = go run
 
@@ -207,4 +208,23 @@ def --env source-bash [
     | transpose --header-row --as-record
     | if $in == [] { {} } else { $in }
     | load-env
+}
+
+def net? [] {
+    let result = ^ping -c 1 -t 1 1.1.1.1 | complete
+
+    if $result.exit_code == 0 {
+        let latency = $result.stdout
+            | lines
+            | get 1
+            | split row "time="
+            | get 1
+            | split row " "
+            | str join ""
+            | into duration
+
+        log info $"network is (ansi green)up(ansi reset). latency: (ansi purple)($latency)(ansi reset)"
+    } else {
+        log error $"network is (ansi red)down(ansi reset). ping failed with exit code (ansi purple)($result.exit_code)(ansi reset)"
+    }
 }
