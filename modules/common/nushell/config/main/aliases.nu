@@ -228,3 +228,62 @@ def net? [] {
         log error $"network is (ansi red)down(ansi reset). ping failed with exit code (ansi purple)($result.exit_code)(ansi reset)"
     }
 }
+
+def dns? [] {
+    let local = timeit --output {
+        ^dig +short +time=1 +tries=1 google.com @127.0.0.1 | complete
+    }
+
+    if $local.output.exit_code == 0 {
+        log info $"dns is (ansi green)fully up(ansi reset). local resolver responded in (ansi purple)($local.time)(ansi reset)"
+        return
+    }
+
+    let cf = timeit --output {
+        ^dig +short +time=1 +tries=1 google.com @1.1.1.1 | complete
+    }
+
+    if $cf.output.exit_code == 0 {
+        log warn $"dns is (ansi yellow)partially up(ansi reset). local resolver failed, but cloudflare responded in (ansi purple)($cf.time)(ansi reset)"
+        return
+    }
+
+    let dhcp_dns = do {
+        let line = (
+            ^ipconfig getpacket en0
+            | lines
+            | where { |l| $l | str contains "domain_name_server (ip_mult):" }
+            | get -o 0
+        )
+
+        if ($line == null) {
+            log error --exit $"could not find domain_name_server in DHCP packet for en0"
+        }
+
+        let servers = (
+            $line
+            | str replace --all --regex '[^0-9.]+' ' '
+            | split row ' '
+            | each { |s| $s | str trim }
+            | where { |s| ($s | is-not-empty) and ($s =~ '^\d{1,3}(\.\d{1,3}){3}$') }
+        )
+
+        if ($servers | is-empty) {
+            log warn $"domain_name_server was present for en0, but no IPv4 DNS servers parsed: ($line)"
+        }
+
+        $servers
+    } | first
+
+    let dhcp = timeit --output {
+        ^dig +short +time=1 +tries=1 google.com @($dhcp_dns) | complete
+    }
+
+    if $dhcp.output.exit_code == 0 {
+        log warn $"dns is (ansi yellow)partially up(ansi reset). local resolver AND cloudflare failed \(hinting at a captive network environment), but dhcp-provided server (ansi blue)($dhcp_dns) responded in (ansi purple)($dhcp.time)(ansi reset)"
+        return
+    } else {
+        log error $"dns is (ansi red)fully down(ansi reset). local resolver, cloudflare, and dhcp-provided server (ansi blue)($dhcp_dns)(ansi reset) all failed"
+        return
+    }
+}
