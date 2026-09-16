@@ -125,6 +125,7 @@ in
           manix
           metasploit
           mitmproxy
+          nodejs_26
           nuclei
           oxfmt
           oxlint
