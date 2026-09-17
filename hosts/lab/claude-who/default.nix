@@ -94,6 +94,7 @@ in
     extraGroups = [
       "docker"
       "kache"
+      "systemd-journal"
     ];
     linger = true;
     authorizedKey = config.secrets.ssh-main-lab.path;
