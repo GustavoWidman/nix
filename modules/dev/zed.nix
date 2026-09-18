@@ -274,6 +274,7 @@ in
               };
             };
           };
+          cursor_animation.enabled = true;
         };
         userKeymaps = [
           {
