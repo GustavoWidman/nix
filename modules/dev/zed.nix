@@ -275,6 +275,9 @@ in
             };
           };
           cursor_animation.enabled = true;
+          markdown_preview = {
+            open_markdown_files_in_preview = true;
+          };
         };
         userKeymaps = [
           {
