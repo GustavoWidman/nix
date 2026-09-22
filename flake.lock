@@ -1846,11 +1846,11 @@
         "systems": "systems_8"
       },
       "locked": {
-        "lastModified": 1790107880,
-        "narHash": "sha256-5R5dmMKZ+tLkFyyD0EF+3zZuIaHOKx2RXW6lm3ITyVc=",
+        "lastModified": 1790116910,
+        "narHash": "sha256-aaxfu+cBbq56j+jrzSm61c4miXuL84CMMrLkNhDCQW4=",
         "ref": "refs/heads/main",
-        "rev": "3a9e99f93849c061f36e7ff3a761c26e5e3cc2c0",
-        "revCount": 316,
+        "rev": "c58b7034b0dd1eb6818eabe9238d90f03f573a15",
+        "revCount": 317,
         "type": "git",
         "url": "ssh://git@github.com/GustavoWidman/thoth"
       },
