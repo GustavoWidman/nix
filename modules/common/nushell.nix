@@ -8,6 +8,7 @@ let
   inherit (lib)
     getExe
     mkIf
+    optionals
     optionalAttrs
     enabled
     concatMapStringsSep
@@ -17,14 +18,14 @@ let
     krb5.dev
     openssl.dev
     freetds
-  ];
+  ] ++ optionals config.isDarwin [ libiconv.dev ];
 
   devLibraryPackages = with pkgs; [
     krb5.lib
     openssl.out
     freetds
     llvmPackages.libcxx
-  ];
+  ] ++ optionals config.isDarwin [ libiconv ];
 
   nushellPath = "${
     if config.isDarwin then "Library/Application Support/nushell" else ".config/nushell"
