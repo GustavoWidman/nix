@@ -1,18 +1,24 @@
 { pkgs, ... }:
 {
+  services.hardware.openrgb = {
+    enable = true;
+    motherboard = "intel";
+  };
+
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia.open = true;
+  hardware.graphics.enable = true;
+
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.limine = {
     enable = true;
     secureBoot.enable = true;
     maxGenerations = 3;
-    extraConfig = ''
-      default_entry: 1
-
+    extraEntries = ''
       /Windows 11
         protocol: efi
         path: guid(fbfb5c96-139b-4c26-bc0a-ba3dd4de4ab2):/EFI/Microsoft/Boot/bootmgfw.efi
-    '';
-    extraEntries = ''
+
       /memtest86
         protocol: efi
         path: boot():/limine/efi/memtest86/memtest86.efi
