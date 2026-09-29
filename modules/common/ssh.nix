@@ -85,7 +85,7 @@ in
                   let
                     relativePath = removeSuffix ".age" (removePrefix "${toString ./ssh}/" (toString p));
                   in
-                  "${config.home.homeDirectory}/.ssh/${relativePath}"
+                  "~/.ssh/${relativePath}"
                 );
             in
             sshConfigFiles;
