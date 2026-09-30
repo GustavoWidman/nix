@@ -1,9 +1,13 @@
 [settings]
 hot_reload = true
 animate = false
+default_disable = false
+focus_follows_mouse = false
+mouse_follows_focus = false
+mouse_hides_on_focus = false
 
 [settings.layout]
-mode = "traditional"
+mode = "stack"
 
 [settings.layout.gaps.inner]
 horizontal = 8.0
@@ -17,24 +21,27 @@ right = 4.0
 
 [settings.ui.menu_bar]
 enabled = true
-show_empty = false
+show_empty = true
 
 [settings.layout.stack]
-stack_offset = 40.0
+# Closest equivalent to AeroSpace's horizontal accordion with 160px padding.
+stack_offset = 160.0
+default_orientation = "horizontal"
 
 [virtual_workspaces]
 enabled = true
-default_workspace_count = 10
+default_workspace_count = 5
 auto_assign_windows = true
 preserve_focus_per_workspace = true
-default_workspace = 5
+default_workspace = 4
+workspace_names = ["1", "2", "3", "4", "5"]
 app_rules = [
   # specific exceptions
-  { app_id = "app.zen-browser.zen", title_substring = "bitwarden", floating = true },
-  { app_id = "dev.zed.Zed", title_substring = "settings", floating = true },
-  { app_id = "dev.zed.Zed-Nightly", title_substring = "settings", floating = true },
-  { app_id = "net.whatsapp.WhatsApp", title_substring = "call", floating = true },
-  { app_id = "com.hnc.Discord", title_substring = "call", floating = true },
+  { app_id = "app.zen-browser.zen", title_regex = "bitwarden", workspace = 2, floating = true },
+  { app_id = "dev.zed.Zed", title_regex = "Zed — Settings", workspace = 0, floating = true },
+  { app_id = "dev.zed.Zed-Nightly", title_regex = "Zed — Settings", workspace = 0, floating = true },
+  { app_id = "net.whatsapp.WhatsApp", title_regex = "call", workspace = 3, floating = true },
+  { app_id = "com.hnc.Discord", title_regex = "call", workspace = 3, floating = true },
 
   # code
   { app_id = "dev.zed.Zed", workspace = 0 },
@@ -71,10 +78,21 @@ app_rules = [
   { app_id = "com.mojang.minecraftlauncher", floating = true },
   { app_id = "com.gather.GatherV2", floating = true },
   { app_id = "com.apple.calculator", floating = true },
+  { app_id = "com.apple.iWork.Pages", floating = true },
+  { app_name = "python", floating = true },
 ]
 
 [keys]
-"Alt + Z" = "toggle_space_activated"
+# Stack windows already have equal sizes; restore this layout for Alt+Z.
+"Alt + Z" = { set_workspace_layout = { mode = "stack" } }
+"Alt + Shift + Z" = "reload_config"
+"Alt + F" = "toggle_fullscreen"
+"Alt + Tab" = "next_window"
+"Alt + Shift + Tab" = "prev_window"
+
+# Swallow macOS Hide / Hide Others, as in the AeroSpace config.
+"Meta + H" = { exec = ["/usr/bin/true"] }
+"Meta + Alt + H" = { exec = ["/usr/bin/true"] }
 
 "Alt + 1" = { switch_to_workspace = 0 }
 "Alt + 2" = { switch_to_workspace = 1 }
@@ -97,13 +115,13 @@ app_rules = [
 "Alt + Shift + K" = { move_node = "up" }
 "Alt + Shift + L" = { move_node = "right" }
 
-"Alt + Shift + 1" = { move_window_to_workspace = 0 }
-"Alt + Shift + 2" = { move_window_to_workspace = 1 }
-"Alt + Shift + 3" = { move_window_to_workspace = 2 }
-"Alt + Shift + 4" = { move_window_to_workspace = 3 }
-"Alt + Shift + 5" = { move_window_to_workspace = 4 }
-"Alt + Shift + 6" = { move_window_to_workspace = 5 }
-"Alt + Shift + 7" = { move_window_to_workspace = 6 }
-"Alt + Shift + 8" = { move_window_to_workspace = 7 }
-"Alt + Shift + 9" = { move_window_to_workspace = 8 }
-"Alt + Shift + 0" = { move_window_to_workspace = 9 }
+"Alt + Shift + 1" = { move_window_to_workspace = { workspace = 0, follow = true } }
+"Alt + Shift + 2" = { move_window_to_workspace = { workspace = 1, follow = true } }
+"Alt + Shift + 3" = { move_window_to_workspace = { workspace = 2, follow = true } }
+"Alt + Shift + 4" = { move_window_to_workspace = { workspace = 3, follow = true } }
+"Alt + Shift + 5" = { move_window_to_workspace = { workspace = 4, follow = true } }
+"Alt + Shift + 6" = { move_window_to_workspace = { workspace = 5, follow = true } }
+"Alt + Shift + 7" = { move_window_to_workspace = { workspace = 6, follow = true } }
+"Alt + Shift + 8" = { move_window_to_workspace = { workspace = 7, follow = true } }
+"Alt + Shift + 9" = { move_window_to_workspace = { workspace = 8, follow = true } }
+"Alt + Shift + 0" = { move_window_to_workspace = { workspace = 9, follow = true } }

@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ config, lib, ... }:
 let
   inherit (lib.strings)
     toJSON
@@ -87,7 +87,7 @@ let
       manipulators = makeOptionDisableManipulators allStandardKeys;
     }
     {
-      description = "Yabai Binds";
+      description = "Rift workspace back-and-forth";
       manipulators = [
         {
           from.key_code = "tab";
@@ -95,8 +95,7 @@ let
 
           to = [
             {
-              shell_command = "${pkgs.aerospace}/bin/aerospace workspace-back-and-forth";
-              # shell_command = "${pkgs.rift-bin}/bin/rift-cli execute workspace last";
+              shell_command = "${config.services.rift.package}/bin/rift-cli execute workspace last";
             }
           ];
           type = "basic";

@@ -34,7 +34,7 @@ let
   };
 in
 {
-  services.aerospace = enabled {
+  services.aerospace = {
     settings = {
       accordion-padding = 160;
       default-root-container-layout = "accordion";

@@ -1,16 +1,14 @@
 {
   pkgs,
+  rift,
   ...
 }:
 {
-  environment.systemPackages = [
-    pkgs.rift-bin
-  ];
-
   services.rift = {
-    # enable = true;
+    enable = true;
     config = ./config.toml;
-    package = pkgs.rift-bin;
+    # Build the fork so native tab focus fixes are included.
+    package = rift.packages.${pkgs.stdenv.hostPlatform.system}.rift;
   };
 
   # system.activationScripts.rift.text = ''
