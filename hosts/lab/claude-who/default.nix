@@ -1,18 +1,10 @@
 {
-  claude-who,
   config,
   pkgs,
   ...
 }:
 let
   kacheCacheDir = "/mnt/encrypted/oracle/kache";
-  kacheExe = "${config.services.kache.package}/bin/kache";
-  ccWrapper = "${pkgs.writeShellScriptBin "kache-cc" ''
-    exec ${kacheExe} cc "$@"
-  ''}/bin/kache-cc";
-  cxxWrapper = "${pkgs.writeShellScriptBin "kache-cxx" ''
-    exec ${kacheExe} c++ "$@"
-  ''}/bin/kache-cxx";
 in
 {
   services.kache.settings.cache.local_store = kacheCacheDir;
@@ -25,70 +17,27 @@ in
   };
 
   systemd.tmpfiles.rules = [
-    "d ${kacheCacheDir} 2775 ${config.services.claude-who.user} kache - -"
-    "d /mnt/encrypted/oracle/cargo-target 0755 ${config.services.claude-who.user} ${config.services.claude-who.group} - -"
-    "d /mnt/encrypted/oracle/cargo-target/${config.services.claude-who.user} 0755 ${config.services.claude-who.user} ${config.services.claude-who.group} - -"
-    "d /mnt/encrypted/oracle/misc 0755 ${config.services.claude-who.user} ${config.services.claude-who.group} - -"
+    "d ${kacheCacheDir} 2775 oracle kache - -"
+    "d /mnt/encrypted/oracle/cargo-target 0755 oracle oracle - -"
+    "d /mnt/encrypted/oracle/cargo-target/oracle 0755 oracle oracle - -"
+    "d /mnt/encrypted/oracle/misc 0755 oracle oracle - -"
     "d /mnt/encrypted/oracle/cargo-target/r3dlust 0755 r3dlust users - -"
   ];
 
-  secrets.claude-who = {
-    file = ./settings.json.age;
-    mode = "400"; # read-only for owner
-    owner = config.services.claude-who.user;
-    group = config.services.claude-who.group;
-  };
-
-  services.claude-who = {
-    enable = false;
-    user = "oracle";
-    group = "oracle";
-
-    settings = config.secrets.claude-who.path;
-
-    browser.chromiumPackage = pkgs.chromium;
-
-    extraPackages = with pkgs; [
-      "/home/${config.services.claude-who.user}/.bun"
-      pkg-config
-      jujutsu
-      openssh
-      nodejs
-      codex
-      config.services.kache.package
-      ruby # for OMC's ralph plugin
-      bun
-    ];
-
-    environment = {
-      BUN_INSTALL = "/home/${config.services.claude-who.user}/.bun";
-      NPM_CONFIG_PREFIX = "/home/${config.services.claude-who.user}/.npm-global";
-      RUSTC_WRAPPER = kacheExe;
-      CARGO_INCREMENTAL = "0";
-      KACHE_CACHE_DIR = kacheCacheDir;
-      CC = ccWrapper;
-      CXX = cxxWrapper;
-    };
-
-    extraReadWritePaths = [
-      "/mnt/encrypted"
-    ];
-  };
-
   # add oracle as a home-manager user
   home-manager.users = {
-    ${config.services.claude-who.user}.home = {
+    oracle.home = {
       stateVersion = "25.05";
-      homeDirectory = "/home/${config.services.claude-who.user}";
+      homeDirectory = "/home/oracle";
     };
   };
 
   # add oracle's user to the "docker" group
-  users.users.${config.services.claude-who.user} = {
+  users.users.oracle = {
     uid = 993;
     isSystemUser = true;
-    group = config.services.claude-who.group;
-    home = "/home/${config.services.claude-who.user}";
+    group = "oracle";
+    home = "/home/oracle";
     createHome = true;
     shell = pkgs.bash;
     extraGroups = [
@@ -102,9 +51,34 @@ in
 
   users.users.r3dlust.extraGroups = [ "kache" ];
 
-  environment.systemPackages = [
-    claude-who.packages.${config.metadata.architecture}.default
+  environment.systemPackages = with pkgs; [
+    xvfb
+    openbox
+    dbus
+    at-spi2-core
+    xmessage
+    xrandr
+    libx11
+    libxi
+    libxtst
+    libxext
+    pipewire
+    libei
+    libxkbcommon
+    x11vnc
+    novnc
+    python3Packages.websockify
+    xorg-server
   ];
+
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      xorg.libX11
+      xorg.libXi
+      libxkbcommon
+    ];
+  };
 
   systemd.user.services.kache.serviceConfig = {
     ReadWritePaths = [ "/mnt/encrypted" ];
