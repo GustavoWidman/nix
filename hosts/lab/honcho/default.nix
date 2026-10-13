@@ -81,6 +81,7 @@ let
     DIALECTIC_LEVELS__max__MODEL_CONFIG__TRANSPORT = "openai";
     DIALECTIC_LEVELS__max__MODEL_CONFIG__MODEL = "gpt-6-luna";
     DIALECTIC_LEVELS__max__MODEL_CONFIG__OVERRIDES__BASE_URL = "https://lab.tail4a3ea.ts.net:8317/v1";
+    DIALECTIC_LEVELS__max__MAX_TOOL_ITERATIONS = "50";
 
     EMBEDDING__MODEL_CONFIG__TRANSPORT = "openai";
     EMBEDDING__MODEL_CONFIG__MODEL = "qllama/bge-small-en-v1.5";
