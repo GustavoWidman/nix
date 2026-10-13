@@ -56,8 +56,8 @@ export def --env true_home [] {
     			false => {
      			^grep '/home/' /etc/passwd
         				| each {|str| $str | ^cut -d: -f6 | str trim}
-        				| where {|str| not ($str =~ "build")}
                         | lines
+        				| where {$in =~ "r3dlust"} # TODO maybe change this
         				| last
     			}
             };
