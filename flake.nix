@@ -101,6 +101,7 @@
     };
 
     cliproxyapi.url = "github:GustavoWidman/nix-cliproxyapi";
+    coeus.url = "github:GustavoWidman/coeus/feat/async-deployment-jobs";
     kache.url = "github:kunobi-ninja/kache";
 
     zed.url = "github:GustavoWidman/zed-autobuild";
