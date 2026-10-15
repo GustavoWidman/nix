@@ -159,11 +159,11 @@
         "systems": "systems_4"
       },
       "locked": {
-        "lastModified": 1792023769,
-        "narHash": "sha256-lUXDKB9Gcvu7KaczY4xsO974IHjlL6xC/kk4+qP62Qw=",
+        "lastModified": 1792067088,
+        "narHash": "sha256-x3y54YOLdhNqro7uFdTFxYL5qDl5SDLRutgpzPQMXwQ=",
         "owner": "GustavoWidman",
         "repo": "coeus",
-        "rev": "ef2c319256a976f21e91313abfa075824c56f90c",
+        "rev": "82367747ed770c08edc2ffa726092ad7cbdc8281",
         "type": "github"
       },
       "original": {
