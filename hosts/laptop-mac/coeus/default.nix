@@ -1,9 +1,15 @@
 { config, coeus, pkgs, ... }:
 {
-  secrets.coeusd-config = {
+  secrets.coeus-server-config = {
     owner = config.services.coeusd.user;
     group = config.services.coeusd.group;
     file = ./server.toml.age;
+    mode = "400";
+  };
+
+  secrets.coeus-client-config = {
+    owner = "r3dlust";
+    file = ./client.toml.age;
     mode = "400";
   };
 
@@ -12,7 +18,8 @@
     uid = 498;
 
     stateDirectory = "/var/lib/coeus/state";
-    configFile = config.secrets.coeusd-config.path;
+    serverConfigFile = config.secrets.coeus-server-config.path;
+    clientConfigFile = config.secrets.coeus-client-config.path;
     enablePasswordlessActivation = true;
   };
 
