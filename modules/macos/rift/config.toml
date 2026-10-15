@@ -28,6 +28,12 @@ show_empty = true
 stack_offset = 160.0
 default_orientation = "horizontal"
 
+[settings.ui.stack_line]
+enabled = true
+horiz_placement = "top"
+thickness = 24.0          # minimum 20 points
+spacing = 8.0
+
 [virtual_workspaces]
 enabled = true
 default_workspace_count = 5
