@@ -1631,11 +1631,11 @@
         "nixpkgs": "nixpkgs_13"
       },
       "locked": {
-        "lastModified": 1784077643,
-        "narHash": "sha256-KpzKLMPMcenRpXtTLT83WSxrOX+2/vTl7AvSEILQLVo=",
+        "lastModified": 1792413694,
+        "narHash": "sha256-n2uc0cnW32jukUgNWh6NMaKCqGnbrcuYRhqm50EPCyI=",
         "owner": "GustavoWidman",
         "repo": "portfolio",
-        "rev": "524381665270fe537a1ed4a41adc9cf99c75ee59",
+        "rev": "84f61120c9d001444592f1836841b1f508997d72",
         "type": "github"
       },
       "original": {
