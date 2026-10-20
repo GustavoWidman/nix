@@ -50,22 +50,22 @@ app_rules = [
   { app_id = "com.hnc.Discord", title_regex = "call", workspace = 3, floating = true },
 
   # code
-  { app_id = "dev.zed.Zed", workspace = 0 },
-  { app_id = "dev.zed.Zed-Nightly", workspace = 0 },
-  { app_id = "com.microsoft.VSCode", workspace = 0 },
+  { app_id = "dev.zed.Zed", workspace = 0, focus = true },
+  { app_id = "dev.zed.Zed-Nightly", workspace = 0, focus = true },
+  { app_id = "com.microsoft.VSCode", workspace = 0, focus = true },
 
   # terminal
-  { app_id = "com.mitchellh.ghostty", workspace = 1 },
-  { app_id = "com.apple.Terminal", workspace = 1 },
+  { app_id = "com.mitchellh.ghostty", workspace = 1, focus = true },
+  { app_id = "com.apple.Terminal", workspace = 1, focus = true },
 
   # browser
-  { app_id = "app.zen-browser.zen", workspace = 2 },
-  { app_id = "com.apple.Safari", workspace = 2 },
-  { app_id = "com.google.Chrome", workspace = 2 },
+  { app_id = "app.zen-browser.zen", workspace = 2, focus = true },
+  { app_id = "com.apple.Safari", workspace = 2, focus = true },
+  { app_id = "com.google.Chrome", workspace = 2, focus = true },
 
   # social
-  { app_id = "com.hnc.Discord", workspace = 3 },
-  { app_id = "net.whatsapp.WhatsApp", workspace = 3 },
+  { app_id = "com.hnc.Discord", workspace = 3, focus = true },
+  { app_id = "net.whatsapp.WhatsApp", workspace = 3, focus = true },
 
   # system/utils
   { app_id = "com.apple.systempreferences", floating = true },
