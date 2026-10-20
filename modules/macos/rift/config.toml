@@ -86,6 +86,9 @@ app_rules = [
   { app_id = "com.apple.calculator", floating = true },
   { app_id = "com.apple.iWork.Pages", floating = true },
   { app_name = "python", floating = true },
+
+  # unmapped apps go to workspace 5; earlier, equally specific rules win.
+  { title_regex = ".*", workspace = 4, focus = true },
 ]
 
 [keys]
