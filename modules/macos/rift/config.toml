@@ -110,11 +110,6 @@ app_rules = [
 "Alt + 3" = { switch_to_workspace = 2 }
 "Alt + 4" = { switch_to_workspace = 3 }
 "Alt + 5" = { switch_to_workspace = 4 }
-"Alt + 6" = { switch_to_workspace = 5 }
-"Alt + 7" = { switch_to_workspace = 6 }
-"Alt + 8" = { switch_to_workspace = 7 }
-"Alt + 9" = { switch_to_workspace = 8 }
-"Alt + 0" = { switch_to_workspace = 9 }
 
 "Alt + H" = { move_focus = "left" }
 "Alt + J" = { move_focus = "down" }
@@ -131,8 +126,3 @@ app_rules = [
 "Alt + Shift + 3" = { move_window_to_workspace = { workspace = 2, follow = true } }
 "Alt + Shift + 4" = { move_window_to_workspace = { workspace = 3, follow = true } }
 "Alt + Shift + 5" = { move_window_to_workspace = { workspace = 4, follow = true } }
-"Alt + Shift + 6" = { move_window_to_workspace = { workspace = 5, follow = true } }
-"Alt + Shift + 7" = { move_window_to_workspace = { workspace = 6, follow = true } }
-"Alt + Shift + 8" = { move_window_to_workspace = { workspace = 7, follow = true } }
-"Alt + Shift + 9" = { move_window_to_workspace = { workspace = 8, follow = true } }
-"Alt + Shift + 0" = { move_window_to_workspace = { workspace = 9, follow = true } }
