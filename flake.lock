@@ -1700,11 +1700,11 @@
         "nixpkgs": "nixpkgs_15"
       },
       "locked": {
-        "lastModified": 1792063733,
-        "narHash": "sha256-4EXcqaF1aXZeqRZPEmhOJ8TR/bC9OdsQ4aLEtH1uIvE=",
+        "lastModified": 1792535191,
+        "narHash": "sha256-LiKGcD26lztJ6TBwWHE0Echdp40nhqueZPec/KGIFcQ=",
         "owner": "gustavowidman",
         "repo": "rift",
-        "rev": "a263f94d8490da14ca947d6d5d5e8bcaab1d5c8e",
+        "rev": "6a9b174b5665220436ec082d84e00e0ad119bfa0",
         "type": "github"
       },
       "original": {
