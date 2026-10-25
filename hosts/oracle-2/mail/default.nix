@@ -105,16 +105,45 @@ in
     '';
   };
 
-  # Roundcube is intentionally disabled. Keep its named Docker volumes intact,
-  # but do not start the PHP container or proxy requests to a manually started one.
-  # PHP October 2026 RCE advisories: https://www.php.net/archive/2026.php
+  # Oxi uses the existing mail accounts; no shared application password or
+  # additional agenix secret is needed. Keep the old Roundcube volumes intact.
+  services.oxi = enabled {
+    host = "127.0.0.1";
+    port = 37993;
+    imapHost = "mail.r3dlust.com";
+    imapPort = 993;
+    smtpHost = "mail.r3dlust.com";
+    smtpPort = 587; # Oxi uses required STARTTLS on this port.
+    tlsEnabled = true;
+    sessionTimeoutHours = 12;
+  };
+
+  systemd.services.oxi = {
+    after = [
+      "dovecot.service"
+      "postfix.service"
+    ];
+    environment.TRUSTED_PROXIES = "127.0.0.1";
+    serviceConfig = {
+      StateDirectory = "oxi";
+      StateDirectoryMode = "0700";
+      UMask = "0077";
+    };
+  };
+
   services.caddy.virtualHosts."mail.r3dlust.com" = {
     extraConfig = ''
       tls ${config.networking.certificates."mail.r3dlust.com".paths.fullchain} ${
         config.networking.certificates."mail.r3dlust.com".paths.key
       }
 
-      respond "Webmail is disabled." 503
+      header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+        Referrer-Policy same-origin
+      }
+
+      reverse_proxy http://127.0.0.1:${toString config.services.oxi.port}
     '';
   };
 }

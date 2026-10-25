@@ -91,6 +91,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    oxi = {
+      url = "github:c0h1b4/oxi";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.fenix.follows = "fenix";
+      inputs.crane.follows = "crane";
+      inputs.bun2nix.follows = "portfolio/bun2nix";
+    };
+
     copyparty.url = "github:9001/copyparty";
     zen-browser = {
       url = "github:youwen5/zen-browser-flake";
