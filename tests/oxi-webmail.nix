@@ -15,6 +15,7 @@ let
     trustedProxyOnly = unit.environment.TRUSTED_PROXIES == "127.0.0.1";
     staticRootMatches = (oxi.package.oxiBasePath or null) == "" && oxi.basePath == null;
     offlineFonts = oxi.package ? offlineFrontend;
+    backendTestsEnabled = oxi.package.testedBackend.doCheck;
     privateState =
       unit.serviceConfig.StateDirectory == "oxi"
       && unit.serviceConfig.StateDirectoryMode == "0700"

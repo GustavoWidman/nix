@@ -5,6 +5,19 @@
 }:
 let
   upstreamPackages = upstream.packages.${pkgs.stdenv.hostPlatform.system};
+  # Upstream's Cargo source filter omits the JSON fixture included by the
+  # authentication contract test. Restore only that pinned fixture, retaining
+  # the upstream source selection, cargo artifacts and test phase.
+  backend = upstreamPackages.backend.overrideAttrs (old: {
+    src = pkgs.runCommand "oxi-backend-source-with-test-fixture" { } ''
+      mkdir -p $out
+      cp -r ${old.src}/. $out/
+      chmod -R u+w $out
+      mkdir -p $out/tests/fixtures
+      cp ${upstream}/backend/tests/fixtures/account-session-expired.json \
+        $out/tests/fixtures/account-session-expired.json
+    '';
+  });
   frontend = upstreamPackages.frontend.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [ ./local-fonts.patch ];
     postPatch = (old.postPatch or "") + ''
@@ -33,12 +46,13 @@ pkgs.runCommand "oxi-email-server"
     passthru = {
       oxiBasePath = "";
       offlineFrontend = frontend;
+      testedBackend = backend;
     };
   }
   ''
     mkdir -p $out/bin $out/share/oxi
     cp -r ${frontend} $out/share/oxi/static
-    cp ${upstreamPackages.backend}/bin/oxi-email-server $out/bin/.oxi-email-server-wrapped
+    cp ${backend}/bin/oxi-email-server $out/bin/.oxi-email-server-wrapped
     makeWrapper $out/bin/.oxi-email-server-wrapped $out/bin/oxi-email-server \
       --set-default STATIC_DIR "$out/share/oxi/static" \
       --set-default ENVIRONMENT "production" \
