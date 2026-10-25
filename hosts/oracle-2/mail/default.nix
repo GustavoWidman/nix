@@ -105,40 +105,16 @@ in
     '';
   };
 
-  virtualisation.arion.projects.roundcube.settings = {
-    services = {
-      app.service = {
-        image = "roundcube/roundcubemail";
-        environment = {
-          ROUNDCUBEMAIL_DB_TYPE = "sqlite";
-          ROUNDCUBEMAIL_SKIN = "elastic";
-          ROUNDCUBEMAIL_DEFAULT_HOST = "tls://mail.r3dlust.com";
-          ROUNDCUBEMAIL_SMTP_SERVER = "tls://mail.r3dlust.com";
-        };
-        restart = "unless-stopped";
-        volumes = [
-          "roundcube-static:/app/backups"
-          "roundcube-db:/var/roundcube/db"
-        ];
-        ports = [ "127.0.0.1:37993:80" ];
-      };
-    };
-
-    docker-compose.volumes = {
-      roundcube-static = { };
-      roundcube-db = { };
-    };
-  };
-
+  # Roundcube is intentionally disabled. Keep its named Docker volumes intact,
+  # but do not start the PHP container or proxy requests to a manually started one.
+  # PHP October 2026 RCE advisories: https://www.php.net/archive/2026.php
   services.caddy.virtualHosts."mail.r3dlust.com" = {
     extraConfig = ''
       tls ${config.networking.certificates."mail.r3dlust.com".paths.fullchain} ${
         config.networking.certificates."mail.r3dlust.com".paths.key
       }
 
-      reverse_proxy /* {
-        to http://127.0.0.1:37993
-      }
+      respond "Webmail is disabled." 503
     '';
   };
 }
