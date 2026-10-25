@@ -14,6 +14,7 @@ let
     production = unit.environment.ENVIRONMENT == "production";
     trustedProxyOnly = unit.environment.TRUSTED_PROXIES == "127.0.0.1";
     staticRootMatches = (oxi.package.oxiBasePath or null) == "" && oxi.basePath == null;
+    offlineFonts = oxi.package ? offlineFrontend;
     privateState =
       unit.serviceConfig.StateDirectory == "oxi"
       && unit.serviceConfig.StateDirectoryMode == "0700"

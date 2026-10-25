@@ -5,6 +5,12 @@ Nix flake and NixOS module. `flake.lock` pins the application revision. The
 backend serves the static frontend; no PHP, Node.js runtime, or Docker container
 is used for webmail.
 
+`packages/oxi` applies a local build fix to the pinned upstream frontend: Inter
+and JetBrains Mono are bundled from locked nixpkgs font packages using
+`next/font/local`. Builds need no Google Fonts access, and the Nix sandbox stays
+enabled. The upstream backend and NixOS module remain in use; the small wrapper
+mirrors upstream packaging with the patched frontend.
+
 - Caddy terminates HTTPS and proxies HTTP/WebSockets to `127.0.0.1:37993`.
 - IMAP uses `mail.r3dlust.com:993` with certificate-verified TLS.
 - SMTP uses `mail.r3dlust.com:587` with required STARTTLS.
