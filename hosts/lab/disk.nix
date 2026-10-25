@@ -13,8 +13,6 @@
 
           keyFile = "/dev/disk/by-id/usb-Generic_Flash-Disk_0111214634-0:0";
           keyFileSize = 4096;
-
-          preLVM = true;
         };
       };
     };
