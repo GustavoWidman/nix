@@ -61,8 +61,6 @@
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.darwin.follows = "nix-darwin";
-      inputs.home-manager.follows = "home-manager";
     };
 
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
@@ -76,8 +74,6 @@
     };
 
     nixos-mailserver = {
-      # pinned: commits after this migrate to `services.dovecot2.settings`,
-      # which isn't in our nixpkgs rev yet. unpin once nixpkgs catches up.
       url = "gitlab:simple-nixos-mailserver/nixos-mailserver/main";
 
       inputs.nixpkgs.follows = "nixpkgs";
