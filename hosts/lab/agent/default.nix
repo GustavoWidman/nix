@@ -10,7 +10,7 @@ in
     uid = 989;
     isSystemUser = true;
     group = "agent";
-    extraGroups = [ "kvm" ];
+    extraGroups = [ "kvm" "systemd-journal" "docker" ];
     home = "/home/agent";
     createHome = true;
     shell = pkgs.bash;
