@@ -45,9 +45,9 @@ app_rules = [
   # specific exceptions
   { app_id = "app.zen-browser.zen", title_regex = "bitwarden", workspace = 2, floating = true },
   { app_id = "dev.zed.Zed", title_regex = "Zed — Settings", workspace = 0, floating = true },
-  { app_id = "dev.zed.Zed-Nightly", title_regex = "Zed — Settings", workspace = 0, floating = true },
+  { app_id = "dev.zed.Zed-Nightly", title_regex = "(?:Zed — Settings)", workspace = 0, floating = true },
   { app_id = "net.whatsapp.WhatsApp", title_regex = "call", workspace = 3, floating = true },
-  { app_id = "com.hnc.Discord", title_regex = "call", workspace = 3, floating = true },
+  { app_id = "com.hnc.Discord", title_regex = "(?:call)", workspace = 3, floating = true },
 
   # code
   { app_id = "dev.zed.Zed", workspace = 0, focus = true },
