@@ -40,6 +40,7 @@ in
           lsof
           nano
           netcat-gnu
+          niks3
           nmap
           openfortivpn
           openssl

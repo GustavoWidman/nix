@@ -47,6 +47,7 @@ in
 
   # Common
   "modules/common/nix/github-token-nix-conf.age".publicKeys = all;
+  "modules/common/cache/token.age".publicKeys = all;
 
   # Server Specific
   "modules/server/acme/environment.env.age".publicKeys = server ++ admins;
@@ -69,6 +70,9 @@ in
   "hosts/oracle-1/password.age".publicKeys = [ oracle-1 ] ++ admins;
   "hosts/oracle-1/rocky-bot/rocky-bot.toml.age".publicKeys = [ oracle-1 ] ++ admins;
   "hosts/oracle-1/lavalink/environment.env.age".publicKeys = [ oracle-1 ] ++ admins;
+  "hosts/oracle-1/niks3/signing-key.age".publicKeys = [ oracle-1 ] ++ admins;
+  "hosts/oracle-1/niks3/s3-access-key.age".publicKeys = [ oracle-1 ] ++ admins;
+  "hosts/oracle-1/niks3/s3-secret-key.age".publicKeys = [ oracle-1 ] ++ admins;
 
   # Oracle-2 Specific
   "hosts/oracle-2/adguard/config.yaml.age".publicKeys = [ oracle-2 ] ++ admins;

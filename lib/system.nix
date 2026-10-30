@@ -40,6 +40,7 @@ in
 
       specialArgs = inputs // {
         inherit inputs;
+        isDarwin = false;
         keys = import ../keys.nix;
         lib = self;
       };
@@ -75,6 +76,7 @@ in
 
       specialArgs = inputs // {
         inherit inputs;
+        isDarwin = false;
         keys = import ../keys.nix;
         lib = self;
       };
@@ -109,6 +111,7 @@ in
 
       specialArgs = inputs // {
         inherit inputs;
+        isDarwin = false;
         keys = import ../keys.nix;
         lib = self;
       };
@@ -143,6 +146,7 @@ in
 
       specialArgs = inputs // {
         inherit inputs;
+        isDarwin = true;
         keys = import ../keys.nix;
         lib = self;
       };
@@ -178,6 +182,7 @@ in
 
       specialArgs = inputs // {
         inherit inputs;
+        isDarwin = true;
         keys = import ../keys.nix;
         lib = self;
       };
