@@ -109,10 +109,7 @@
 
     cliproxyapi.url = "github:GustavoWidman/nix-cliproxyapi";
     coeus.url = "github:GustavoWidman/coeus/feat/async-deployment-jobs";
-    # Newer daemon-execution tests assume readable Linux security labels, which
-    # are unavailable in the lab's Nix sandbox. Keep the validated revision;
-    # do not bypass its test suite or relax process-isolation checks.
-    kache.url = "github:kunobi-ninja/kache/d2932194991878df979124068f2d7d814f2b4408";
+    kache.url = "github:kunobi-ninja/kache";
 
     zed.url = "github:GustavoWidman/zed-autobuild";
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
