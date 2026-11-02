@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  oxi,
   ...
 }:
 let
@@ -109,7 +108,6 @@ in
   # Oxi uses the existing mail accounts; no shared application password or
   # additional agenix secret is needed. Keep the old Roundcube volumes intact.
   services.oxi = enabled {
-    package = pkgs.callPackage ../../../packages/oxi { upstream = oxi; };
     host = "127.0.0.1";
     port = 37993;
     imapHost = "mail.r3dlust.com";
