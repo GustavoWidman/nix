@@ -1670,11 +1670,11 @@
         "systems": "systems_5"
       },
       "locked": {
-        "lastModified": 1793455802,
-        "narHash": "sha256-C4tlsqLpWHsFbEsD1bx9MFq9ILnjAjA9VWuWzD5VD/I=",
+        "lastModified": 1793586874,
+        "narHash": "sha256-MMYhRi53GUvxrKqzaPB3sWdZQQEMPpisN98BkSaQtew=",
         "owner": "c0h1b4",
         "repo": "oxi",
-        "rev": "15355b43734622d100d547a586f29c5fbade7dd6",
+        "rev": "822807ef5d27e109b61cb4528478018bc941d788",
         "type": "github"
       },
       "original": {
