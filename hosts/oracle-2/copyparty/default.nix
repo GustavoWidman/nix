@@ -37,15 +37,12 @@ in
       "noatime"
       "vers=4.2"
       "_netdev" # Wait for network before mounting
+      # Keep the VPN up until Copyparty stops and this mount is unmounted.
+      "x-systemd.requires=tailscaled.service"
       "hard" # Let transient NFS faults block instead of surfacing as EIO
       "timeo=60"
       "retrans=3"
     ];
-  };
-
-  systemd.services."mnt-lab.mount" = {
-    after = [ "tailscaled.service" ];
-    requires = [ "tailscaled.service" ];
   };
 
   services.copyparty = enabled {
@@ -163,6 +160,9 @@ in
     serviceConfig = {
       Restart = "on-failure";
       RestartSec = "30s";
+      # Allow graceful shutdown, then kill remaining workers on timeout.
+      TimeoutStopSec = "30s";
+      TimeoutStopFailureMode = "kill";
     };
   };
 
