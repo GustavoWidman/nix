@@ -20,8 +20,8 @@
     # Disable bpf() JIT (to eliminate spray attacks).
     "net.core.bpf_jit_enable" = false;
 
-    # Disable ftrace debugging.
-    "kernel.ftrace_enabled" = false;
+    # Disable ftrace where supported; some kernels reject this runtime write.
+    "-kernel.ftrace_enabled" = false;
 
     # Avoid kernel memory address exposures via dmesg (this value can also be set by CONFIG_SECURITY_DMESG_RESTRICT).
     "kernel.dmesg_restrict" = 1;
@@ -39,7 +39,7 @@
     "kernel.perf_event_paranoid" = 3;
 
     # Require CAP_BPF to use bpf.
-    "kernel.unprvileged_bpf_disabled" = 1;
+    "kernel.unprivileged_bpf_disabled" = 1;
   };
 
   # https://www.kernel.org/doc/html/latest/admin-guide/kernel-parameters.html
@@ -53,11 +53,8 @@
     # Reduce most of the exposure of a heap attack to a single cache.
     "slab_nomerge"
 
-    # Only allow signed modules.
-    "module.sig_enforce=1"
-
-    # Blocks access to all kernel memory, even preventing administrators from being able to inspect and probe the kernel.
-    "lockdown=confidentiality"
+    # Do not enforce module signatures or lockdown without a trusted module
+    # signing setup: rejecting storage drivers prevents the initrd mounting root.
 
     # Enable buddy allocator free poisoning.
     "page_poison=1"
