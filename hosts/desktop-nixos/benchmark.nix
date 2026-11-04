@@ -5,6 +5,8 @@ let
   # on it. gungnir pins measurements to CPU 14; its sibling 15 stays idle.
   benchCpus = "14,15";
   otherCpus = "0-13,16-31";
+  # The same set as a hex mask, which /proc/irq/default_smp_affinity requires.
+  otherMask = "ffff3fff";
 
   # Bench mode fixes the clock for the length of a measurement session and restores the
   # previous state afterwards, so daily use keeps turbo and the normal governor.
@@ -37,7 +39,7 @@ let
           fi
         done
         echo 1 > "$cpu/intel_pstate/no_turbo"
-        echo "${otherCpus}" > /proc/irq/default_smp_affinity
+        echo "${otherMask}" > /proc/irq/default_smp_affinity
         for irq in /proc/irq/[0-9]*; do
           echo "${otherCpus}" > "$irq/smp_affinity_list" 2>/dev/null || true
         done
@@ -103,6 +105,11 @@ in
       commands = [
         {
           command = "${benchMode}/bin/gungnir-bench-mode";
+          options = [ "NOPASSWD" ];
+        }
+        # sudo matches the path the command is found at, which on PATH is the system profile.
+        {
+          command = "/run/current-system/sw/bin/gungnir-bench-mode";
           options = [ "NOPASSWD" ];
         }
       ];
