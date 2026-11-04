@@ -21,6 +21,10 @@ in
 {
   services.kache = {
     enable = true;
+    # Parallel upstream tests race on process-wide environment and cwd changes.
+    package = pkgs.kache.overrideAttrs (_: {
+      dontUseCargoParallelTests = true;
+    });
     daemon.enable = true;
     rustcWrapper = true;
     settings.cache = {
