@@ -31,6 +31,7 @@ in
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
+  boot.kernel.sysctl."kernel.perf_event_paranoid" = lib.mkOverride 1 1; # enable profiling for this machine
 
   fileSystems."/" = {
     device = "/dev/disk/by-label/root";
