@@ -124,6 +124,10 @@ in
   # and the measurement stop when the last login session closes.
   users.users.r3dlust.linger = true;
 
+  # Measuring sessions wake the machine over the network and power it off afterwards; arm the
+  # card for magic packets on every boot rather than trusting its default.
+  networking.interfaces.eno1.wakeOnLan.enable = true;
+
   environment.systemPackages = [ benchMode ];
 
   security.sudo.extraRules = [
