@@ -139,6 +139,10 @@ in
           command = "/run/current-system/sw/bin/gungnir-bench-mode";
           options = [ "NOPASSWD" ];
         }
+        {
+          command = "/run/current-system/sw/bin/poweroff";
+          options = [ "NOPASSWD" ];
+        }
       ];
     }
   ];
