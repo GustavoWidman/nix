@@ -2,14 +2,19 @@
 let
   # i9-13900K: logical CPUs 0-15 are the eight P-cores, two threads each (P-core n is CPUs 2n
   # and 2n+1), and 16-31 are the sixteen E-cores. Check with `lscpu --extended` before relying
-  # on it. gungnir pins measurements to CPU 14; its sibling 15 stays idle.
-  benchCpus = "14,15";
-  otherCpus = "0-13,16-31";
+  # on it. P-cores 4 to 7 (CPUs 8-15) are reserved for measuring: gungnir runs one comparison on
+  # the first thread of each (CPUs 8, 10, 12 and 14) and leaves the siblings idle. P-cores 0 to 3
+  # and every E-core stay with everything else.
+  benchCpus = "8-15";
+  benchList = "8 9 10 11 12 13 14 15";
+  otherCpus = "0-7,16-31";
   # The same set as a hex mask, which /proc/irq/default_smp_affinity requires.
-  otherMask = "ffff3fff";
+  otherMask = "ffff00ff";
 
   # Bench mode fixes the clock for the length of a measurement session and restores the
-  # previous state afterwards, so daily use keeps turbo and the normal governor.
+  # previous state afterwards, so daily use keeps turbo and the normal governor. `on` runs every
+  # core at its base clock with turbo off; `on MHZ` instead keeps turbo on and pins the
+  # measurement cores to MHZ by setting their minimum and maximum frequency to it.
   benchMode = pkgs.writeShellApplication {
     name = "gungnir-bench-mode";
     runtimeInputs = [ pkgs.coreutils ];
@@ -23,6 +28,8 @@ let
         for policy in "$cpu"/cpufreq/policy*; do
           name=$(basename "$policy")
           cat "$policy/scaling_governor" > "$state/$name.governor"
+          cat "$policy/scaling_min_freq" > "$state/$name.min"
+          cat "$policy/scaling_max_freq" > "$state/$name.max"
           if [ -e "$policy/energy_performance_preference" ]; then
             cat "$policy/energy_performance_preference" > "$state/$name.epp"
           fi
@@ -31,6 +38,7 @@ let
       }
 
       on() {
+        local mhz=$1
         [ -d "$state" ] || save
         for policy in "$cpu"/cpufreq/policy*; do
           echo performance > "$policy/scaling_governor"
@@ -38,7 +46,16 @@ let
             echo performance > "$policy/energy_performance_preference"
           fi
         done
-        echo 1 > "$cpu/intel_pstate/no_turbo"
+        if [ -z "$mhz" ]; then
+          echo 1 > "$cpu/intel_pstate/no_turbo"
+        else
+          echo 0 > "$cpu/intel_pstate/no_turbo"
+          for n in ${benchList}; do
+            # Raise the maximum first, so that the minimum never exceeds it.
+            echo $((mhz * 1000)) > "$cpu/cpufreq/policy$n/scaling_max_freq"
+            echo $((mhz * 1000)) > "$cpu/cpufreq/policy$n/scaling_min_freq"
+          done
+        fi
         echo "${otherMask}" > /proc/irq/default_smp_affinity
         for irq in /proc/irq/[0-9]*; do
           echo "${otherCpus}" > "$irq/smp_affinity_list" 2>/dev/null || true
@@ -51,6 +68,9 @@ let
         for policy in "$cpu"/cpufreq/policy*; do
           name=$(basename "$policy")
           cat "$state/$name.governor" > "$policy/scaling_governor"
+          # Lower the minimum first, so that it never exceeds the maximum.
+          cat "$state/$name.min" > "$policy/scaling_min_freq"
+          cat "$state/$name.max" > "$policy/scaling_max_freq"
           if [ -e "$state/$name.epp" ]; then
             cat "$state/$name.epp" > "$policy/energy_performance_preference"
           fi
@@ -62,17 +82,20 @@ let
       status() {
         echo "bench mode:      $([ -d "$state" ] && echo on || echo off)"
         echo "no_turbo:        $(cat "$cpu/intel_pstate/no_turbo")"
-        echo "governor cpu14:  $(cat "$cpu/cpu14/cpufreq/scaling_governor")"
+        echo "governor cpu8:   $(cat "$cpu/cpu8/cpufreq/scaling_governor")"
+        for n in 8 10 12 14; do
+          echo "cpu$n kHz:       $(cat "$cpu/cpu$n/cpufreq/scaling_cur_freq") (min $(cat "$cpu/cpu$n/cpufreq/scaling_min_freq"), max $(cat "$cpu/cpu$n/cpufreq/scaling_max_freq"))"
+        done
         echo "isolated cpus:   $(cat "$cpu/isolated")"
         echo "nohz_full cpus:  $(cat "$cpu/nohz_full" 2>/dev/null || echo unsupported)"
         echo "perf paranoid:   $(cat /proc/sys/kernel/perf_event_paranoid)"
       }
 
       case "''${1:-status}" in
-        on) on; status ;;
+        on) on "''${2:-}"; status ;;
         off) off; status ;;
         status) status ;;
-        *) echo "usage: gungnir-bench-mode on|off|status" >&2; exit 2 ;;
+        *) echo "usage: gungnir-bench-mode on [MHZ]|off|status" >&2; exit 2 ;;
       esac
     '';
   };
@@ -85,8 +108,8 @@ in
   # The NMI watchdog holds a hardware counter; freeing it keeps perf from multiplexing.
   boot.kernel.sysctl."kernel.nmi_watchdog" = 0;
 
-  # Keep the scheduler, the timer tick and RCU callbacks off the measurement core. This
-  # reserves one P-core (2 of 32 threads) permanently; drop these three to give it back.
+  # Keep the scheduler, the timer tick and RCU callbacks off the measurement cores. This
+  # reserves four P-cores (8 of 32 threads) permanently; drop these three to give them back.
   boot.kernelParams = [
     "isolcpus=${benchCpus}"
     "nohz_full=${benchCpus}"
