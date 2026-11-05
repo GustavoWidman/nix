@@ -97,6 +97,10 @@ in
   # and task limits, which needs these controllers delegated to the user manager.
   systemd.services."user@".serviceConfig.Delegate = "cpu cpuset io memory pids";
 
+  # A measurement session runs for hours as a user service; without lingering, the user manager
+  # and the measurement stop when the last login session closes.
+  users.users.r3dlust.linger = true;
+
   environment.systemPackages = [ benchMode ];
 
   security.sudo.extraRules = [
