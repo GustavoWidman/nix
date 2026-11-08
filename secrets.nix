@@ -37,6 +37,7 @@ in
   "modules/common/ssh/misc/build.age".publicKeys = all;
 
   "modules/common/ssh/main/config.age".publicKeys = all;
+  "modules/common/ssh/main/altar.age".publicKeys = all;
   "modules/common/ssh/main/desktop.age".publicKeys = all;
   "modules/common/ssh/main/lab.age".publicKeys = all;
   "modules/common/ssh/main/laptop.age".publicKeys = all;
