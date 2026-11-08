@@ -23,7 +23,7 @@ let
       exit 0
     fi
     if ! printf '%s' "$drv" | ${pkgs.jq}/bin/jq -e '
-      all(.[]; all(.outputs[]; (has("hash") or has("hashAlgo")) | not)
+      all((.derivations // .)[]; all(.outputs[]; (has("hash") or has("hashAlgo")) | not)
         and ((.env.outputHash // "") == ""))
     ' >/dev/null; then
       exit 0
