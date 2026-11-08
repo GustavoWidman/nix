@@ -108,7 +108,10 @@ def rsync-files [
             ''
     })"
 
-    $in | rsync ...$rsync_opts --rsh $ssh_cmd --files-from - $source $destination
+    # macOS ships openrsync, which lacks options above; use GNU rsync from nixpkgs there.
+    let rsync_path = "sh -c 'if rsync --version 2>/dev/null | grep -q openrsync; then exec nix --extra-experimental-features \"nix-command flakes\" shell nixpkgs#rsync -c rsync \"$@\"; fi; exec rsync \"$@\"' rsync"
+
+    $in | rsync ...$rsync_opts --rsh $ssh_cmd --rsync-path $rsync_path --files-from - $source $destination
 }
 
 def sync-nix-config [
