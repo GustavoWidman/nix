@@ -13,9 +13,9 @@ this flake currently knows about 6 hosts:
 
 - **`laptop-mac`** (darwin, aarch64): my daily driver macbook. runs aerospace,
   ghostty, homebrew bits, and the usual macos crimes.
-- **`altar`** (darwin, aarch64): a headless mac mini that exists to run ai
-  agents. no window manager, no login apps, never sleeps, and comes back on its
-  own after a power cut.
+- **`altar`** (darwin, aarch64): a headless mac mini dev server that exists to
+  run ai agents. gets the dev toolchain, but no window manager, no login apps,
+  never sleeps, and comes back on its own after a power cut.
 - **`desktop-nixos`** (nixos, x86_64): my main linux desktop. runs hyprland,
   wayland, and all the gaming/heavy lifting stuff.
 - **`lab`** (nixos, x86_64): a remote dev server that runs at home 24/7. i ssh
@@ -106,8 +106,8 @@ and exposes the generated systems through `nixosConfigurations`,
 the `lib/` directory is where the magic happens, it's heavily inspired off of
 rgbcube/ncc's `lib` module. instead of copy-pasting massive configurations for
 each host, `lib/system.nix` exports builder functions like `linuxDesktopSystem`,
-`linuxServerSystem`, `linuxDevServerSystem`, `darwinDesktopSystem`, and
-`darwinServerSystem`.
+`linuxServerSystem`, `linuxDevServerSystem`, `darwinDesktopSystem`,
+`darwinServerSystem`, and `darwinDevServerSystem`.
 
 when a new host is defined in `hosts/my-host/flake.nix`, it calls one of these
 builder functions. the function scoops up the shared modules, adds the relevant
@@ -135,8 +135,8 @@ ssh. allegedly.
 2. create a `flake.nix` inside it, declaring the `metadata` (`hostname`,
    `class`, `type`, `architecture`).
 3. call the appropriate lib function, such as `linuxServerSystem`,
-   `linuxDevServerSystem`, `linuxDesktopSystem`, `darwinDesktopSystem`, or
-   `darwinServerSystem`.
+   `linuxDevServerSystem`, `linuxDesktopSystem`, `darwinDesktopSystem`,
+   `darwinServerSystem`, or `darwinDevServerSystem`.
 4. add host-specific modules in the same folder and import them from that host
    flake.
 5. add the host key to `keys.nix`, update `secrets.nix` recipients, and rekey

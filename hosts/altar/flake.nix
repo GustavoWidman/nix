@@ -3,7 +3,7 @@ let
   metadata = {
     hostname = "altar";
     class = "darwin";
-    type = "server";
+    type = "dev-server";
     architecture = "aarch64-darwin";
     build-architectures = [
       metadata.architecture
@@ -20,7 +20,7 @@ in
       inputs@{
         ...
       }:
-      inputs.lib.darwinServerSystem inputs (
+      inputs.lib.darwinDevServerSystem inputs (
         {
           lib,
           pkgs,

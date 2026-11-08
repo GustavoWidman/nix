@@ -165,6 +165,41 @@ in
       ++ inputModulesDarwin;
     };
 
+  darwinDevServerSystem =
+    inputs: module:
+    let
+      inputModulesDarwin = collectInputsFrom inputs [
+        "darwinModules"
+        "default"
+      ];
+      inputOverlays = collectInputsFrom inputs [
+        "overlays"
+        "default"
+      ];
+      overlayModule = {
+        nixpkgs.overlays = inputOverlays;
+      };
+
+      specialArgs = inputs // {
+        inherit inputs;
+        isDarwin = true;
+        keys = import ../keys.nix;
+        lib = self;
+      };
+    in
+    super.darwinSystem {
+      inherit specialArgs;
+
+      modules = [
+        module
+        overlayModule
+      ]
+      ++ modulesCommon
+      ++ modulesDarwin
+      ++ modulesDev
+      ++ inputModulesDarwin;
+    };
+
   darwinServerSystem =
     inputs: module:
     let
