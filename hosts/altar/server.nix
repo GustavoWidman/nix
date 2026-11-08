@@ -7,6 +7,7 @@
     restartAfterPowerFailure = true;
     restartAfterFreeze = true;
   };
+  system.defaults.screensaver.askForPassword = false;
 
   networking.wakeOnLan.enable = true;
 
