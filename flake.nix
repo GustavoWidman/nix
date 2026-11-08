@@ -47,6 +47,7 @@
     self.submodules = true;
 
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
 

@@ -2,6 +2,7 @@
   config,
   fenix,
   lib,
+  nixpkgs-unstable,
   pkgs,
   ...
 }:
@@ -21,10 +22,9 @@ in
 {
   services.kache = {
     enable = true;
-    # Parallel upstream tests race on process-wide environment and cwd changes.
-    package = pkgs.kache.overrideAttrs (_: {
-      dontUseCargoParallelTests = true;
-    });
+    # The kache flake overlay builds kache from source. The nixpkgs-unstable
+    # branch only advances once Hydra has built its packages, so this one is cached.
+    package = nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.kache;
     daemon.enable = true;
     rustcWrapper = true;
     settings.cache = {
@@ -44,7 +44,8 @@ in
   environment.variables = {
     RUSTC_WRAPPER = kacheExe;
     CARGO_INCREMENTAL = "0";
-  } // lib.optionalAttrs config.isDarwin {
+  }
+  // lib.optionalAttrs config.isDarwin {
     DYLD_FALLBACK_LIBRARY_PATH = "${rustToolchain}/lib";
   };
 
@@ -55,7 +56,8 @@ in
         home.sessionVariables = {
           RUSTC_WRAPPER = kacheExe;
           CARGO_INCREMENTAL = "0";
-        } // lib.optionalAttrs osConfig.isDarwin {
+        }
+        // lib.optionalAttrs osConfig.isDarwin {
           DYLD_FALLBACK_LIBRARY_PATH = "${rustToolchain}/lib";
         };
 
