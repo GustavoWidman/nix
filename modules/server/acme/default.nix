@@ -1,5 +1,6 @@
 {
   config,
+  isDarwin,
   lib,
   ...
 }:
@@ -167,7 +168,7 @@ in
     description = "Certificate configurations";
   };
 
-  config = {
+  config = lib.optionalAttrs (!isDarwin) {
     secrets.acme-environment.file = ./environment.env.age;
 
     users.groups = genAttrs getCertificateGroups (group: { });

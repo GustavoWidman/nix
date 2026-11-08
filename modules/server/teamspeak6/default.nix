@@ -1,5 +1,6 @@
 {
   config,
+  isDarwin,
   lib,
   pkgs,
   ...
@@ -45,36 +46,38 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    virtualisation.podman.enable = true;
-    virtualisation.oci-containers.backend = "podman";
-    virtualisation.oci-containers.containers.teamspeak6 = {
-      inherit (cfg) image;
-      autoStart = true;
-      ports = [
-        "${cfg.bindAddress}:${toString cfg.voicePort}:${toString cfg.voicePort}/udp"
-        "${cfg.bindAddress}:${toString cfg.fileTransferPort}:${toString cfg.fileTransferPort}/tcp"
-      ]
-      ++ lib.optional cfg.enableQuery "127.0.0.1:${toString cfg.queryPort}:${toString cfg.queryPort}/tcp";
-      volumes = [ "${cfg.dataDir}:/var/tsserver" ];
-      environment = {
-        TSSERVER_LICENSE_ACCEPTED = "accept";
-        TSSERVER_DEFAULT_PORT = toString cfg.voicePort;
-        TSSERVER_FILE_TRANSFER_PORT = toString cfg.fileTransferPort;
-      }
-      // lib.optionalAttrs cfg.enableQuery {
-        TSSERVER_QUERY_HTTP_ENABLED = "1";
-        TSSERVER_QUERY_HTTP_PORT = toString cfg.queryPort;
+  config = lib.optionalAttrs (!isDarwin) (
+    lib.mkIf cfg.enable {
+      virtualisation.podman.enable = true;
+      virtualisation.oci-containers.backend = "podman";
+      virtualisation.oci-containers.containers.teamspeak6 = {
+        inherit (cfg) image;
+        autoStart = true;
+        ports = [
+          "${cfg.bindAddress}:${toString cfg.voicePort}:${toString cfg.voicePort}/udp"
+          "${cfg.bindAddress}:${toString cfg.fileTransferPort}:${toString cfg.fileTransferPort}/tcp"
+        ]
+        ++ lib.optional cfg.enableQuery "127.0.0.1:${toString cfg.queryPort}:${toString cfg.queryPort}/tcp";
+        volumes = [ "${cfg.dataDir}:/var/tsserver" ];
+        environment = {
+          TSSERVER_LICENSE_ACCEPTED = "accept";
+          TSSERVER_DEFAULT_PORT = toString cfg.voicePort;
+          TSSERVER_FILE_TRANSFER_PORT = toString cfg.fileTransferPort;
+        }
+        // lib.optionalAttrs cfg.enableQuery {
+          TSSERVER_QUERY_HTTP_ENABLED = "1";
+          TSSERVER_QUERY_HTTP_PORT = toString cfg.queryPort;
+        };
       };
-    };
-    systemd.tmpfiles.rules = [ "d ${cfg.dataDir} 0750 9987 9987 -" ];
-    systemd.services.podman-teamspeak6.preStart = lib.mkAfter ''
-      ${pkgs.coreutils}/bin/chown -R 9987:9987 ${cfg.dataDir}
-    '';
-    networking.firewall.allowedUDPPorts = [ cfg.voicePort ];
-    networking.firewall.allowedTCPPorts = [
-      cfg.fileTransferPort
-    ]
-    ++ lib.optional cfg.enableQuery cfg.queryPort;
-  };
+      systemd.tmpfiles.rules = [ "d ${cfg.dataDir} 0750 9987 9987 -" ];
+      systemd.services.podman-teamspeak6.preStart = lib.mkAfter ''
+        ${pkgs.coreutils}/bin/chown -R 9987:9987 ${cfg.dataDir}
+      '';
+      networking.firewall.allowedUDPPorts = [ cfg.voicePort ];
+      networking.firewall.allowedTCPPorts = [
+        cfg.fileTransferPort
+      ]
+      ++ lib.optional cfg.enableQuery cfg.queryPort;
+    }
+  );
 }
