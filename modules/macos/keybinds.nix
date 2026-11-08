@@ -1,5 +1,6 @@
+{ config, lib, ... }:
 {
-  system.defaults.CustomUserPreferences = {
+  system.defaults.CustomUserPreferences = lib.mkIf config.isDesktop {
     "com.apple.symbolichotkeys" = {
       AppleSymbolicHotKeys = {
         # Disable Spotlight Search (⌘Space by default)

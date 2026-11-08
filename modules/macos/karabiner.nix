@@ -104,7 +104,7 @@ let
     }
   ];
 in
-{
+lib.mkIf config.isDesktop {
   homebrew.casks = [ "karabiner-elements" ];
 
   home-manager.sharedModules = [

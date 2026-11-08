@@ -1,9 +1,11 @@
 {
+  config,
+  lib,
   pkgs,
   rift,
   ...
 }:
-{
+lib.mkIf config.isDesktop {
   services.rift = {
     enable = true;
     config = ./config.toml;

@@ -1,13 +1,18 @@
-{ pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   system.defaults.loginwindow = {
     DisableConsoleAccess = true;
     GuestEnabled = false;
   };
 
-  system.login-items = with pkgs; [
-    unnaturalscrollwheels
-    stats
+  system.login-items = lib.mkIf config.isDesktop [
+    pkgs.unnaturalscrollwheels
+    pkgs.stats
   ];
 
   launchd.daemons.limit-maxfiles = {
