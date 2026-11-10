@@ -74,7 +74,7 @@ in
   "hosts/oracle-1/niks3/signing-key.age".publicKeys = [ oracle-1 ] ++ admins;
   "hosts/oracle-1/niks3/s3-access-key.age".publicKeys = [ oracle-1 ] ++ admins;
   "hosts/oracle-1/niks3/s3-secret-key.age".publicKeys = [ oracle-1 ] ++ admins;
-  "hosts/oracle-1/heimdall/password-hash.age".publicKeys = [ oracle-1 ] ++ admins;
+  "hosts/oracle-1/heimdall/password.age".publicKeys = [ oracle-1 ] ++ admins;
 
   # Oracle-2 Specific
   "hosts/oracle-2/adguard/config.yaml.age".publicKeys = [ oracle-2 ] ++ admins;

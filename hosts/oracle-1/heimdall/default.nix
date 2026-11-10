@@ -13,19 +13,17 @@ in
     '';
   };
 
-  # Read as root by systemd and handed to the service as a credential.
-  secrets.heimdall-password-hash.file = ./password-hash.age;
+  # Holds the argon2id hash of the password, read as root by systemd and handed to the
+  # service as a credential.
+  secrets.heimdall-password.file = ./password.age;
 
+  # Caddy serves the web app from its files and proxies /api to heimdall.
   services.heimdall = {
     enable = true;
-    passwordHashFile = config.secrets.heimdall-password-hash.path;
+    virtualHost = domain;
+    passwordHashFile = config.secrets.heimdall-password.path;
   };
 
-  # A plain proxy is enough: Caddy keeps Host and sets X-Forwarded-Proto for
-  # heimdall's same-origin check, and flushes the event stream of /api/live.
-  services.caddy.virtualHosts.${domain}.extraConfig = ''
-    ${config.networking.certificates.${domain}.paths.caddy}
-
-    reverse_proxy ${config.services.heimdall.listen}
-  '';
+  services.caddy.virtualHosts.${domain}.extraConfig =
+    config.networking.certificates.${domain}.paths.caddy;
 }
