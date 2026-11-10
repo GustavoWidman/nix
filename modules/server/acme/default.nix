@@ -2,6 +2,7 @@
   config,
   isDarwin,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -47,6 +48,40 @@ let
     |> flatten;
 
   getGroupedUserAssignments = getUserGroupAssignments |> groupBy (assignment: assignment.user);
+
+  # Certificates Caddy reads, by domain.
+  caddyCertificates =
+    enabledCertificates |> filterAttrs (domain: certCfg: lib.elem "caddy" certCfg.users) |> lib.attrNames;
+
+  # A switch reloads the units that already run before it starts new ones, so Caddy
+  # reloads into a config naming a new certificate before acme-<domain>.service has
+  # written even its placeholder, and the reload fails. Activation runs before both, so it
+  # writes a one-day self-signed placeholder for every certificate that has no files yet.
+  # acme-<domain>.service replaces it, and lego still orders the real certificate: it
+  # tracks its own state, not these files.
+  placeholderScript =
+    enabledCertificates
+    |> mapAttrsToList (
+      domain: certCfg:
+      let
+        dir = "/var/lib/acme/${domain}";
+        openssl = lib.getExe pkgs.openssl;
+      in
+      ''
+        if [ ! -e ${dir}/cert.pem ]; then
+          install -d -m 750 -o acme -g ${certCfg.group} ${dir}
+          ${openssl} req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes \
+            -days 1 -subj /CN=${domain} -addext subjectAltName=DNS:${domain} \
+            -keyout ${dir}/key.pem -out ${dir}/cert.pem 2>/dev/null
+          cp ${dir}/cert.pem ${dir}/fullchain.pem
+          cp ${dir}/cert.pem ${dir}/chain.pem
+          cat ${dir}/key.pem ${dir}/cert.pem > ${dir}/full.pem
+          chown acme:${certCfg.group} ${dir}/*.pem
+          chmod 640 ${dir}/*.pem
+        fi
+      ''
+    )
+    |> lib.concatStrings;
 in
 {
   options.networking.certificates = mkOption {
@@ -182,6 +217,20 @@ in
       );
 
     networking.domain = mkDefault "r3dlust.com";
+
+    system.activationScripts.acme-placeholders = {
+      deps = [
+        "users"
+        "groups"
+      ];
+      text = placeholderScript;
+    };
+
+    # On boot, start Caddy once its certificates exist, as useACMEHost would.
+    systemd.services.caddy = lib.mkIf (caddyCertificates != [ ]) {
+      wants = caddyCertificates |> map (domain: "acme-${domain}.service");
+      after = caddyCertificates |> map (domain: "acme-${domain}.service");
+    };
 
     security.acme = {
       acceptTerms = true;
