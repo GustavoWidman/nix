@@ -91,12 +91,7 @@ def get_status [commit_list: list] {
     return "red" # dirty
 }
 
-def jj_stats [] {
-    let jjdir = find-jj-dir | str trim
-    if $jjdir == "" {
-        return ""
-    }
-
+def jj_stats [jjdir: string] {
     let commit_list: list = try {
         jj --quiet -R $jjdir --color never --ignore-working-copy log --no-graph -r "(first_parent(mutable()) | mutable())::@ | @" -T 'empty ++ "\n" ++ description.first_line() ++ "\n" ++ immutable ++ "\n" ++ change_id ++ "\n" ++ json(remote_bookmarks) ++ "\n"' err> /dev/null
             | lines
@@ -243,13 +238,39 @@ def activateables [] {
     }
 }
 
+def jj_cache_file [jjdir: string] {
+    $env.TMPDIR | path join $"nu-prompt-jj-($jjdir | hash md5)"
+}
+
+# The jj segment costs an external call, which is slow from the REPL. Draw the prompt with
+# the segment this repo showed last, then refresh it from a background job.
+def render_prompt [head: string, tail: string] {
+    job list | where description == prompt-jj | each { job kill $in.id } | ignore
+
+    let jjdir = find-jj-dir
+    if $jjdir == "" {
+        return $"($head)($tail)"
+    }
+
+    let cache = jj_cache_file $jjdir
+    job spawn --description prompt-jj {
+        let stats = jj_stats $jjdir
+        $stats | save -f $cache
+        commandline set-prompt $"($head)($stats)($tail)"
+    } | ignore
+
+    let cached = if ($cache | path exists) { open --raw $cache } else { "" }
+    $"($head)($cached)($tail)"
+}
+
 
 export-env {
     let USER_COLOR = if (is-admin) { $'(ansi red)' } else { $'(ansi $env.USER_COLOR)' }
     let user_host = $"($USER_COLOR)(whoami)(ansi reset)@($USER_COLOR)($env.HOSTNAME)(ansi reset)"
 
     $env.PROMPT_COMMAND_RIGHT = ""
-    $env.PROMPT_COMMAND = {|| $"(ansi reset)╭─ ($user_host)(activateables)(get-cwd)(jj_stats)(venv_prompt)(nix_shell_prompt)(nuenv_prompt)
-╰─"}
+    $env.PROMPT_COMMAND = {||
+        render_prompt $"(ansi reset)╭─ ($user_host)(activateables)(get-cwd)" $"(venv_prompt)(nix_shell_prompt)(nuenv_prompt)\n╰─"
+    }
     $env.PROMPT_INDICATOR = $"(ansi reset)(ansi white_bold)(if (is-admin) { "#" } else { "$" })(ansi reset) "
 }
