@@ -1,3 +1,5 @@
+use ../utils/paths.nu nearest-with
+
 def get-cwd [] {
     let pwd = match $env.OS {
         "Darwin" => ((do { pwd })
@@ -22,27 +24,6 @@ def superscript []: string -> string {
         | str replace -a "7" "⁷"
         | str replace -a "8" "⁸"
         | str replace -a "9" "⁹"
-}
-
-def find-jj-dir [pwd?: string] {
-    mut current_dir = match ($pwd | is-empty) {
-        true => (pwd),
-        false => $pwd
-    }
-
-    loop {
-        let jj_path = ($current_dir | path join ".jj")
-
-        if ($jj_path | path exists) {
-            return ($jj_path | path dirname)
-        }
-
-        let parent = ($current_dir | path dirname)
-        if $parent == $current_dir {
-            return ""
-        }
-        $current_dir = $parent
-    }
 }
 
 def get_branch [commit_list: list] {
@@ -247,7 +228,7 @@ def jj_cache_file [jjdir: string] {
 def render_prompt [head: string, tail: string] {
     job list | where description == prompt-jj | each { job kill $in.id } | ignore
 
-    let jjdir = find-jj-dir
+    let jjdir = nearest-with .jj
     if $jjdir == "" {
         return $"($head)($tail)"
     }

@@ -1,21 +1,6 @@
 use mise.nu
+use ../utils/paths.nu in-tree-of
 use zoxide.nu
-
-# Whether the current directory or one of its parents holds any of `names`.
-def in-tree-of [names: list<string>] {
-    mut dir = $env.PWD
-    loop {
-        let here = $dir
-        if ($names | each {|name| $here | path join $name } | path exists | any { $in }) {
-            return true
-        }
-        let parent = $dir | path dirname
-        if $parent == $dir {
-            return false
-        }
-        $dir = $parent
-    }
-}
 
 # Whether any mise config applies here, so mise has something to watch between prompts.
 def mise-configured []: nothing -> bool {
