@@ -20,9 +20,9 @@ $env.config.hooks.env_change.PWD = [
 		__zoxide_hook: true,
 		code: {|_, dir| job spawn { zoxide add -- $dir } | ignore }
 	},
-	# Mise
+	# Mise, where a config applies or something it loaded has to unload
 	{
-		condition: { "MISE_SHELL" in $env }
+		condition: { ("MISE_SHELL" in $env) and (("__MISE_DIFF" in $env) or (mise-configured)) }
 		code: { mise hook }
 	}
     # Rust Environment (add and remove debug and release builds to PATH)
@@ -137,9 +137,9 @@ $env.config.hooks.env_change.PWD = [
     }
 ];
 
-# Both tools spawn a process per prompt. The PWD hook already runs mise on every cd, so
-# between prompts mise only needs to run where a config can change, and direnv only acts
-# where an .envrc applies or something it loaded has to unload.
+# Each external call from the prompt costs several milliseconds before the tool does any
+# work. Between prompts mise only needs to run where a config can change, and direnv only
+# acts where an .envrc applies or something it loaded has to unload.
 $env.config.hooks.pre_prompt = [
 	{
 		condition: { ("MISE_SHELL" in $env) and (mise-configured) }
