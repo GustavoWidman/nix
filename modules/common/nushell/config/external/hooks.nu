@@ -179,7 +179,13 @@ alias cd = zoxide z
 alias cdi = zoxide zi
 
 $env.config.completions.external.enable = true
-$env.config.completions.external.completer = {|place|
+# nushell runs ordinary completers on a background worker, and reedline only checks for
+# its answer every 100 ms, so each Tab waited for that tick. A completer whose closure ends
+# in an @interactive command runs inline on the line editor thread instead.
+@interactive
+def carapace-complete [place: record] {
   carapace $place.command.0 nushell ...$place.command
     | from json
 }
+
+$env.config.completions.external.completer = {|place| carapace-complete $place }
