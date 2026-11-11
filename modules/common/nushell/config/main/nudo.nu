@@ -1,5 +1,5 @@
-def nudo-completer [spans: list<string>] {
-    let $spans = $spans | skip 1 | prepend "sudo"
+def nudo-completer [place: record] {
+    let spans = $place.command | skip 1 | prepend "sudo"
 
     ^carapace $spans.0 nushell ...$spans
         | from json
