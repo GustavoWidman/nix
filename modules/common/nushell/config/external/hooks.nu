@@ -15,10 +15,10 @@ def mise-configured []: nothing -> bool {
 }
 
 $env.config.hooks.env_change.PWD = [
-	# Zoxide
+	# Zoxide only records the visit, so nothing has to wait for it
 	{
 		__zoxide_hook: true,
-		code: {|_, dir| zoxide add -- $dir}
+		code: {|_, dir| job spawn { zoxide add -- $dir } | ignore }
 	},
 	# Mise
 	{
