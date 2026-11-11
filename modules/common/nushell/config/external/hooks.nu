@@ -179,18 +179,7 @@ alias cd = zoxide z
 alias cdi = zoxide zi
 
 $env.config.completions.external.enable = true
-$env.config.completions.external.completer = {|spans|
-  # if the current command is an alias, get it's expansion
-  let expanded_alias = (scope aliases | where name == $spans.0 | get -o 0 | get -o expansion)
-
-  # overwrite
-  let spans = (if $expanded_alias != null  {
-    # put the first word of the expanded alias first in the span
-    $spans | skip 1 | prepend ($expanded_alias | split row " " | take 1)
-  } else {
-    $spans | skip 1 | prepend ($spans.0)
-  })
-
-  carapace $spans.0 nushell ...$spans
+$env.config.completions.external.completer = {|place|
+  carapace $place.command.0 nushell ...$place.command
     | from json
 }

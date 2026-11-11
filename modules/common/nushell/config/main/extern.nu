@@ -1,5 +1,5 @@
-def fish-completer [spans: list<string>] {
-	^fish --command $"complete '--do-complete=($spans | str replace --all "'" "\\'" | str join ' ')'"
+def fish-completer [place: record] {
+	^fish --command $"complete '--do-complete=($place.command | str replace --all "'" "\\'" | str join ' ')'"
 	| from tsv --flexible --noheaders --no-infer
 	| rename value description
 	| update value {|row|
