@@ -141,6 +141,13 @@ $env.config.hooks.env_change.PWD = [
 # work. Between prompts mise only needs to run where a config can change, and direnv only
 # acts where an .envrc applies or something it loaded has to unload.
 $env.config.hooks.pre_prompt = [
+	# Closing a terminal while a command runs sends the hangup to that command, so the shell
+	# lives on without a terminal. nushell then cannot exit while any background job is alive
+	# and loops at full CPU, so deliver the hangup it missed.
+	{
+		condition: { not (is-terminal --stdin) }
+		code: { kill --signal 1 $nu.pid }
+	}
 	{
 		condition: { ("MISE_SHELL" in $env) and (mise-configured) }
 		code: { mise hook }
