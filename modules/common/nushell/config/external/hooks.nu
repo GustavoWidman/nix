@@ -1,25 +1,32 @@
 use mise.nu
 use zoxide.nu
 
-def find-jj-dir [pwd?: string] {
-    mut current_dir = match ($pwd | is-empty) {
-        true => (pwd),
-        false => $pwd
-    }
-
+# Whether the current directory or one of its parents holds any of `names`.
+def in-tree-of [names: list<string>] {
+    mut dir = $env.PWD
     loop {
-        let jj_path = ($current_dir | path join ".jj")
-
-        if ($jj_path | path exists) {
-            return ($jj_path | path dirname)
+        let here = $dir
+        if ($names | each {|name| $here | path join $name } | path exists | any { $in }) {
+            return true
         }
-
-        let parent = ($current_dir | path dirname)
-        if $parent == $current_dir {
-            return ""
+        let parent = $dir | path dirname
+        if $parent == $dir {
+            return false
         }
-        $current_dir = $parent
+        $dir = $parent
     }
+}
+
+# Whether any mise config applies here, so mise has something to watch between prompts.
+def mise-configured []: nothing -> bool {
+    let config_home = $env.XDG_CONFIG_HOME? | default ($env.HOME | path join .config)
+    (
+        ($env.MISE_ENV? | is-not-empty)
+        or ($env.MISE_CONFIG_DIR? | is-not-empty)
+        or ($env.MISE_GLOBAL_CONFIG_FILE? | is-not-empty)
+        or ([/etc/mise ($config_home | path join mise)] | path exists | any { $in })
+        or (in-tree-of [mise.toml mise.local.toml .mise.toml .mise.local.toml .tool-versions .mise mise .config/mise.toml .config/mise])
+    )
 }
 
 $env.config.hooks.env_change.PWD = [
@@ -145,10 +152,11 @@ $env.config.hooks.env_change.PWD = [
     }
 ];
 
+# mise spawns a process per prompt. The PWD hook already runs it on every cd, so between
+# prompts it only needs to run where a config can change.
 $env.config.hooks.pre_prompt = [
-	# Mise
 	{
-		condition: { "MISE_SHELL" in $env }
+		condition: { ("MISE_SHELL" in $env) and (mise-configured) }
 		code: { mise hook }
 	}
 ];
