@@ -167,56 +167,29 @@ def nix_shell_prompt [] {
     }
 }
 
-def venv_activateable [ls_results] {
-    let venvs = $ls_results
-		| where type == dir and name =~ "(?i)env"
-		| get name
-		| where (
-			$env.pwd
-				| path join $it bin activate.nu
-				| path exists
-		)
-
-	match (($venvs | is-not-empty) and not ("VIRTUAL_ENV_PROMPT" in $env)) {
-	    true => $"(ansi green_bold)⁺(ansi reset)",
-	    false => ""
-	}
-}
-
-def nuenv_activateable [ls_results] {
-    let nu_files = $ls_results
-        | where {|el| ($el | get type) == "file" }
-        | each { get name | path parse }
-        | where {|el| ($el | get extension) == "nu" }
-
-    match (($nu_files | is-not-empty) and not (("NU_ENV" in $env) and ($env.NU_ENV != null))) {
-        true => $"(ansi purple_bold)⁺(ansi reset)",
-        false => ""
-    }
-}
-
-def nix_shell_activateable [ls_results] {
-    let nix_flakes = $ls_results
-        | where name == "flake.nix"
-
-    match (($nix_flakes | is-not-empty) and (open ($nix_flakes | first | get name) | str contains "devShells") and (not (("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env)))) {
-        true => $"(ansi cyan_bold)⁺(ansi reset)",
-        false => ""
-    }
-}
-
+# A marker for each environment the current directory offers that is not active yet:
+# a python venv, a .nu environment, and a nix devshell.
 def activateables [] {
-    let ls_results = ls -a err> /dev/null
-    let venv = venv_activateable $ls_results
-    let nuenv = nuenv_activateable $ls_results
-    let nix = nix_shell_activateable $ls_results
+    let entries = ls -a err> /dev/null
 
-    let concat = $'(venv_activateable $ls_results)(nuenv_activateable $ls_results)(nix_shell_activateable $ls_results)'
+    let venv = (not ("VIRTUAL_ENV_PROMPT" in $env)) and (
+        $entries
+            | where type == dir and name =~ "(?i)env"
+            | where ($env.PWD | path join $it.name bin activate.nu | path exists)
+            | is-not-empty
+    )
+    let nuenv = (not (("NU_ENV" in $env) and ($env.NU_ENV != null))) and (
+        $entries | where type == file and name ends-with ".nu" | is-not-empty
+    )
+    let nix = (not (("NIX_BUILD_TOP" in $env) or ("IN_NIX_SHELL" in $env))) and (
+        ("flake.nix" | path exists) and (open --raw flake.nix | str contains "devShells")
+    )
 
-    match ($concat | is-not-empty) {
-        true => $"($concat)",
-        false => ""
-    }
+    [
+        (if $venv { $"(ansi green_bold)⁺(ansi reset)" })
+        (if $nuenv { $"(ansi purple_bold)⁺(ansi reset)" })
+        (if $nix { $"(ansi cyan_bold)⁺(ansi reset)" })
+    ] | compact | str join
 }
 
 def jj_cache_file [jjdir: string] {
