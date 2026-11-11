@@ -152,12 +152,44 @@ $env.config.hooks.env_change.PWD = [
     }
 ];
 
-# mise spawns a process per prompt. The PWD hook already runs it on every cd, so between
-# prompts it only needs to run where a config can change.
+# Both tools spawn a process per prompt. The PWD hook already runs mise on every cd, so
+# between prompts mise only needs to run where a config can change, and direnv only acts
+# where an .envrc applies or something it loaded has to unload.
 $env.config.hooks.pre_prompt = [
 	{
 		condition: { ("MISE_SHELL" in $env) and (mise-configured) }
 		code: { mise hook }
+	}
+	{
+		condition: { ("DIRENV_DIR" in $env) or (in-tree-of [.envrc]) }
+		code: {
+			let direnv = ^direnv export json | from json --strict | default {}
+
+			for key in ($direnv | columns) {
+				if ($direnv | get $key) == null {
+					hide-env --ignore-errors $key
+				}
+			}
+
+			$direnv
+				| items {|key, value|
+					let value = do (
+						{
+							"PATH": {
+								from_string: {|s| $s | split row (char esep) | path expand --no-symlink }
+								to_string: {|v| $v | path expand --no-symlink | str join (char esep) }
+							}
+						}
+						| merge ($env.ENV_CONVERSIONS? | default {})
+						| get ([[value, optional, insensitive]; [$key, true, true] [from_string, true, false]] | into cell-path)
+						| if ($in | is-empty) { {|x| $x} } else { $in }
+					) $value
+					return [ $key $value ]
+				}
+				| where {|pair| $pair.1 != null }
+				| into record
+				| load-env
+		}
 	}
 ];
 
