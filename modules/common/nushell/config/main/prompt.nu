@@ -199,7 +199,7 @@ def jj_cache_file [jjdir: string] {
 # The jj segment costs an external call, which is slow from the REPL. Draw the prompt with
 # the segment this repo showed last, then refresh it from a background job.
 def render_prompt [head: string, tail: string] {
-    job list | where description == prompt-jj | each { job kill $in.id } | ignore
+    job list | where description? == prompt-jj | each { try { job kill $in.id } } | ignore
 
     let jjdir = nearest-with .jj
     if $jjdir == "" {
