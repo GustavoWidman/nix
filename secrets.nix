@@ -49,6 +49,7 @@ in
   # Common
   "modules/common/nix/github-token-nix-conf.age".publicKeys = all;
   "modules/common/cache/token.age".publicKeys = all;
+  "modules/common/coeus/key.age".publicKeys = all;
 
   # Server Specific
   "modules/server/acme/environment.env.age".publicKeys = server ++ admins;

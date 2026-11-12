@@ -1,0 +1,3 @@
+{
+  services.coeus.openFirewall = true;
+}
