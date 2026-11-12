@@ -55,6 +55,12 @@ in
           );
           default = [ pkgs.stdenv.hostPlatform.system ];
         };
+        # an admin's host key opens every secret, so it can rekey them and
+        # bootstrap new machines; keys.nix reads it as the `admins` group
+        options.admin = mkOption {
+          type = types.bool;
+          default = false;
+        };
       };
     };
 

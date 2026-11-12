@@ -5,6 +5,7 @@ let
     class = "nixos";
     type = "desktop";
     architecture = "x86_64-linux";
+    admin = true;
     build-architectures = [ ]; # no builds, not always on
   };
 in
