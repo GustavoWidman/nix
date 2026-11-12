@@ -1,39 +1,59 @@
+# every machine's ssh host key and the groups secrets are shared with, read
+# from hosts/: a machine is a directory with a flake.nix, its key is the first
+# line of its host.pub, and its groups follow from its metadata.
+#
+# builtins only: agenix's CLI evaluates this through secrets.nix with plain
+# nix, and coeus through .coeus/bootstrap.nix, neither with nixpkgs.
 let
-  keys = {
-    altar = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKbOsLMIldgj9oFdsnsxNyB6s2JFT1SyLPlAOpMtVQ6f";
-    desktop-nixos = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJEhKl6wG2mU+3lEm1b7WjXMX/QicjkzWGZPnd2F6+VX root@nixos";
-    oracle-1 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB5b0huhIgxXA2toMoeZg7wslf9r3izay7ROC3Q3Fixk root@nixos";
-    oracle-2 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE/dj27jlY8FgNflMPk91Wza8M/Gjm+2c4A2hopshHl5 root@nixos";
-    lab = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICDAYlV/keQmXqAEVP+2ozD3ILSpySY6EUAD3dMqU5Bk root@nixos";
-    laptop-mac = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBJe8nXcNoSbs+MGuN6HxXP8bw4kXGkjH0K2CA7tR+Ul";
-  };
+  inherit (builtins)
+    attrNames
+    filter
+    head
+    isString
+    listToAttrs
+    map
+    pathExists
+    readDir
+    readFile
+    split
+    ;
+
+  entries = readDir ./hosts;
+  names = filter (name: entries.${name} == "directory" && pathExists ./hosts/${name}/flake.nix) (
+    attrNames entries
+  );
+
+  machine =
+    name:
+    let
+      metadata = (import ./hosts/${name}/flake.nix { }).outputs.metadata;
+    in
+    metadata
+    // {
+      inherit name;
+      admin = metadata.admin or false;
+      key = head (
+        filter (line: isString line && line != "") (split "\n" (readFile ./hosts/${name}/host.pub))
+      );
+    };
+
+  # sorted by name, as readDir lists them
+  machines = map machine names;
+  keysOf = keep: map (machine: machine.key) (filter keep machines);
+
+  keys = listToAttrs (
+    map (machine: {
+      inherit (machine) name;
+      value = machine.key;
+    }) machines
+  );
 in
 keys
 // {
-  admins = [
-    keys.altar
-    keys.desktop-nixos
-    keys.laptop-mac
-    keys.lab
-  ];
-  linux = [
-    keys.desktop-nixos
-    keys.lab
-    keys.oracle-1
-    keys.oracle-2
-  ];
-  dev = [
-    keys.desktop-nixos
-    keys.laptop-mac
-  ];
-  server = [
-    keys.oracle-1
-    keys.oracle-2
-    keys.lab
-  ];
-  darwin = [
-    keys.altar
-    keys.laptop-mac
-  ];
-  all = builtins.attrValues keys;
+  admins = keysOf (machine: machine.admin);
+  linux = keysOf (machine: machine.class == "nixos");
+  darwin = keysOf (machine: machine.class == "darwin");
+  server = keysOf (machine: machine.class == "nixos" && machine.type != "desktop");
+  dev = keysOf (machine: machine.type == "desktop");
+  all = keysOf (_: true);
 }
