@@ -52,6 +52,9 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - uses: DeterminateSystems/determinate-nix-action@v3
+        with:
+          extra-conf: |
+            extra-experimental-features = pipe-operators
 
       - uses: tailscale/github-action@v4.4.0
         with:
