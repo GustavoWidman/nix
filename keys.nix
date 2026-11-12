@@ -11,6 +11,7 @@ in
 keys
 // {
   admins = [
+    keys.altar
     keys.desktop-nixos
     keys.laptop-mac
     keys.lab
