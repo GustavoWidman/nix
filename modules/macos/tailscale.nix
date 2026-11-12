@@ -45,9 +45,17 @@ let
       sleep 1
     done
 
+    # the key and its parameters go in a file of root's own, never on argv
+    umask 077
+    joining=$(mktemp)
+    trap 'rm -f "$joining"' EXIT
+    printf '%s%s' "$(tr -d '[:space:]' < ${key})" ${
+      escapeShellArgs [ config.tailscale.auth-key-parameters ]
+    } > "$joining"
+
     delay=10
     for attempt in 1 2 3 4 5; do
-      if ${tailscale} up --auth-key=file:${key} --timeout=60s ${escapeShellArgs config.tailscale.up-flags}; then
+      if ${tailscale} up --auth-key="file:$joining" --timeout=60s ${escapeShellArgs config.tailscale.join-flags}; then
         echo "joined the tailnet"
         exit 0
       fi

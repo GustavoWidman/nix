@@ -94,10 +94,13 @@ fleet switches cleanly, the workflow moves the `deployed` branch to that
 commit. machines that were asleep or offline look `deployed` up as soon as
 they come back, and every 15 minutes after, and catch up on their own.
 
-every machine reaches the tailnet without a click. the auth key lives in
-`modules/common/tailscale/auth-key.age`, so every machine can open it, and
-`tailscale.enable` (with `tailscale.exit-node` and
-`tailscale.advertise-routes`) drives both platforms. nixos turns it on by
+every machine reaches the tailnet without a click, as `tag:fleet`. the key in
+`modules/common/tailscale/auth-key.age`, which every machine can open, is the
+secret of a tailscale oauth client allowed to write auth keys for that tag: it
+never expires, and a machine it signs in joins preauthorized, owned by the tag
+rather than a person, with key expiry off. `tailscale.enable` (with
+`tailscale.exit-node`, `tailscale.advertise-routes` and `tailscale.tags`)
+drives both platforms. nixos turns it on by
 default and signs in through `services.tailscale.authKeyFile`. on a mac it is
 opt-in: nix-darwin runs `tailscaled`, and a `tailscale-autoconnect` launchd
 daemon runs `tailscale up` with the key whenever `tailscaled` says it needs a
