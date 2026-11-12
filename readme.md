@@ -93,13 +93,14 @@ nobody has to start rollouts by hand, though. every push to `main` makes
 `coeus deploy` on the pushed commit: lab goes first, everyone else follows if
 it survives, and any reachable machine failing fails the run. when the whole
 fleet switches cleanly, the workflow moves the `deployed` branch to that
-commit. machines that were asleep or offline check `deployed` every 15 minutes
-and catch up on their own.
+commit. machines that were asleep or offline look `deployed` up as soon as
+they come back, and every 15 minutes after, and catch up on their own.
 
-one-time step on each mac: nix-darwin's activation needs full disk access, and
-coeus runs it under `/usr/bin/time` so that only that one binary needs it.
-grant it in system settings > privacy & security > full disk access (hit `+`,
-then `cmd+shift+g` and type `/usr/bin/time`). yes, really, `time`.
+one-time step on each mac: nix-darwin needs full disk access to create or
+delete users, and only a person can grant it. coeus runs activations under its
+own `coeus-launcher`, installed once and never replaced, so the grant outlives
+every update. run `coeus doctor --fix` on the mac and drag `coeus-launcher` into
+the list it opens. routine deployments work without it.
 
 ## file structure
 
