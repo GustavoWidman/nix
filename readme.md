@@ -42,16 +42,14 @@ local builds and handles remote deployments over ssh.
 # rebuild a remote machine
 ./deploy.nu --remote lab
 
-# first deploy to a remote host
-./deploy.nu oracle-1 --remote oracle-1 --initial
-
 # build every reachable host sequentially
 ./deploy.nu all
 ```
 
 the script can also update flake inputs with `--update`, split remote work with
-`--build-only` and `--apply-only`, skip staging with `--no-git`, and fetch a new
-host's ssh host key during `--initial`.
+`--build-only` and `--apply-only`, and skip staging with `--no-git`. it only
+rebuilds machines already in the flake; new ones come in through
+`coeus bootstrap` (see [initializing a new host](#initializing-a-new-host)).
 
 fun fact: since my own shell loads a `.nu` file as a local toolchain, i actually
 use the `deploy.nu` script simply as `deploy`:
@@ -126,8 +124,10 @@ the repository is structured around modularity and avoiding spaghetti code.
 ├── lib/             # custom nix helper functions
 │   ├── system.nix   # assembles nixos and darwin configurations
 │   └── values.nix   # small shared values/helpers
-├── keys.nix         # age public keys and recipient groups
-├── secrets.nix      # agenix secret definitions
+├── .coeus/
+│   └── bootstrap.nix # what `coeus bootstrap` writes for a new machine
+├── keys.nix         # host keys and recipient groups, read from hosts/
+├── secrets.nix      # agenix rules, derived from where each secret lives
 └── deploy.nu        # deployment orchestrator
 ```
 
@@ -151,33 +151,62 @@ nixos or darwin configuration.
 
 it makes spinning up a new machine almost as easy as creating a new folder,
 writing 20 lines of nix, and letting the deploy script bully the target into
-shape.
+shape. in practice `coeus bootstrap` writes those 20 lines for me.
 
 ## secrets
 
-secrets are handled by `agenix`. public keys and recipient groups live in
-`keys.nix`, while encrypted secrets are declared in `secrets.nix` and stored as
-age files.
+secrets are handled by `agenix`, and nobody writes keys or rules by hand:
+each machine's ssh host key sits in `hosts/<name>/host.pub`, and `keys.nix`
+builds the recipient groups (`admins`, `linux`, `darwin`, `server`, `dev`,
+`all`) from host metadata. a machine with `admin = true;` opens every secret.
 
-host-specific secrets can live next to the host config, for example
-`hosts/oracle-2/password.age`. after changing recipient groups, rekey the
-affected secrets before deploying, unless you enjoy debugging boot failures over
-ssh. allegedly.
+who opens a secret depends on where it lives, and `recipients` in
+`.coeus/bootstrap.nix` spells it out: `hosts/<name>/` is that machine plus the
+admins, `modules/common/` is everyone, `modules/linux/` and `modules/server/`
+are those machines plus the admins. `secrets.nix` is just that function applied
+to every `.age` file on disk, so `agenix -e` works as usual. a brand new secret
+needs its file before its rule:
+
+```bash
+touch hosts/lab/new.age && agenix -e hosts/lab/new.age < plaintext
+```
+
+after a machine joins or leaves a group, rekey before deploying, unless you
+enjoy debugging boot failures over ssh. allegedly. `coeus bootstrap` does that
+part on its own.
 
 ## initializing a new host
 
-1. create a new folder in `hosts/`: `mkdir hosts/my-new-host`
-2. create a `flake.nix` inside it, declaring the `metadata` (`hostname`,
-   `class`, `type`, `architecture`).
-3. call the appropriate lib function, such as `linuxServerSystem`,
-   `linuxDevServerSystem`, `linuxDesktopSystem`, `darwinDesktopSystem`,
-   `darwinServerSystem`, or `darwinDevServerSystem`.
-4. add host-specific modules in the same folder and import them from that host
-   flake.
-5. add the host key to `keys.nix`, update `secrets.nix` recipients, and rekey
-   anything the new machine needs.
-6. run the initial deployment: `./deploy.nu my-new-host --remote my-new-host --initial`
-7. grab a coffee while nix does its thing
+new machines join with `coeus bootstrap`, run from an admin machine against
+anything that already runs nixos (a stock install is fine) or macos (it gets
+determinate nix if it lacks it):
+
+```bash
+coeus bootstrap my-new-host --to nixos@192.168.1.50
+```
+
+it asks what the machine is for (server, dev server or desktop) and whether
+it should be an admin, then does the whole dance:
+
+1. writes `hosts/my-new-host/`: a `flake.nix` with the right builder, the
+   machine's `host.pub`, and on nixos its `hardware.nix` and a `boot.nix`
+   keeping the boot loader it was installed with.
+2. creates its secrets: the main user's login key under
+   `modules/common/ssh/main/`, and on nixos the root/r3dlust password, which
+   it asks for.
+3. rekeys every secret the new machine (or new admin) should open.
+4. pushes a `coeus/bootstrap/my-new-host` branch and opens a draft pull
+   request.
+5. does the first switch on the machine itself, follows it live, and checks
+   `coeusd` answers over the tailnet afterwards.
+6. marks the pull request ready. merge it, and the next deploy tells every
+   other machine about the new one.
+
+what goes into `hosts/<name>/` and which secrets it gets is decided by
+`.coeus/bootstrap.nix`, not by coeus, so changing what a new host looks like
+means editing that file. stopping it halfway is fine: running the same command
+again picks up where it left off. on a mac, finish with `coeus doctor --fix`
+(see [coeus](#coeus)).
 
 ## custom flakes
 
