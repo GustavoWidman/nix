@@ -41,7 +41,7 @@ permissions:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       TARGETS: ${{ inputs.targets || '@all' }}
       ACTION: ${{ inputs.action || 'switch' }}
@@ -51,10 +51,14 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
 
-      - uses: DeterminateSystems/determinate-nix-action@v3
+      # the job evaluates a file and substitutes one closure, which a plain Nix
+      # set up from a prebuilt store does in a second
+      - uses: nixbuild/nix-quick-install-action@v35
         with:
-          extra-conf: |
-            extra-experimental-features = pipe-operators
+          nix_conf: |
+            experimental-features = nix-command flakes pipe-operators
+            substituters = https://cache.nixos.org/ https://cache.r3dlust.com
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= cache.r3dlust.com-1:Wdkf9mes2ued0P7C7CL3Jax1b4KPuJwQpM3h4G/Z+yI=
 
       - uses: tailscale/github-action@v4.4.0
         with:
@@ -69,11 +73,49 @@ jobs:
           nix eval --raw --file .github/coeus.nix > "$RUNNER_TEMP/coeus.toml"
           echo "COEUS_CONFIG=$RUNNER_TEMP/coeus.toml" >> "$GITHUB_ENV"
 
-      - name: Build the coeus CLI the fleet runs
+      - name: Find the coeus the fleet runs
+        id: coeus
         run: |
-          coeus=$(jq -r '.nodes[.nodes.root.inputs.coeus].locked | "github:\(.owner)/\(.repo)/\(.rev)"' flake.lock)
-          nix build --out-link "$RUNNER_TEMP/coeus" "$coeus"
+          locked=$(jq -r '.nodes[.nodes.root.inputs.coeus].locked | "\(.owner)/\(.repo)/\(.rev)"' flake.lock)
+          printf 'locked=%s\n' "$locked" >> "$GITHUB_OUTPUT"
+          printf 'key=%s\n' "${locked//\//-}" >> "$GITHUB_OUTPUT"
+
+      # the store path of that coeus and its closure, saved for each locked
+      # coeus: naming a coeus build means evaluating coeus' flake, most of a
+      # minute, and the closure comes faster from here than from a binary cache
+      - name: Recall that coeus
+        id: recalled
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ runner.temp }}/coeus-saved
+          key: coeus-cli-x86_64-linux-${{ steps.coeus.outputs.key }}
+
+      - name: Fetch the coeus CLI
+        env:
+          COEUS: github:${{ steps.coeus.outputs.locked }}#packages.x86_64-linux.default
+          SAVED: ${{ runner.temp }}/coeus-saved
+        run: |
+          if [ -s "$SAVED/path" ]; then
+            path=$(cat "$SAVED/path")
+            # unsigned when built here; only runs on main save what main restores
+            nix copy --no-check-sigs --from "file://$SAVED/store" "$path"
+          else
+            path=$(nix eval --raw "$COEUS.outPath")
+            # a released coeus comes from the binary cache; any other commit builds here
+            nix build --no-link "$path" || nix build --no-link "$COEUS"
+            nix copy --to "file://$SAVED/store?compression=zstd" "$path"
+            printf '%s\n' "$path" > "$SAVED/path"
+          fi
+          nix build --out-link "$RUNNER_TEMP/coeus" "$path"
           echo "$RUNNER_TEMP/coeus/bin" >> "$GITHUB_PATH"
+
+      # right away, so a deployment that fails still leaves it for the next run
+      - name: Remember that coeus
+        if: steps.recalled.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ runner.temp }}/coeus-saved
+          key: coeus-cli-x86_64-linux-${{ steps.coeus.outputs.key }}
 
       - name: Deploy
         env:
