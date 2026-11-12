@@ -174,5 +174,7 @@
     // hostConfigs
     // {
       inherit lib machineMetadata machineFlakes;
+
+      coeus.clientConfig = lib.coeusClientConfig;
     };
 }
