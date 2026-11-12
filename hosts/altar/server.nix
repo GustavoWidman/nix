@@ -22,5 +22,5 @@
     '';
   };
 
-  services.tailscale.enable = true;
+  tailscale.enable = true;
 }
