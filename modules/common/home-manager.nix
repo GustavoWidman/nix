@@ -14,5 +14,5 @@
   };
 
   # re-expose hm packages to system
-  environment.systemPackages = config.home-manager.users.r3dlust.home.packages;
+  environment.systemPackages = config.home-manager.users.${config.mainUser}.home.packages;
 }
