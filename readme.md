@@ -67,6 +67,40 @@ deploy
 deploy all
 ```
 
+## coeus
+
+every machine also runs `coeusd`, the daemon half of
+[coeus](https://github.com/GustavoWidman/coeus), my own deployment tool. it
+listens on the tailnet (port 45729, `tailscale0` only on nixos), builds and
+activates its own configuration from this repo when told to, and rolls itself
+back if the new generation cuts it off the network. the `coeus` cli comes along
+with it, already pointed at the whole fleet, which is read straight from the
+`hosts/` folders. adding a host folder is all it takes to join.
+
+```bash
+# switch the whole fleet to main, lab first as the canary
+coeus deploy @all --ref main --canary @canary
+
+# only the nixos servers, and only on the next boot
+coeus deploy @server --boot
+
+# watch every machine, including rollouts nobody started from this terminal
+coeus watch
+```
+
+nobody has to start rollouts by hand, though. every push to `main` makes
+`.github/workflows/deploy.yml` join the tailnet as `tag:ci` and run
+`coeus deploy` on the pushed commit: lab goes first, everyone else follows if
+it survives, and any reachable machine failing fails the run. when the whole
+fleet switches cleanly, the workflow moves the `deployed` branch to that
+commit. machines that were asleep or offline check `deployed` every 15 minutes
+and catch up on their own.
+
+one-time step on each mac: nix-darwin's activation needs full disk access, and
+coeus runs it under `/usr/bin/time` so that only that one binary needs it.
+grant it in system settings > privacy & security > full disk access (hit `+`,
+then `cmd+shift+g` and type `/usr/bin/time`). yes, really, `time`.
+
 ## file structure
 
 the repository is structured around modularity and avoiding spaghetti code.
