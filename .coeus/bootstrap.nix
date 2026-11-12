@@ -222,7 +222,8 @@ let
       system.stateVersion = "${stateVersion}";
     '';
 
-  # the mac keeps the account it was set up with as its main user
+  # the mac keeps the account it was set up with as its main user, and joins
+  # the tailnet on its own with the fleet's auth key (modules/macos/tailscale.nix)
   darwinBody =
     { name, user }:
     let
@@ -256,6 +257,8 @@ let
           homeDirectory = "${home}";
         };
       };
+
+      tailscale.enable = true;
 
       system.stateVersion = ${toString darwinStateVersion};
     '';
