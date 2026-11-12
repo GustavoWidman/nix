@@ -62,9 +62,11 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
+      # from `hosts/` alone: the flake's `coeus.clientConfig` would first fetch
+      # nixpkgs for the few lib functions it uses
       - name: Write the fleet inventory
         run: |
-          nix eval --raw .#coeus.clientConfig > "$RUNNER_TEMP/coeus.toml"
+          nix eval --raw --file .github/coeus.nix > "$RUNNER_TEMP/coeus.toml"
           echo "COEUS_CONFIG=$RUNNER_TEMP/coeus.toml" >> "$GITHUB_ENV"
 
       - name: Build the coeus CLI the fleet runs
