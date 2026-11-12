@@ -5,6 +5,7 @@ let
     class = "darwin";
     type = "dev-server";
     architecture = "aarch64-darwin";
+    admin = true;
     build-architectures = [
       metadata.architecture
     ];
