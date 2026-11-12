@@ -34,7 +34,6 @@
     show-trace = true;
     trusted-users = [
       "root"
-      "coeus"
       "@build"
       "@wheel"
       "@admin"
@@ -109,7 +108,7 @@
     };
 
     cliproxyapi.url = "github:GustavoWidman/nix-cliproxyapi";
-    coeus.url = "github:GustavoWidman/coeus/feat/async-deployment-jobs";
+    coeus.url = "github:GustavoWidman/coeus";
     kache.url = "github:kunobi-ninja/kache";
 
     zed.url = "github:GustavoWidman/zed-autobuild";
