@@ -90,7 +90,4 @@ in
 
   # Desktop-Nixos Specific
   "hosts/desktop-nixos/password.age".publicKeys = [ desktop-nixos ] ++ admins;
-
-  "hosts/laptop-mac/coeus/server.toml.age".publicKeys = [ laptop-mac ] ++ admins;
-  "hosts/laptop-mac/coeus/client.toml.age".publicKeys = [ laptop-mac ] ++ admins;
 }
