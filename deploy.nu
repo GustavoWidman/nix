@@ -144,90 +144,6 @@ def notify [
     }
 }
 
-def ensure-host-key [
-    hostname: string
-    remote: string
-    --key (-k): path
-] {
-    let existing_key = (
-        nix eval
-            --extra-experimental-features nix-command
-            --impure
-            --expr
-            $"\(import ./keys.nix\).($hostname) or null"
-    )
-
-    if $existing_key == "null" {
-        let pubkey = if ($remote | is-not-empty) {
-            ssh-exec $remote "cat /etc/ssh/ssh_host_ed25519_key.pub" --key $key --return-output
-        } else {
-            open -r /etc/ssh/ssh_host_ed25519_key.pub
-        }
-
-        log info $"adding host key: (ansi $LOG_COLORS.cmd)($pubkey | str substring 0..50)...(ansi reset)"
-
-        mut keys_content = open ./keys.nix
-        | lines
-        | insert 2 $'    ($hostname) = "($pubkey)";'
-
-        let os = (["linux" "darwin"] | input list (log info "choose machine os" --return-instead))
-        let os_line = ($keys_content
-            | enumerate
-            | where item =~ $os
-            | first
-            | get index
-        ) + 1
-        $keys_content = $keys_content
-        | insert $os_line $'    keys.($hostname)'
-
-        let type = (["server" "desktop"] | input list (log info "choose machine type" --return-instead))
-        let type_line = ($keys_content
-            | enumerate
-            | where item =~ $type
-            | first
-            | get index
-        ) + 1
-        $keys_content = $keys_content
-        | insert $type_line $'    keys.($hostname)'
-
-        let is_dev = (input -n 1 (log info $"is this machine a dev environment? [(ansi green)y(ansi reset)/(ansi red)N(ansi reset)]: " --return-instead))
-        if ($is_dev | str lowercase) == "y" {
-            let dev_line = ($keys_content
-                | enumerate
-                | where item =~ dev
-                | first
-                | get index
-            ) + 1
-            $keys_content = $keys_content
-            | insert $dev_line $'    keys.($hostname)'
-        }
-
-        let is_admin = (input -n 1 (log info $"is this machine an admin? [(ansi green)y(ansi reset)/(ansi red)N(ansi reset)]: " --return-instead))
-        if ($is_admin | str lowercase) == "y" {
-            let admin_line = ($keys_content
-                | enumerate
-                | where item =~ admins
-                | first
-                | get index
-            ) + 1
-            $keys_content = $keys_content
-            | insert $admin_line $'    keys.($hostname)'
-        }
-
-        $keys_content
-        | str join "\n"
-        | save -f ./keys.nix
-
-        nixfmt ./keys.nix
-        let home = match ($env.OS == "Darwin") {
-            true => "/var/root",
-            false => "/root"
-        }
-        with-env { HOME: $home } { sudo agenix -r -i /etc/ssh/ssh_host_ed25519_key }
-        log warn -e "host key added. please configure secrets and rerun."
-    }
-}
-
 def rebuild-remote [
     hostname: string
     remote: string
@@ -235,68 +151,51 @@ def rebuild-remote [
     --key (-k): path
     --boot (-b)                  # Use boot instead of switch
     --dry-run (-d)               # Perform dry run
-    --initial (-i)               # Initial setup for new host
     --clean-substituters         # Ignore stale substituters from the current system
 ] {
     sync-nix-config $remote --key $key
 
-    let action = if ($boot or $initial) { "boot" } else { "switch" }
+    let action = if $boot { "boot" } else { "switch" }
 
     let rebuild_args = [
         $hostname
-        (if $initial { "--initial" } else { "" })
         (if $boot { "--boot" } else { "" })
         (if $dry_run { "--dry-run" } else { "" })
         (if $clean_substituters { "--clean-substituters" } else { "" })
     ] | where {|x| $x != ""} | str join " "
 
-    if $initial {
-        log info "initial setup on remote host needed, please be patient..."
-        let remote_cmd = [
-            "nix-channel --add https://nixos.org/channels/nixpkgs-unstable"
-            "nix-channel --update"
-            $'NIX_CONFIG="experimental-features = nix-command flakes" NH_BYPASS_ROOT_CHECK=true nix-shell -p nushell -p nh -p git --run "cd .nix && IN_REMOTE=true ./deploy.nu ($rebuild_args)"'
-            "rm -rf ~/.nix"
-        ] | str join " && "
+    # build
+    let build_remote_cmd = [
+        "cd .nix"
+        $"IN_REMOTE=true ./deploy.nu ($rebuild_args) --build-only"
+    ] | str join " \n "
 
-        log info "executing rebuild on remote host"
-        ssh-exec $remote $remote_cmd --key $key
-        notify $hostname $action
-    } else {
-        # build
-        let build_remote_cmd = [
-            "cd .nix"
-            $"IN_REMOTE=true ./deploy.nu ($rebuild_args) --build-only"
-        ] | str join " \n "
+    log info "executing build on remote host"
+    ssh-exec $remote $build_remote_cmd --key $key
 
-        log info "executing build on remote host"
-        ssh-exec $remote $build_remote_cmd --key $key
+    # notify locally
+    notify $hostname $action
 
-        # notify locally
-        notify $hostname $action
+    # apply
+    let apply_remote_cmd = [
+        "cd .nix"
+        $"IN_REMOTE=true ./deploy.nu ($rebuild_args) --apply-only"
+    ] | str join " \n "
 
-        # apply
-        let apply_remote_cmd = [
-            "cd .nix"
-            $"IN_REMOTE=true ./deploy.nu ($rebuild_args) --apply-only"
-        ] | str join " \n "
-
-        log info "applying configuration on remote host"
-        ssh-exec $remote $apply_remote_cmd --key $key
-    }
+    log info "applying configuration on remote host"
+    ssh-exec $remote $apply_remote_cmd --key $key
 }
 
 def rebuild-local [
     hostname: string
     --boot (-b)                 # Use boot instead of switch
     --dry-run (-d)              # Perform dry run
-    --initial (-i)              # Initial setup for new host
     --clean-substituters        # Ignore stale substituters from the current system
     --build-only                # Only build, don't apply
     --apply-only                # Only apply, don't build
 ] {
     let system = (uname | get kernel-name)
-    let action = if ($boot or $initial) { "boot" } else { "switch" }
+    let action = if $boot { "boot" } else { "switch" }
 
     let nh_flags = [
         "--quiet"
@@ -315,16 +214,6 @@ def rebuild-local [
             "--option" "trusted-public-keys" $CLEAN_TRUSTED_PUBLIC_KEYS
             "--option" "extra-trusted-public-keys" ""
         ])
-    }
-
-    if $initial {
-        $nix_flags = ($nix_flags | append [
-            "--extra-experimental-features" "flakes"
-            "--extra-experimental-features" "pipe-operators"
-            "--extra-experimental-features" "nix-command"
-        ])
-
-        $env.NIXOS_INSTALL_BOOTLOADER = 1
     }
 
     if $dry_run {
@@ -353,9 +242,6 @@ def rebuild-local [
                 nh darwin switch . ...$nh_flags -- ...$nix_flags
             } else {
                 nh os $action . ...$nh_flags -- ...$nix_flags
-                if $initial {
-                    log warn "initial build complete. please reboot the system."
-                }
             }
             log success "rebuild completed successfully"
         }
@@ -393,7 +279,6 @@ export def main --env [
 
     --boot (-b)                     # Boot instead of switch (NixOS only)
     --dry-run (-d)                  # Sets "eval-cache" to false in nix options
-    --initial (-i)                  # Initial setup for new host
     --update (-u)                   # Update flake inputs before rebuild
     --clean-substituters             # Ignore stale substituters from the current system
 
@@ -435,14 +320,13 @@ export def main --env [
     if ($remote | is-not-empty) {
         log info $"starting remote rebuild for (ansi $LOG_COLORS.host)($target)(ansi reset)(if ($target != $remote) { $' at (ansi $LOG_COLORS.host)($remote)(ansi reset)' } else { '' })"
 
-        ensure-host-key $target $remote --key $key
-        rebuild-remote $target $remote --key $key --boot=$boot --dry-run=$dry_run --initial=$initial --clean-substituters=$clean_substituters
+        rebuild-remote $target $remote --key $key --boot=$boot --dry-run=$dry_run --clean-substituters=$clean_substituters
     } else {
         if not $in_remote {
             log info $"starting local rebuild for (ansi $LOG_COLORS.host)($target)(ansi reset)"
         }
 
-        rebuild-local $target --boot=$boot --dry-run=$dry_run --initial=$initial --clean-substituters=$clean_substituters --build-only=$build_only --apply-only=$apply_only
+        rebuild-local $target --boot=$boot --dry-run=$dry_run --clean-substituters=$clean_substituters --build-only=$build_only --apply-only=$apply_only
     }
 }
 
