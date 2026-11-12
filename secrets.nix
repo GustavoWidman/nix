@@ -1,94 +1,59 @@
+# agenix's rules: every .age file under hosts/ and modules/, encrypted to the
+# keys `recipients` in .coeus/bootstrap.nix gives its path. a secret is
+# shared by where it lives, so the rules follow the files; see `recipients`.
+#
+# a new secret needs its file before its rule: create the file, then pipe the
+# contents into agenix, which encrypts without decrypting when stdin is not a
+# terminal:
+#
+#   touch hosts/lab/new.age && agenix -e hosts/lab/new.age < plaintext
 let
-  inherit (import ./keys.nix)
-    lab
-    oracle-1
-    oracle-2
-    laptop-mac
-    desktop-nixos
-
-    linux
-    darwin
-
-    server
-    dev
-
-    admins
-    all
+  inherit (builtins)
+    attrNames
+    concatMap
+    listToAttrs
+    readDir
+    stringLength
+    substring
     ;
+
+  inherit (import ./.coeus/bootstrap.nix) recipients;
+
+  isAge = name: stringLength name > 4 && substring (stringLength name - 4) 4 name == ".age";
+
+  # every .age file under `dir`, as a path from the repository root
+  secretsUnder =
+    dir:
+    let
+      found = readDir ./${dir};
+    in
+    concatMap (
+      name:
+      let
+        path = "${dir}/${name}";
+      in
+      if found.${name} == "directory" then
+        secretsUnder path
+      else if isAge name then
+        [ path ]
+      else
+        [ ]
+    ) (attrNames found);
 in
-{
-  # SSH Config
-  "modules/common/ssh/id_ed25519.age".publicKeys = all;
-  "modules/common/ssh/id_ed25519.pub.age".publicKeys = all;
-
-  "modules/common/ssh/vms/config.age".publicKeys = all;
-  "modules/common/ssh/vms/mac-arch.age".publicKeys = all;
-  "modules/common/ssh/vms/vm.age".publicKeys = all;
-
-  "modules/common/ssh/oracle/config.age".publicKeys = all;
-  "modules/common/ssh/oracle/oracle-1.age".publicKeys = all;
-  "modules/common/ssh/oracle/oracle-2.age".publicKeys = all;
-  "modules/common/ssh/oracle/oracle-xray.age".publicKeys = all;
-
-  "modules/common/ssh/misc/config.age".publicKeys = all;
-  "modules/common/ssh/misc/aur.age".publicKeys = all;
-  "modules/common/ssh/misc/mwkey.age".publicKeys = all;
-  "modules/common/ssh/misc/toninho.age".publicKeys = all;
-  "modules/common/ssh/misc/build.age".publicKeys = all;
-
-  "modules/common/ssh/main/config.age".publicKeys = all;
-  "modules/common/ssh/main/altar.age".publicKeys = all;
-  "modules/common/ssh/main/desktop.age".publicKeys = all;
-  "modules/common/ssh/main/lab.age".publicKeys = all;
-  "modules/common/ssh/main/laptop.age".publicKeys = all;
-
-  "modules/common/ssh/github/config.age".publicKeys = all;
-  "modules/common/ssh/github/inteli.age".publicKeys = all;
-  "modules/common/ssh/github/personal.age".publicKeys = all;
-
-  # Common
-  "modules/common/nix/github-token-nix-conf.age".publicKeys = all;
-  "modules/common/cache/token.age".publicKeys = all;
-  "modules/common/coeus/key.age".publicKeys = all;
-
-  # Server Specific
-  "modules/server/acme/environment.env.age".publicKeys = server ++ admins;
-
-  # Linux Specific
-  "modules/linux/tailscale/auth-key.age".publicKeys = linux ++ admins;
-
-  # Lab Specific
-  "hosts/lab/password.age".publicKeys = [ lab ] ++ admins;
-  "hosts/lab/cliproxyapi/config.yaml.age".publicKeys = [ lab ] ++ admins;
-  "hosts/lab/claude-who/settings.json.age".publicKeys = [ lab ] ++ admins;
-  "hosts/lab/rustfs/environment.env.age".publicKeys = [ lab ] ++ admins;
-  "hosts/lab/rustfs/iam.env.age".publicKeys = [ lab ] ++ admins;
-  "hosts/lab/thoth/config.toml.age".publicKeys = [ lab ] ++ admins;
-  "hosts/lab/honcho/environment.env.age".publicKeys = [ lab ] ++ admins;
-  "hosts/lab/honcho/hombre.env.age".publicKeys = [ lab ] ++ admins;
-  "hosts/lab/honcho/database.env.age".publicKeys = [ lab ] ++ admins;
-
-  # Oracle-1 Specific
-  "hosts/oracle-1/password.age".publicKeys = [ oracle-1 ] ++ admins;
-  "hosts/oracle-1/rocky-bot/rocky-bot.toml.age".publicKeys = [ oracle-1 ] ++ admins;
-  "hosts/oracle-1/lavalink/environment.env.age".publicKeys = [ oracle-1 ] ++ admins;
-  "hosts/oracle-1/niks3/signing-key.age".publicKeys = [ oracle-1 ] ++ admins;
-  "hosts/oracle-1/niks3/s3-access-key.age".publicKeys = [ oracle-1 ] ++ admins;
-  "hosts/oracle-1/niks3/s3-secret-key.age".publicKeys = [ oracle-1 ] ++ admins;
-  "hosts/oracle-1/heimdall/password.age".publicKeys = [ oracle-1 ] ++ admins;
-
-  # Oracle-2 Specific
-  "hosts/oracle-2/adguard/config.yaml.age".publicKeys = [ oracle-2 ] ++ admins;
-  "hosts/oracle-2/password.age".publicKeys = [ oracle-2 ] ++ admins;
-
-  "hosts/oracle-2/mail/sasl_passwd.age".publicKeys = [ oracle-2 ] ++ admins;
-  "hosts/oracle-2/mail/dovecot.age".publicKeys = [ oracle-2 ] ++ admins;
-  "hosts/oracle-2/mail/postfix.age".publicKeys = [ oracle-2 ] ++ admins;
-
-  "hosts/oracle-2/pinger/config.toml.age".publicKeys = [ oracle-2 ] ++ admins;
-
-  "hosts/oracle-2/copyparty/password.age".publicKeys = [ oracle-2 ] ++ admins;
-
-  # Desktop-Nixos Specific
-  "hosts/desktop-nixos/password.age".publicKeys = [ desktop-nixos ] ++ admins;
-}
+listToAttrs (
+  concatMap (
+    path:
+    let
+      publicKeys = recipients path;
+    in
+    if publicKeys == null then
+      [ ]
+    else
+      [
+        {
+          name = path;
+          value = { inherit publicKeys; };
+        }
+      ]
+  ) (secretsUnder "hosts" ++ secretsUnder "modules")
+)
