@@ -94,6 +94,17 @@ fleet switches cleanly, the workflow moves the `deployed` branch to that
 commit. machines that were asleep or offline look `deployed` up as soon as
 they come back, and every 15 minutes after, and catch up on their own.
 
+every machine reaches the tailnet without a click. the auth key lives in
+`modules/common/tailscale/auth-key.age`, so every machine can open it, and
+`tailscale.enable` (with `tailscale.exit-node` and
+`tailscale.advertise-routes`) drives both platforms. nixos turns it on by
+default and signs in through `services.tailscale.authKeyFile`. on a mac it is
+opt-in: nix-darwin runs `tailscaled`, and a `tailscale-autoconnect` launchd
+daemon runs `tailscale up` with the key whenever `tailscaled` says it needs a
+login, retrying a few times before giving up (see
+`/var/log/tailscale-autoconnect.log`). a mac already signed in is left alone,
+and `laptop-mac` keeps signing in through the Tailscale app.
+
 one-time step on each mac: nix-darwin needs full disk access to create or
 delete users, and only a person can grant it. coeus runs activations under its
 own `coeus-launcher`, installed once and never replaced, so the grant outlives
@@ -198,7 +209,9 @@ it should be an admin, then does the whole dance:
 4. pushes a `coeus/bootstrap/my-new-host` branch and opens a draft pull
    request.
 5. does the first switch on the machine itself, follows it live, and checks
-   `coeusd` answers over the tailnet afterwards.
+   `coeusd` answers over the tailnet afterwards. a new mac gets
+   `tailscale.enable = true;`, so that switch also signs it in to the tailnet
+   with the fleet's auth key.
 6. marks the pull request ready. merge it, and the next deploy tells every
    other machine about the new one.
 
