@@ -18,5 +18,9 @@ in
     taps."homebrew/homebrew-cask" = homebrew-cask;
 
     mutableTaps = false;
+
+    # most macs come with homebrew already in /opt/homebrew: take it over,
+    # keeping what it installed, instead of refusing the first activation
+    autoMigrate = true;
   };
 }
