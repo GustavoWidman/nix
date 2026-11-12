@@ -115,15 +115,15 @@ in
           };
         }
         {
-          # release.yml always runs on the tag it builds: release-please starts it
-          # with workflow_dispatch, and a tag pushed by hand starts it with push.
+          # nix-cache.yml runs from main after each successful release and builds
+          # the release's tag; a person can also start it on main for a tag.
           scopes = [ "write" ];
           pins = [ "taproot-*" ];
           boundClaims = {
             repository = [ "265866/taproot" ];
-            event_name = [ "push" "workflow_dispatch" ];
-            ref = [ "refs/tags/taproot-v*" ];
-            workflow_ref = [ "265866/taproot/.github/workflows/release.yml@refs/tags/taproot-v*" ];
+            event_name = [ "workflow_run" "workflow_dispatch" ];
+            ref = [ "refs/heads/main" ];
+            workflow_ref = [ "265866/taproot/.github/workflows/nix-cache.yml@refs/heads/main" ];
           };
         }
       ];
