@@ -5,6 +5,7 @@ let
     class = "darwin";
     type = "desktop";
     architecture = "aarch64-darwin";
+    admin = true;
     build-architectures = [
       metadata.architecture
       "x86_64-darwin"

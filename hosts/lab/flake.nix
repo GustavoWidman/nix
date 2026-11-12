@@ -5,6 +5,7 @@ let
     class = "nixos";
     type = "dev-server";
     architecture = "x86_64-linux";
+    admin = true;
     build-architectures = [
       metadata.architecture
     ];
