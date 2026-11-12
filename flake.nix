@@ -146,7 +146,7 @@
         readDir ./hosts
         |> mapAttrs (name: const <| (import ./hosts/${name}/flake.nix (inputs // { inherit lib; })));
 
-      machineMetadata = machineFlakes |> mapAttrs (name: flake: flake.outputs.metadata);
+      machineMetadata = lib.fleet;
 
       hostsByType =
         machineFlakes
