@@ -99,6 +99,7 @@ in
         }
         {
           scopes = [ "write" ];
+          pins = [ "heimdall-*" "coeus-*" ];
           boundClaims = {
             repository_owner = [ "GustavoWidman" ];
             event_name = [ "push" ];
