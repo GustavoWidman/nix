@@ -114,18 +114,6 @@ in
             ref = [ "refs/heads/*" ];
           };
         }
-        {
-          # nix-cache.yml runs from main after each successful release and builds
-          # the release's tag; a person can also start it on main for a tag.
-          scopes = [ "write" ];
-          pins = [ "taproot-*" ];
-          boundClaims = {
-            repository = [ "265866/taproot" ];
-            event_name = [ "workflow_run" "workflow_dispatch" ];
-            ref = [ "refs/heads/main" ];
-            workflow_ref = [ "265866/taproot/.github/workflows/nix-cache.yml@refs/heads/main" ];
-          };
-        }
       ];
     };
   };
