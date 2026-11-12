@@ -1,0 +1,88 @@
+# Rolls every push to `main` out to the fleet with coeus, canary first, then
+# advances the `deployed` branch that machines which were offline catch up with.
+#
+# The runner joins the tailnet as `tag:ci` through a Tailscale OAuth client
+# (TS_OAUTH_CLIENT_ID, TS_OAUTH_SECRET) and relies on this tailnet policy:
+#   - `tagOwners` declares `tag:ci`;
+#   - `autogroup:member` keeps its allow-all rule;
+#   - `tag:ci` may reach only `autogroup:member:45729` (coeusd) over tcp.
+# COEUS_KEY holds the fleet's pre-shared key.
+#
+# `coeus deploy` exits non-zero when a reachable machine fails, which fails
+# the run and leaves `deployed` where it was. Unreachable machines are skipped
+# and catch up on their own.
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      targets:
+        description: Machines to deploy, e.g. `@all`, `lab`, `@nixos !oracle-2`
+        type: string
+        default: "@all"
+      action:
+        description: What to do with the new configuration
+        type: choice
+        options: [switch, boot, build]
+        default: switch
+      ref:
+        description: Branch or tag to deploy (default the dispatching branch)
+        type: string
+        default: ""
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      TARGETS: ${{ inputs.targets || '@all' }}
+      ACTION: ${{ inputs.action || 'switch' }}
+      REF: ${{ inputs.ref || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - uses: DeterminateSystems/determinate-nix-action@v3
+
+      - uses: tailscale/github-action@v4.4.0
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Write the fleet inventory
+        run: |
+          nix eval --raw .#coeus.clientConfig > "$RUNNER_TEMP/coeus.toml"
+          echo "COEUS_CONFIG=$RUNNER_TEMP/coeus.toml" >> "$GITHUB_ENV"
+
+      - name: Build the coeus CLI the fleet runs
+        run: |
+          coeus=$(jq -r '.nodes[.nodes.root.inputs.coeus].locked | "github:\(.owner)/\(.repo)/\(.rev)"' flake.lock)
+          nix build --out-link "$RUNNER_TEMP/coeus" "$coeus"
+          echo "$RUNNER_TEMP/coeus/bin" >> "$GITHUB_PATH"
+
+      - name: Deploy
+        env:
+          COEUS_KEY: ${{ secrets.COEUS_KEY }}
+        run: |
+          read -ra targets <<< "$TARGETS"
+          mode=()
+          if [ "$ACTION" != switch ]; then mode=("--$ACTION"); fi
+
+          coeus deploy "${targets[@]}" \
+            --rev "$(git rev-parse HEAD)" --ref "$REF" \
+            --canary @canary --skip-unreachable "${mode[@]}"
+
+      # only a switch of main to the whole fleet moves what every machine follows
+      - name: Advance `deployed`
+        if: env.ACTION == 'switch' && env.TARGETS == '@all' && env.REF == 'main'
+        run: git push --force origin "$(git rev-parse HEAD):refs/heads/deployed"
