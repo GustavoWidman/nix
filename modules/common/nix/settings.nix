@@ -13,6 +13,8 @@ let
     mapAttrsToList
     filterAttrs
     mapAttrs
+    optionalAttrs
+    remove
     mkForce
     mkAfter
     mkMerge
@@ -26,7 +28,12 @@ let
   flakes = removeAttrs inputs [ "self" ] |> filterAttrs (const <| isType "flake");
   registry = flakes // { default = inputs.nixpkgs; } |> mapAttrs (_: flake: { inherit flake; });
 
-  settings = (import <| self + /flake.nix).nixConfig;
+  extra-platforms = remove config.metadata.architecture config.metadata.build-architectures;
+  # extra-platforms = [ ] turns off nix's default platforms (i686-linux,
+  # x86_64-v*), so it is set only when the machine builds for more
+  settings =
+    (import <| self + /flake.nix).nixConfig
+    // optionalAttrs (extra-platforms != [ ]) { inherit extra-platforms; };
   includeGithubToken = "!include ${config.secrets.github-token-nix-conf.path}";
 
   determinateNix = inputs.determinate.inputs.nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
