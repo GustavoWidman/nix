@@ -47,13 +47,6 @@ let
 
   # ── who opens each secret ──────────────────────────────────────────────────
 
-  # encrypted by hand to an older set of keys and read by no module; no rule
-  # covers them, so neither agenix nor coeus rewrites them
-  unmanaged = [
-    "hosts/oracle-1/niks3/api-token.age"
-    "hosts/oracle-2/rocky-bot/rocky-bot.toml.age"
-  ];
-
   hostKey =
     name:
     keys.${name}
@@ -73,7 +66,7 @@ let
     let
       parts = segments path;
     in
-    if !(endsWith ".age" path) || elem path unmanaged then
+    if !(endsWith ".age" path) then
       null
     else if head parts == "hosts" && length parts > 2 then
       unique ([ (hostKey (elemAt parts 1)) ] ++ keys.admins)
