@@ -1,6 +1,7 @@
 {
   config,
   self,
+  keys,
   lib,
   ...
 }:
@@ -10,6 +11,7 @@ let
     attrsToList
     filter
     length
+    mapAttrs
     ;
 
   machinesList =
@@ -35,4 +37,18 @@ let
 in
 {
   environment.etc."nix/machines".text = concatStringsSep "\n" machinesList;
+
+  # the nix daemon reaches the builders above as root, so it has to know their
+  # host keys without asking
+  programs.ssh.knownHosts =
+    self.machineMetadata
+    |> mapAttrs (
+      name: _: {
+        hostNames = [
+          name
+          "${name}.tail4a3ea.ts.net"
+        ];
+        publicKey = keys.${name};
+      }
+    );
 }
