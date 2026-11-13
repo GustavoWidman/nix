@@ -68,32 +68,8 @@ in
     isDarwin = mkConst <| config.metadata.class == "darwin";
 
     isDesktop = mkConst <| config.metadata.type == "desktop";
-    isServer = mkConst <| config.metadata.type == "server";
     isDevServer = mkConst <| config.metadata.type == "dev-server";
     isDev = mkConst <| (config.metadata.type == "dev-server" || config.metadata.type == "desktop");
-
-    isLinuxServer = mkConst <| (config.metadata.class == "nixos" && config.metadata.type == "server");
-    isLinuxDesktop = mkConst <| (config.metadata.class == "nixos" && config.metadata.type == "desktop");
-    isLinuxDevServer =
-      mkConst <| (config.metadata.class == "nixos" && config.metadata.type == "dev-server");
-    isLinuxDev =
-      mkConst
-      <| (
-        config.metadata.class == "nixos"
-        && (config.metadata.type == "dev-server" || config.metadata.type == "desktop")
-      );
-
-    isDarwinServer = mkConst <| (config.metadata.class == "darwin" && config.metadata.type == "server");
-    isDarwinDesktop =
-      mkConst <| (config.metadata.class == "darwin" && config.metadata.type == "desktop");
-    isDarwinDevServer =
-      mkConst <| (config.metadata.class == "darwin" && config.metadata.type == "dev-server");
-    isDarwinDev =
-      mkConst
-      <| (
-        config.metadata.class == "darwin"
-        && (config.metadata.type == "dev-server" || config.metadata.type == "desktop")
-      );
 
     mainUser =
       mkConst
@@ -105,6 +81,5 @@ in
         && hasPrefix (if config.isDarwin then "/Users/" else "/home/") value.home
         && value.isMainUser
       ) config.users.users;
-    homeDir = mkConst <| "${if config.isLinux then "/home" else "/Users"}/${config.mainUser}";
   };
 }
