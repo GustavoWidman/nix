@@ -1,172 +1,63 @@
 {
-  config,
   lib,
   pkgs,
   ...
 }:
 let
-  inherit (lib) attrValues optionalAttrs;
+  inherit (lib) attrValues;
 in
 {
   environment.systemPackages =
     attrValues
-    <|
-      {
-        inherit (pkgs)
-          attic-client
-          age
-          awscli2 # TODO broken
-          bash
-          binwalk
-          cachix
-          # coreutils
-          curl
-          dig
-          dosfstools
-          e2fsprogs
-          eza
-          fastfetch
-          file
-          ffmpeg
-          fzf
-          gawk
-          gcc
-          gnused
-          go
-          hping
-          htop
-          httpie
-          jq
-          lsof
-          nano
-          netcat-gnu
-          niks3
-          nmap
-          openfortivpn
-          openssl
-          openvpn
-          p7zip
-          python313
-          q
-          ripgrep
-          rsync
-          rustscan
-          socat
-          sops
-          sqlite
-          stow # ! TODO maybe remove this if we fully port to nix
-          util-linux
-          uutils-coreutils-noprefix
-          uutils-findutils
-          watchexec
-          wget
-          wireguard-tools
-          ;
-      }
-      // optionalAttrs config.isLinux {
-        inherit (pkgs)
-          exfat # temporarily moved to isLinux due to failing build on darwin
-          inotify-tools
-          tailscale
-          usbutils
-          xfsprogs
-          wol
-          ;
-      }
-      // optionalAttrs config.isDarwin {
-        lima = pkgs.lima.override {
-          withAdditionalGuestAgents = true;
-        };
-        inherit (pkgs)
-          # fuse-ext2
-          iproute2mac
-          libiconv
-          lima-additional-guestagents
-          llama-cpp
-          sshfs
-          unnaturalscrollwheels
-          utm
-          ;
-      }
-      // optionalAttrs config.isDev {
-        penelope = pkgs.penelope.overrideAttrs (oldAttrs: {
-          version = "0.14.8";
-          src = pkgs.fetchFromGitHub {
-            owner = "brightio";
-            repo = "penelope";
-            rev = "v0.14.8";
-            hash = "sha256-m4EYP1lKte8r9Xa/xAuv6aiwMNha+B8HXUCizH0JgmI=";
-          };
-        });
-        inherit (pkgs)
-          abseil-cpp
-          arduino-cli
-          biome
-          clang
-          clang-tools
-          cmake
-          cyme
-          dalfox
-          # discord # TODO make own config of this maybe? #! THIS IS BROKEN ON MAC FOR SOME REASON
-          exploitdb
-          feroxbuster # TODO make own config of this
-          ffuf
-          # gdb # TODO broken on nixpkgs
-          gradle
-          glab
-          hashcat
-          jdk
-          john
-          just
-          libbde
-          lua
-          nasm
-          nasmfmt
-          maven
-          manix
-          metasploit
-          mitmproxy
-          nodejs_26
-          nuclei
-          oxfmt
-          oxlint
-          portaudio
-          postgresql
-          qemu
-          radare2
-          # retdec #! TODO not compatible with macos
-          sqlmap
-          tectonic
-          terraform
-          termshark
-          testdisk
-          tshark
-          tldr
-          typescript-language-server
-          typst
-          typstyle
-          yq
-          yt-dlp
-          ;
-        inherit (pkgs.llvmPackages)
-          llvm
-          ;
-      }
-      // optionalAttrs config.isDesktop {
-        inherit (pkgs)
-          dbeaver-bin
-          obsidian
-          pandoc
-          wireshark
-          ;
-      }
-      // optionalAttrs (config.isLinux && config.isDesktop) {
-        texliveSmall = pkgs.texliveSmall;
-      }
-      // optionalAttrs (config.isDarwin && config.isDesktop) {
-        inherit (pkgs)
-          terminal-notifier
-          ;
-        texliveFull = pkgs.texliveFull;
-      };
+    <| {
+      inherit (pkgs)
+        attic-client
+        age
+        awscli2 # TODO broken
+        binwalk
+        cachix
+        # coreutils
+        curl
+        dig
+        dosfstools
+        e2fsprogs
+        eza
+        fastfetch
+        file
+        ffmpeg
+        fzf
+        gawk
+        gcc
+        gnused
+        go
+        hping
+        htop
+        httpie
+        jq
+        lsof
+        nano
+        netcat-gnu
+        niks3
+        nmap
+        openfortivpn
+        openssl
+        openvpn
+        p7zip
+        python313
+        q
+        ripgrep
+        rsync
+        rustscan
+        socat
+        sops
+        sqlite
+        stow # ! TODO maybe remove this if we fully port to nix
+        util-linux
+        uutils-coreutils-noprefix
+        uutils-findutils
+        watchexec
+        wget
+        wireguard-tools
+        ;
+    };
 }
