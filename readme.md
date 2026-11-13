@@ -28,42 +28,22 @@ this flake currently knows about 6 hosts:
 
 ## deployment
 
-deployments are handled by `deploy.nu`, a nushell script i wrote because writing
-bash in 2026 should be considered a war crime. it uses `nh` under the hood for
-local builds and handles remote deployments over ssh.
+every deployment goes through [coeus](#coeus): pushing to `main` rolls the
+whole fleet, and `coeus deploy` does the same by hand for any set of machines.
+for the machine you're sitting at, `nh` works too:
 
 ```bash
-# rebuild the current machine
-./deploy.nu
+# rebuild the current nixos machine
+nh os switch .
 
-# rebuild a named local host
-./deploy.nu desktop-nixos
-
-# rebuild a remote machine
-./deploy.nu --remote lab
-
-# build every reachable host sequentially
-./deploy.nu all
+# rebuild the current mac
+nh darwin switch .
 ```
 
-the script can also update flake inputs with `--update`, split remote work with
-`--build-only` and `--apply-only`, and skip staging with `--no-git`. it only
-rebuilds machines already in the flake; new ones come in through
-`coeus bootstrap` (see [initializing a new host](#initializing-a-new-host)).
-
-fun fact: since my own shell loads a `.nu` file as a local toolchain, i actually
-use the `deploy.nu` script simply as `deploy`:
-
-```bash
-# rebuild lab
-deploy -r lab
-
-# rebuild local
-deploy
-
-# rebuild everyone
-deploy all
-```
+every machine also lists the others as remote builders (`ssh-ng://build@<host>`
+for the platforms in their `build-architectures`) and knows their ssh host keys
+from `hosts/<name>/host.pub`. the nixos machines take those builds; the macs
+have no `build` user yet, so nix skips them.
 
 ## coeus
 
@@ -142,7 +122,7 @@ the repository is structured around modularity and avoiding spaghetti code.
 │   └── bootstrap.nix # what `coeus bootstrap` writes for a new machine
 ├── keys.nix         # host keys and recipient groups, read from hosts/
 ├── secrets.nix      # agenix rules, derived from where each secret lives
-└── deploy.nu        # deployment orchestrator
+└── tests/           # vm tests, as checks.<system>
 ```
 
 ## code helpers & `lib`
@@ -163,8 +143,7 @@ desktop/server/dev pieces, injects overlays, and spits out a nixos or darwin
 configuration.
 
 it makes spinning up a new machine almost as easy as creating a new folder,
-writing 20 lines of nix, and letting the deploy script bully the target into
-shape. in practice `coeus bootstrap` writes those 20 lines for me.
+writing 20 lines of nix, and letting coeus bully the target into shape. in practice `coeus bootstrap` writes those 20 lines for me.
 
 ## secrets
 
