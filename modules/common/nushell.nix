@@ -14,18 +14,20 @@ let
     concatMapStringsSep
     ;
 
-  devIncludePackages = with pkgs; [
-    krb5.dev
-    openssl.dev
-    freetds
-  ] ++ optionals config.isDarwin [ libiconv.dev ];
+  devIncludePackages = [
+    pkgs.krb5.dev
+    pkgs.openssl.dev
+    pkgs.freetds
+  ]
+  ++ optionals config.isDarwin [ pkgs.libiconv.dev ];
 
-  devLibraryPackages = with pkgs; [
-    krb5.lib
-    openssl.out
-    freetds
-    llvmPackages.libcxx
-  ] ++ optionals config.isDarwin [ libiconv ];
+  devLibraryPackages = [
+    pkgs.krb5.lib
+    pkgs.openssl.out
+    pkgs.freetds
+    pkgs.llvmPackages.libcxx
+  ]
+  ++ optionals config.isDarwin [ pkgs.libiconv ];
 
   nushellPath = "${
     if config.isDarwin then "Library/Application Support/nushell" else ".config/nushell"
@@ -39,14 +41,14 @@ in
     // {
       shells = mkIf config.isDarwin [ pkgs.nushell ];
 
-      systemPackages = with pkgs; [
-        carapace
-        inshellisense
-        fish
-        zsh
-        bash
-        nushell
-        zoxide
+      systemPackages = [
+        pkgs.carapace
+        pkgs.inshellisense
+        pkgs.fish
+        pkgs.zsh
+        pkgs.bash
+        pkgs.nushell
+        pkgs.zoxide
       ];
 
       variables = mkIf config.isDev {
