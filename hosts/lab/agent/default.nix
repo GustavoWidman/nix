@@ -17,7 +17,7 @@ in
     authorizedKey = config.secrets.ssh-main-lab.path;
   };
   users.groups.agent.gid = 989;
-  home-manager.users.agent.home.stateVersion = "26.11";
+  home-manager.users.agent = { };
 
   # Nested KVM on PVE2 previously triggered a fatal async page fault in the
   # host kernel. Keep async page faults disabled for this nested-QEMU guest.
