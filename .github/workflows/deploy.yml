@@ -3,9 +3,9 @@
 #
 # The runner joins the tailnet as `tag:ci` through a Tailscale OAuth client
 # (TS_OAUTH_CLIENT_ID, TS_OAUTH_SECRET) and relies on this tailnet policy:
-#   - `tagOwners` declares `tag:ci`;
-#   - `autogroup:member` keeps its allow-all rule;
-#   - `tag:ci` may reach only `autogroup:member:45729` (coeusd) over tcp.
+#   - `tagOwners` declares `tag:ci` and `tag:fleet`, which every machine of
+#     the fleet carries;
+#   - `tag:ci` may reach only `tag:fleet:45729` (coeusd) over tcp.
 # COEUS_KEY holds the fleet's pre-shared key.
 #
 # `coeus deploy` exits non-zero when a reachable machine fails, which fails
