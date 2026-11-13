@@ -10,10 +10,16 @@
     GuestEnabled = false;
   };
 
-  system.login-items = lib.mkIf config.isDesktop [
-    pkgs.unnaturalscrollwheels
-    pkgs.stats
-  ];
+  launchd.user.agents = lib.mkIf config.isDesktop (
+    lib.genAttrs [ "stats" "unnaturalscrollwheels" ] (name: {
+      command = "${pkgs.${name}}/Applications/${name}.app/Contents/MacOS/${name}";
+      serviceConfig = {
+        RunAtLoad = true;
+        KeepAlive = true;
+        ProcessType = "Interactive";
+      };
+    })
+  );
 
   launchd.daemons.limit-maxfiles = {
     serviceConfig.ProgramArguments = [
