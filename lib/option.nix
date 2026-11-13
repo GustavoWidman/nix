@@ -9,6 +9,4 @@ in
       default = value;
       readOnly = true;
     };
-
-  mkValue = default: mkOption { inherit default; };
 }
