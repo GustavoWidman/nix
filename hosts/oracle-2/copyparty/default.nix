@@ -50,6 +50,13 @@ in
     ];
   };
 
+  # The nfs client connects from a privileged port between 665 and 1023, and a
+  # port it takes while adguard home or dovecot restarts keeps that service off
+  # 853, 993 or 995, so the client stays below them. sunrpc loads with the other
+  # boot modules, before systemd-sysctl applies this.
+  boot.kernelModules = [ "sunrpc" ];
+  boot.kernel.sysctl."sunrpc.max_resvport" = 852;
+
   services.copyparty = enabled {
     package = pkgs.copyparty-full;
 
