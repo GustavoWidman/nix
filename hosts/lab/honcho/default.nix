@@ -335,7 +335,7 @@ in
         };
 
         networking.firewall.interfaces = {
-          honcho0.allowedTCPPorts = [ config.services.cliproxyapi.port ];
+          honcho0.allowedTCPPorts = [ config.services.taproot.settings.server.port ];
           tailscale0.allowedTCPPorts = [ apiPort 5000 ];
         };
       };

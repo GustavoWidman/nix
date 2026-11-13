@@ -230,7 +230,7 @@ again picks up where it left off. on a mac, finish with `coeus doctor --fix`
 
 this repository pulls in a bunch of project and tool flakes directly from
 github, including `kemono-pinger`, `portfolio`, `claude-who`, `rocky-bot`,
-`kache`, `cliproxyapi`, `zen-browser`, `copyparty`, and a custom autobuild of
+`kache`, `taproot`, `zen-browser`, `copyparty`, and a custom autobuild of
 `zed`.
 
 nix builds what it needs, caches what it can, and still occasionally finds a way
