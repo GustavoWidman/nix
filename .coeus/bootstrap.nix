@@ -195,45 +195,24 @@ let
     };
 
   # the mac keeps the account it was set up with as its main user, and joins
-  # the tailnet on its own with the fleet's auth key (modules/macos/tailscale.nix)
+  # the tailnet on its own with the fleet's auth key (modules/macos/tailscale.nix).
+  # home-manager's user list cannot be derived from users.users, so the main
+  # user is named here.
   darwinBody =
     { name, user }:
-    let
-      home = "/Users/${user}";
-    in
     {
       args = [
         "config"
         "pkgs"
       ];
       text = ''
-        users.users = {
-          ${user} = {
-            name = "${user}";
-            home = "${home}";
-            isMainUser = true;
-            shell = pkgs.nushell;
-            authorizedKey = config.secrets.ssh-main-${name}.path;
-          };
-
-          root = {
-            name = "root";
-            home = "/var/root";
-            shell = pkgs.nushell;
-          };
+        users.users.${user} = {
+          home = "/Users/${user}";
+          isMainUser = true;
+          shell = pkgs.nushell;
+          authorizedKey = config.secrets.ssh-main-${name}.path;
         };
-
-        home-manager.users = {
-          root.home = {
-            stateVersion = "25.05";
-            homeDirectory = "/var/root";
-          };
-
-          ${user}.home = {
-            stateVersion = "25.05";
-            homeDirectory = "${home}";
-          };
-        };
+        home-manager.users.${user} = { };
 
         tailscale.enable = true;
 
