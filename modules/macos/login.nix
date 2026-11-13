@@ -11,14 +11,19 @@
   };
 
   launchd.user.agents = lib.mkIf config.isDesktop (
-    lib.genAttrs [ "stats" "unnaturalscrollwheels" ] (name: {
-      command = "${pkgs.${name}}/Applications/${name}.app/Contents/MacOS/${name}";
-      serviceConfig = {
-        RunAtLoad = true;
-        KeepAlive = true;
-        ProcessType = "Interactive";
-      };
-    })
+    lib.mapAttrs
+      (name: bundle: {
+        command = "${pkgs.${name}}/Applications/${bundle}.app/Contents/MacOS/${bundle}";
+        serviceConfig = {
+          RunAtLoad = true;
+          KeepAlive = true;
+          ProcessType = "Interactive";
+        };
+      })
+      {
+        stats = "Stats";
+        unnaturalscrollwheels = "UnnaturalScrollWheels";
+      }
   );
 
   launchd.daemons.limit-maxfiles = {
