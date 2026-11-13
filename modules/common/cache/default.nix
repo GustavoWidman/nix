@@ -96,8 +96,8 @@ in
         PATH = "/nix/var/nix/profiles/default/bin:/usr/bin:/bin";
       };
 
-      # nix.enable is false on Darwin; use the shim consumed by Determinate.
-      nix-settings.post-build-hook = config.nix.settings.post-build-hook;
+      # Determinate writes the daemon's settings on Darwin; nix.settings never reaches it.
+      determinateNix.customSettings.post-build-hook = config.nix.settings.post-build-hook;
     })
   ];
 }

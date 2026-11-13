@@ -4,6 +4,7 @@
   self,
   lib,
   pkgs,
+  isDarwin,
   ...
 }:
 let
@@ -11,27 +12,22 @@ let
     concatStringsSep
     mapAttrsToList
     filterAttrs
-    optionals
     mapAttrs
     mkForce
+    mkAfter
+    mkMerge
     isType
     const
-    mkIf
-    flip
     id
     ;
 
   # the config's own source would make every commit a new generation on every
   # machine, even one that touches a single host, and nothing looks it up
-  registry = removeAttrs inputs [ "self" ] |> filterAttrs (const <| isType "flake");
+  flakes = removeAttrs inputs [ "self" ] |> filterAttrs (const <| isType "flake");
+  registry = flakes // { default = inputs.nixpkgs; } |> mapAttrs (_: flake: { inherit flake; });
 
-  settings =
-    (import <| self + /flake.nix).nixConfig
-    |> flip removeAttrs (
-      optionals config.isDarwin [
-        "use-cgroups"
-      ]
-    );
+  settings = (import <| self + /flake.nix).nixConfig;
+  includeGithubToken = "!include ${config.secrets.github-token-nix-conf.path}";
 
   determinateNix = inputs.determinate.inputs.nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   determinateNixRuntime = pkgs.symlinkJoin {
@@ -41,45 +37,43 @@ let
     paths = [ (lib.getOutput "out" determinateNix) ];
   };
 in
-{
-  secrets.github-token-nix-conf = {
-    file = ./github-token-nix-conf.age;
-    mode = "444";
-    owner = "root";
-  };
-
-  environment.variables.NIX_PATH = mkForce (
-    registry
-    |> mapAttrsToList (name: value: "${name}=${value}")
-    |> (if config.isDarwin then concatStringsSep ":" else id)
-  );
-
-  nix.registry = registry // { default = inputs.nixpkgs; } |> mapAttrs (_: flake: { inherit flake; });
-
-  # Determinate's cache publishes the runtime output, not Nix's auxiliary outputs.
-  nix.package = mkIf config.isLinux (mkForce determinateNixRuntime);
-
-  nix-settings = settings // {
-    includes = [ config.secrets.github-token-nix-conf.path ];
-  };
-
-  environment.etc."nix/registry.json" = mkIf config.isDarwin {
-    text = builtins.toJSON {
-      version = 2;
-      flakes =
-        registry // { default = inputs.nixpkgs; }
-        |> mapAttrsToList (
-          name: input: {
-            from = {
-              type = "indirect";
-              id = name;
-            };
-            to = {
-              type = "path";
-              path = input.outPath;
-            };
-          }
-        );
+mkMerge [
+  {
+    secrets.github-token-nix-conf = {
+      file = ./github-token-nix-conf.age;
+      mode = "444";
+      owner = "root";
     };
-  };
-}
+
+    environment.variables.NIX_PATH = mkForce (
+      flakes
+      |> mapAttrsToList (name: value: "${name}=${value}")
+      |> (if isDarwin then concatStringsSep ":" else id)
+    );
+  }
+
+  (
+    if isDarwin then
+      {
+        determinateNix = {
+          inherit registry;
+          customSettings = removeAttrs settings [ "use-cgroups" ] // {
+            # Determinate points the global registry at the system one whenever
+            # it writes a registry; empty keeps it off, as on NixOS
+            flake-registry = mkForce settings.flake-registry;
+          };
+        };
+
+        environment.etc."nix/nix.custom.conf".text = mkAfter includeGithubToken;
+      }
+    else
+      {
+        nix = {
+          inherit registry settings;
+          extraOptions = includeGithubToken;
+          # Determinate's cache publishes the runtime output, not Nix's auxiliary outputs.
+          package = mkForce determinateNixRuntime;
+        };
+      }
+  )
+]
