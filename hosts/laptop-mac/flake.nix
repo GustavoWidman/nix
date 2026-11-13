@@ -22,7 +22,7 @@ in
       inputs@{
         ...
       }:
-      inputs.lib.darwinDesktopSystem inputs (
+      inputs.lib.mkSystem inputs metadata (
         {
           lib,
           pkgs,

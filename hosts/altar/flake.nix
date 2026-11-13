@@ -21,7 +21,7 @@ in
       inputs@{
         ...
       }:
-      inputs.lib.darwinDevServerSystem inputs (
+      inputs.lib.mkSystem inputs metadata (
         {
           lib,
           pkgs,

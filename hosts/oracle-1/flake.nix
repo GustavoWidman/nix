@@ -20,7 +20,7 @@ in
       inputs@{
         ...
       }:
-      inputs.lib.linuxServerSystem inputs (
+      inputs.lib.mkSystem inputs metadata (
         {
           config,
           lib,
