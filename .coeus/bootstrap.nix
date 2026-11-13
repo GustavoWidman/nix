@@ -129,12 +129,6 @@ let
   # the newest nix-darwin state version the fleet's macs run
   darwinStateVersion = 6;
 
-  builders = {
-    server = "Server";
-    dev-server = "DevServer";
-    desktop = "Desktop";
-  };
-
   # `text` without its final newline, each line after `prefix`
   indent =
     prefix: text:
@@ -156,7 +150,6 @@ let
       body,
     }:
     let
-      prefix = if class == "darwin" then "darwin" else "linux";
       # desktops are not always on, so no machine builds on them
       buildArchitectures = if type == "desktop" then "[ ]" else "[\n      metadata.architecture\n    ]";
     in
@@ -181,7 +174,7 @@ let
             inputs@{
               ...
             }:
-            inputs.lib.${prefix}${builders.${type}}System inputs (
+            inputs.lib.mkSystem inputs metadata (
               {
                 config,
                 lib,
