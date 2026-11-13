@@ -21,7 +21,7 @@ in
       inputs@{
         ...
       }:
-      inputs.lib.linuxDevServerSystem inputs (
+      inputs.lib.mkSystem inputs metadata (
         {
           config,
           lib,
