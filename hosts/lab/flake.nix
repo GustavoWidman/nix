@@ -47,7 +47,6 @@ in
           system.stateVersion = "25.05";
 
           nix.settings.extra-platforms = extra-platforms;
-          boot.binfmt.emulatedSystems = extra-platforms;
 
           services.netbird.enable = true;
 
