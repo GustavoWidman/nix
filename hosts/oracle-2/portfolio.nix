@@ -25,7 +25,6 @@ let
       "blog.${domain}"
     ];
     users = [ "caddy" ];
-    reloadServices = [ "caddy.service" ];
   };
 
   # Every host uses the certificate of its registrable domain.

@@ -9,10 +9,6 @@ in
     enable = true;
     group = "dns-certs";
     users = [ "caddy" ];
-
-    postRun = ''
-      systemctl reload-or-restart caddy.service
-    '';
   };
 
   # Holds the argon2id hash of the password, read as root by systemd and handed to the
