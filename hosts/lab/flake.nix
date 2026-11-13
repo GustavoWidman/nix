@@ -15,7 +15,7 @@
       users.users.r3dlust.authorizedKey = config.secrets.ssh-main-lab.path;
 
       time.timeZone = "America/Sao_Paulo";
-      system.stateVersion = "25.05";
+      system.stateVersion = "26.11";
 
       # lab builds only for its own architecture; unset, nix would add
       # i686-linux and the x86_64 microarchitecture levels
