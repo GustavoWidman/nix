@@ -82,6 +82,4 @@ in
         );
     };
   };
-
-  services.nh-clean.enable = true;
 }
