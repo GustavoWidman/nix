@@ -14,7 +14,7 @@ let
   modulesDev = collectNix ../modules/dev;
   modulesServer = collectNix ../modules/server;
 
-  # every machine imports these inputs' default modules and overlays; a
+  # every machine imports these inputs' default modules; a
   # machine that runs another input's service imports that module itself
   fleetInputs = [
     "agenix"
@@ -25,6 +25,16 @@ let
     "nix-homebrew"
     "rift"
   ];
+
+  # the fleet inputs whose overlays machines read: pkgs.agenix and pkgs.rift
+  fleetOverlays = [
+    "agenix"
+    "rift"
+  ];
+
+  overlaysFrom =
+    inputSet:
+    fleetOverlays |> filter (name: inputSet ? ${name}) |> map (name: inputSet.${name}.overlays.default);
 
   collectInputsFrom =
     inputSet:
@@ -41,10 +51,7 @@ in
         "nixosModules"
         "default"
       ];
-      inputOverlays = collectInputsFrom inputs [
-        "overlays"
-        "default"
-      ];
+      inputOverlays = overlaysFrom inputs;
       overlayModule = {
         nixpkgs.overlays = inputOverlays;
       };
@@ -77,10 +84,7 @@ in
         "nixosModules"
         "default"
       ];
-      inputOverlays = collectInputsFrom inputs [
-        "overlays"
-        "default"
-      ];
+      inputOverlays = overlaysFrom inputs;
       overlayModule = {
         nixpkgs.overlays = inputOverlays;
       };
@@ -113,10 +117,7 @@ in
         "nixosModules"
         "default"
       ];
-      inputOverlays = collectInputsFrom inputs [
-        "overlays"
-        "default"
-      ];
+      inputOverlays = overlaysFrom inputs;
       overlayModule = {
         nixpkgs.overlays = inputOverlays;
       };
@@ -148,10 +149,7 @@ in
         "darwinModules"
         "default"
       ];
-      inputOverlays = collectInputsFrom inputs [
-        "overlays"
-        "default"
-      ];
+      inputOverlays = overlaysFrom inputs;
       overlayModule = {
         nixpkgs.overlays = inputOverlays;
       };
@@ -184,10 +182,7 @@ in
         "darwinModules"
         "default"
       ];
-      inputOverlays = collectInputsFrom inputs [
-        "overlays"
-        "default"
-      ];
+      inputOverlays = overlaysFrom inputs;
       overlayModule = {
         nixpkgs.overlays = inputOverlays;
       };
@@ -220,10 +215,7 @@ in
         "darwinModules"
         "default"
       ];
-      inputOverlays = collectInputsFrom inputs [
-        "overlays"
-        "default"
-      ];
+      inputOverlays = overlaysFrom inputs;
       overlayModule = {
         nixpkgs.overlays = inputOverlays;
       };
