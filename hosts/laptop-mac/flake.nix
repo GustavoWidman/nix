@@ -22,7 +22,7 @@
       };
       home-manager.users.r3dlust = { };
 
-      system.stateVersion = 5;
+      system.stateVersion = 7;
 
       environment.systemPackages = [ pkgs.libheif ];
     };
