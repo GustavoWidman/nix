@@ -27,12 +27,7 @@ in
   ];
 
   # add oracle as a home-manager user
-  home-manager.users = {
-    oracle.home = {
-      stateVersion = "25.05";
-      homeDirectory = "/home/oracle";
-    };
-  };
+  home-manager.users.oracle = { };
 
   # add oracle's user to the "docker" group
   users.users.oracle = {
