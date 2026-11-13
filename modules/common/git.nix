@@ -4,10 +4,7 @@
   ...
 }:
 let
-  inherit (lib)
-    enabled
-    mkIf
-    ;
+  inherit (lib) enabled;
 in
 {
   home-manager.sharedModules = [
@@ -130,11 +127,5 @@ in
         };
       }
     )
-
-    (mkIf config.isDev {
-      programs.gh = enabled {
-        settings.git_protocol = "ssh";
-      };
-    })
   ];
 }
