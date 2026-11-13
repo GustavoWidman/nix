@@ -1,14 +1,9 @@
 {
-  config,
   lib,
-  pkgs,
   ...
 }:
 let
-  inherit (lib)
-    mkAliasOptionModule
-    mkIf
-    ;
+  inherit (lib) mkAliasOptionModule;
 in
 {
   imports = [ (mkAliasOptionModule [ "secrets" ] [ "age" "secrets" ]) ];
@@ -16,8 +11,4 @@ in
   age.identityPaths = [
     "/etc/ssh/ssh_host_ed25519_key"
   ];
-
-  environment = mkIf config.isDev {
-    systemPackages = [ pkgs.agenix ];
-  };
 }
