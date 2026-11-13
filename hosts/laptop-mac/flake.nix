@@ -34,8 +34,6 @@ in
             collectNix
             remove
             ;
-
-          extra-platforms = metadata.build-architectures |> remove metadata.architecture;
         in
         {
           inherit metadata;
@@ -74,8 +72,6 @@ in
           };
 
           system.stateVersion = 5;
-
-          nix.settings.extra-platforms = extra-platforms;
 
           environment.systemPackages = with pkgs; [ libheif ];
         }
