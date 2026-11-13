@@ -4,8 +4,7 @@ let
   option = import ./option.nix inputs self super;
   system = import ./system.nix inputs self super;
   values = import ./values.nix inputs self super;
-  flake = import ./flake.nix inputs self super;
   fleet = import ./fleet.nix inputs self super;
   coeus = import ./coeus.nix inputs self super;
 in
-filesystem // option // system // values // flake // fleet // coeus
+filesystem // option // system // values // fleet // coeus
