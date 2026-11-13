@@ -1874,8 +1874,7 @@
         "rocky-bot": "rocky-bot",
         "taproot": "taproot",
         "thoth": "thoth",
-        "zed": "zed",
-        "zen-browser": "zen-browser"
+        "zed": "zed"
       }
     },
     "rust-analyzer-src": {
@@ -2370,26 +2369,6 @@
         "owner": "zed-industries",
         "ref": "v1.29.1-pre",
         "repo": "zed",
-        "type": "github"
-      }
-    },
-    "zen-browser": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1794485312,
-        "narHash": "sha256-eLUmhmHQJg9DUKtYMfdyK1v6ktkc7ikbGsYvEwyw3y0=",
-        "owner": "youwen5",
-        "repo": "zen-browser-flake",
-        "rev": "ddf9a4d974a43fdc32db8f766a137093d6822ff5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "youwen5",
-        "repo": "zen-browser-flake",
         "type": "github"
       }
     }
