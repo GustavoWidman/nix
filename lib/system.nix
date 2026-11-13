@@ -1,7 +1,6 @@
 _: self: super:
 let
   inherit (self)
-    attrsToList
     filter
     getAttrFromPath
     hasAttrByPath
@@ -15,10 +14,22 @@ let
   modulesDev = collectNix ../modules/dev;
   modulesServer = collectNix ../modules/server;
 
+  # every machine imports these inputs' default modules and overlays; a
+  # machine that runs another input's service imports that module itself
+  fleetInputs = [
+    "agenix"
+    "coeus"
+    "determinate"
+    "home-manager"
+    "kache"
+    "nix-homebrew"
+    "rift"
+  ];
+
   collectInputsFrom =
     inputSet:
     let
-      inputs' = inputSet |> attrsToList |> filter ({ name, ... }: name != "zed") |> map ({ value, ... }: value);
+      inputs' = fleetInputs |> filter (name: inputSet ? ${name}) |> map (name: inputSet.${name});
     in
     path: inputs' |> filter (hasAttrByPath path) |> map (getAttrFromPath path);
 in

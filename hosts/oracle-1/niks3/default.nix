@@ -1,10 +1,12 @@
-{ config, ... }:
+{ config, niks3, ... }:
 let
   url = "cache.r3dlust.com";
   s3Url = "s3.cache.r3dlust.com";
   bucket = "nix-cache-1";
 in
 {
+  imports = [ niks3.nixosModules.default ];
+
   networking.certificates.${url} = {
     enable = true;
     group = "dns-certs";
