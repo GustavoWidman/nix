@@ -45,6 +45,12 @@ in
         home = config.home.homeDirectory;
       in
       {
+        # copyApps aborts activation when it cannot write inside a copied bundle,
+        # as with notarized apps (ghostty-bin) over ssh without Full Disk Access,
+        # and deploys run over ssh
+        targets.darwin.linkApps.enable = true;
+        targets.darwin.copyApps.enable = false;
+
         home.activation.linkAppsToApplications = lib.mkIf (linkApps.enable || copyApps.enable) (
           lib.hm.dag.entryAfter ([ "linkGeneration" ] ++ lib.optional copyApps.enable "copyApps") ''
             run /bin/bash ${linkAppsScript} \
