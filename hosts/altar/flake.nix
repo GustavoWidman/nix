@@ -19,6 +19,6 @@
       };
       home-manager.users.r3dlust = { };
 
-      system.stateVersion = 6;
+      system.stateVersion = 7;
     };
 }
