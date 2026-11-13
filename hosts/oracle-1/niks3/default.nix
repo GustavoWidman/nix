@@ -143,11 +143,31 @@ in
       extraConfig = ''
         ${config.networking.certificates.${url}.paths.caddy}
 
-        reverse_proxy ${config.services.niks3.httpAddr} {
-          transport http {
-            dial_timeout 5s
-            response_header_timeout 60s
-            keepalive 2m
+        # reads are one S3 object each, which answers within seconds, even
+        # from a disk spinning up; without the storage they would wait out
+        # the timeout, so they get a short one. /api/ is uploads and admin,
+        # which may check a whole closure before answering.
+        @reads {
+          method GET HEAD
+          not path /api/*
+        }
+        handle @reads {
+          reverse_proxy ${config.services.niks3.httpAddr} {
+            transport http {
+              dial_timeout 5s
+              response_header_timeout 15s
+              keepalive 2m
+            }
+          }
+        }
+
+        handle {
+          reverse_proxy ${config.services.niks3.httpAddr} {
+            transport http {
+              dial_timeout 5s
+              response_header_timeout 60s
+              keepalive 2m
+            }
           }
         }
       '';
