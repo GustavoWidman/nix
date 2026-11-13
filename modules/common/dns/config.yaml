@@ -13,11 +13,15 @@ http3: true
 cache: true
 fallback:
   - "https://1.1.1.1/dns-query"
+# dns.r3dlust.com is preferred and the fallback answers while it is down.
+# tls, not quic: a closed port refuses a tcp connection at once, while quic
+# dials one connection at a time and waits out a 5s handshake for each.
 upstream:
-  - "quic://dns.r3dlust.com:853"
+  - "tls://dns.r3dlust.com:853"
   - "[/lab/]100.122.90.22"
   - "[/ts.net/]100.100.100.100"
   - "[/tailnet.camelsec.com/]100.100.100.100"
   - "[/staging.camelsec.com/]100.100.100.100"
   - "[/internal.camelsec.com/]100.100.100.100"
-timeout: "10s"
+# under the 5s a libc lookup waits, so the fallback answers before it gives up
+timeout: "2s"
