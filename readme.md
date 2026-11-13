@@ -147,21 +147,20 @@ the repository is structured around modularity and avoiding spaghetti code.
 
 ## code helpers & `lib`
 
-`flake.nix` reads every `hosts/<name>/flake.nix`, collects the host metadata,
-and exposes the generated systems through `nixosConfigurations`,
-`darwinConfigurations`, top-level host aliases, `machineMetadata`, and
-`machineFlakes`.
+`flake.nix` builds every machine under `hosts/` and exposes the systems through
+`nixosConfigurations`, `darwinConfigurations`, top-level host aliases, and
+`machineMetadata`.
 
 the `lib/` directory is where the magic happens, it's heavily inspired off of
 rgbcube/ncc's `lib` module. instead of copy-pasting massive configurations for
-each host, `lib/system.nix` exports builder functions like `linuxDesktopSystem`,
-`linuxServerSystem`, `linuxDevServerSystem`, `darwinDesktopSystem`,
-`darwinServerSystem`, and `darwinDevServerSystem`.
+each host, `lib/system.nix` exports one builder, `mkSystem`.
 
-when a new host is defined in `hosts/my-host/flake.nix`, it calls one of these
-builder functions. the function scoops up the shared modules, adds the relevant
-linux/darwin and desktop/server/dev pieces, injects overlays, and spits out a
-nixos or darwin configuration.
+a host is a folder: `hosts/my-host/flake.nix` holds its `metadata` (hostname,
+class, type, architecture) and its top-level `module`, and every other file in
+the folder is imported. `mkSystem` reads the class and type from the metadata,
+scoops up the shared modules, adds the relevant linux/darwin and
+desktop/server/dev pieces, injects overlays, and spits out a nixos or darwin
+configuration.
 
 it makes spinning up a new machine almost as easy as creating a new folder,
 writing 20 lines of nix, and letting the deploy script bully the target into
@@ -204,7 +203,7 @@ coeus bootstrap my-new-host --to nixos@192.168.1.50
 it asks what the machine is for (server, dev server or desktop) and whether
 it should be an admin, then does the whole dance:
 
-1. writes `hosts/my-new-host/`: a `flake.nix` with the right builder, the
+1. writes `hosts/my-new-host/`: a `flake.nix` with its metadata and module, the
    machine's `host.pub`, and on nixos its `hardware.nix` and a `boot.nix`
    keeping the boot loader it was installed with.
 2. creates its secrets: the main user's login key under
