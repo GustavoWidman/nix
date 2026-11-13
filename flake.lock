@@ -1016,11 +1016,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1794482910,
-        "narHash": "sha256-eihb/4m+o2w6ZVpeCmu1UPhrH76SPzh164axPKA8jlQ=",
+        "lastModified": 1794581561,
+        "narHash": "sha256-EAfbk5MNVyUjGpdrtifLgrhhN/BSslbBrhFzeMWAJy4=",
         "owner": "GustavoWidman",
         "repo": "heimdall",
-        "rev": "673b84d96467b819632b595e17d57ac6c997786a",
+        "rev": "2f989f5d97d29550ba638daeca94611642f1b1f7",
         "type": "github"
       },
       "original": {
