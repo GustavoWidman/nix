@@ -12,4 +12,12 @@
       StandardErrorPath = "/var/log/dnsproxy.log";
     };
   };
+
+  networking.dns = [ "127.0.0.1" ];
+  networking.knownNetworkServices = [
+    "Wi-Fi"
+    "Thunderbolt Bridge"
+    "USB 10/100/1000 LAN"
+    "Tailscale"
+  ];
 }
