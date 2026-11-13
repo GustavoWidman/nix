@@ -74,8 +74,8 @@ in
   programs.nix-ld = {
     enable = true;
     libraries = with pkgs; [
-      xorg.libX11
-      xorg.libXi
+      libx11
+      libxi
       libxkbcommon
     ];
   };
