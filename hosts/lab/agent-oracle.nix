@@ -1,10 +1,12 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
 let
   kacheCacheDir = "/mnt/encrypted/oracle/kache";
+  cargoTargetDir = "/mnt/encrypted/oracle/cargo-target";
 in
 {
   services.kache.settings.cache.local_store = kacheCacheDir;
@@ -18,10 +20,10 @@ in
 
   systemd.tmpfiles.rules = [
     "d ${kacheCacheDir} 2775 oracle kache - -"
-    "d /mnt/encrypted/oracle/cargo-target 0755 oracle oracle - -"
-    "d /mnt/encrypted/oracle/cargo-target/oracle 0755 oracle oracle - -"
+    "d ${cargoTargetDir} 0755 oracle oracle - -"
+    "d ${cargoTargetDir}/oracle 0755 oracle oracle - -"
     "d /mnt/encrypted/oracle/misc 0755 oracle oracle - -"
-    "d /mnt/encrypted/oracle/cargo-target/r3dlust 0755 r3dlust users - -"
+    "d ${cargoTargetDir}/r3dlust 0755 r3dlust users - -"
   ];
 
   # add oracle as a home-manager user
@@ -50,6 +52,17 @@ in
   };
 
   users.users.r3dlust.extraGroups = [ "kache" ];
+
+  home-manager.sharedModules = [
+    (
+      { config, ... }:
+      {
+        home.file.".cargo/config.toml".text = lib.mkAfter ''
+          target-dir = "${cargoTargetDir}/${config.home.username}"
+        '';
+      }
+    )
+  ];
 
   environment.systemPackages = with pkgs; [
     xvfb
