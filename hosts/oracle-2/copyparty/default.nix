@@ -39,7 +39,12 @@ in
       "_netdev" # Wait for network before mounting
       # Keep the VPN up until Copyparty stops and this mount is unmounted.
       "x-systemd.requires=tailscaled.service"
-      "hard" # Let transient NFS faults block instead of surfacing as EIO
+      # While lab is down, a call to it fails with EIO after the retries below
+      # (about a minute) instead of blocking until lab is back. A hard mount
+      # blocks systemd itself when a switch reloads it, since it opens this
+      # mount point, and nothing on oracle-2 can be started or stopped until
+      # lab answers again. An upload cut off by the outage can be left partial.
+      "soft"
       "timeo=60"
       "retrans=3"
     ];
