@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
   home-manager = {
     useGlobalPkgs = true;
@@ -7,6 +7,8 @@
 
     sharedModules = [
       {
+        home.stateVersion = lib.mkDefault "25.05";
+
         manual.json.enable = false;
         manual.manpages.enable = false;
       }
