@@ -13,19 +13,12 @@ in
     users = [
       "caddy"
     ];
-
-    postRun = ''
-      systemctl reload-or-restart caddy.service
-    '';
   };
 
   networking.certificates.${s3Url} = {
     enable = true;
     group = "dns-certs";
     users = [ "caddy" ];
-    postRun = ''
-      systemctl reload-or-restart caddy.service
-    '';
   };
 
   secrets = {
