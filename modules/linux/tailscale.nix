@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -14,7 +13,6 @@ let
 in
 {
   services.tailscale = mkIf cfg.enable {
-    package = pkgs.tailscale;
     authKeyFile = config.secrets.tailscale-key.path;
     # the same as the shared cfg.auth-key-parameters, in the nixos module's form
     authKeyParameters = {
