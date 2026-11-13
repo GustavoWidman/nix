@@ -23,9 +23,7 @@ in
     enable = true;
     virtualHosts."dns.r3dlust.com" = {
       extraConfig = ''
-        tls ${config.networking.certificates."dns.r3dlust.com".paths.fullchain} ${
-          config.networking.certificates."dns.r3dlust.com".paths.key
-        }
+        ${config.networking.certificates."dns.r3dlust.com".paths.caddy}
 
         reverse_proxy /* {
           to https://127.0.0.1:3443
