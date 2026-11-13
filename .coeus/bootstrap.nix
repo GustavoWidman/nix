@@ -139,7 +139,9 @@ let
       map (line: if line == "" then "" else prefix + line) (filter isString (split "\n" body))
     );
 
-  # hosts/<name>/flake.nix, in the shape every other host has
+  # hosts/<name>/flake.nix, in the shape every other host has: the machine's
+  # metadata and its top-level module, whose arguments and body come from
+  # nixosBody or darwinBody
   hostFlake =
     {
       name,
@@ -151,11 +153,10 @@ let
     }:
     let
       # desktops are not always on, so no machine builds on them
-      buildArchitectures = if type == "desktop" then "[ ]" else "[\n      metadata.architecture\n    ]";
+      buildArchitectures = if type == "desktop" then "[ ]" else ''[ "${system}" ]'';
     in
     ''
-      parent:
-      let
+      {
         metadata = {
           hostname = "${name}";
           class = "${class}";
@@ -163,39 +164,12 @@ let
           architecture = "${system}";
       ${if admin then "    admin = true;\n" else ""}    build-architectures = ${buildArchitectures};
         };
-      in
-      {
-        inputs = parent;
 
-        outputs = {
-          inherit metadata;
-
-          config =
-            inputs@{
-              ...
-            }:
-            inputs.lib.mkSystem inputs metadata (
-              {
-                config,
-                lib,
-                pkgs,
-                ...
-              }:
-              let
-                inherit (lib) collectNix remove;
-              in
-              {
-                inherit metadata;
-
-                imports = collectNix ./. |> remove ./flake.nix;
-
-                networking.hostName = metadata.hostname;
-                nixpkgs.hostPlatform = metadata.architecture;
-
-      ${indent "          " body}
-              }
-            );
-        };
+        module =
+          { ${concatStringsSep ", " body.args}, ... }:
+          {
+      ${indent "      " body.text}
+          };
       }
     '';
 
@@ -209,13 +183,16 @@ let
       );
       stateVersion = checked "state version" "[0-9]+\\.[0-9]+" facts.stateVersion;
     in
-    ''
-      secrets.password.file = ./password.age;
-      users.users.r3dlust.authorizedKey = config.secrets.ssh-main-${name}.path;
+    {
+      args = [ "config" ];
+      text = ''
+        secrets.password.file = ./password.age;
+        users.users.r3dlust.authorizedKey = config.secrets.ssh-main-${name}.path;
 
-      time.timeZone = "${timeZone}";
-      system.stateVersion = "${stateVersion}";
-    '';
+        time.timeZone = "${timeZone}";
+        system.stateVersion = "${stateVersion}";
+      '';
+    };
 
   # the mac keeps the account it was set up with as its main user, and joins
   # the tailnet on its own with the fleet's auth key (modules/macos/tailscale.nix)
@@ -224,39 +201,45 @@ let
     let
       home = "/Users/${user}";
     in
-    ''
-      users.users = {
-        ${user} = {
-          name = "${user}";
-          home = "${home}";
-          isMainUser = true;
-          shell = pkgs.nushell;
-          authorizedKey = config.secrets.ssh-main-${name}.path;
+    {
+      args = [
+        "config"
+        "pkgs"
+      ];
+      text = ''
+        users.users = {
+          ${user} = {
+            name = "${user}";
+            home = "${home}";
+            isMainUser = true;
+            shell = pkgs.nushell;
+            authorizedKey = config.secrets.ssh-main-${name}.path;
+          };
+
+          root = {
+            name = "root";
+            home = "/var/root";
+            shell = pkgs.nushell;
+          };
         };
 
-        root = {
-          name = "root";
-          home = "/var/root";
-          shell = pkgs.nushell;
+        home-manager.users = {
+          root.home = {
+            stateVersion = "25.05";
+            homeDirectory = "/var/root";
+          };
+
+          ${user}.home = {
+            stateVersion = "25.05";
+            homeDirectory = "${home}";
+          };
         };
-      };
 
-      home-manager.users = {
-        root.home = {
-          stateVersion = "25.05";
-          homeDirectory = "/var/root";
-        };
+        tailscale.enable = true;
 
-        ${user}.home = {
-          stateVersion = "25.05";
-          homeDirectory = "${home}";
-        };
-      };
-
-      tailscale.enable = true;
-
-      system.stateVersion = ${toString darwinStateVersion};
-    '';
+        system.stateVersion = ${toString darwinStateVersion};
+      '';
+    };
 
   # the boot loader the machine was installed with, on the disk it boots from
   bootNix =

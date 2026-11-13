@@ -7,5 +7,5 @@ in
   fleet =
     builtins.readDir ../hosts
     |> filterAttrs (_: type: type == "directory")
-    |> mapAttrs (name: const (import ../hosts/${name}/flake.nix { }).outputs.metadata);
+    |> mapAttrs (name: const (import ../hosts/${name}/flake.nix).metadata);
 }

@@ -1,77 +1,44 @@
-parent:
-let
+{
   metadata = {
     hostname = "altar";
     class = "darwin";
     type = "dev-server";
     architecture = "aarch64-darwin";
     admin = true;
-    build-architectures = [
-      metadata.architecture
-    ];
+    build-architectures = [ "aarch64-darwin" ];
   };
-in
-{
-  inputs = parent;
 
-  outputs = {
-    inherit metadata;
+  module =
+    { config, pkgs, ... }:
+    {
+      users.users = {
+        r3dlust = {
+          name = "r3dlust";
+          home = "/Users/r3dlust";
+          isMainUser = true;
+          shell = pkgs.nushell;
+          authorizedKey = config.secrets.ssh-main-altar.path;
+        };
 
-    config =
-      inputs@{
-        ...
-      }:
-      inputs.lib.mkSystem inputs metadata (
-        {
-          lib,
-          pkgs,
-          config,
-          ...
-        }:
-        let
-          inherit (lib)
-            collectNix
-            remove
-            ;
-        in
-        {
-          inherit metadata;
+        root = {
+          name = "root";
+          home = "/var/root";
+          shell = pkgs.nushell;
+        };
+      };
 
-          imports = collectNix ./. |> remove ./flake.nix;
+      home-manager.users = {
+        root.home = {
+          stateVersion = "25.05";
+          homeDirectory = "/var/root";
+        };
 
-          networking.hostName = metadata.hostname;
-          nixpkgs.hostPlatform = metadata.architecture;
+        r3dlust.home = {
+          stateVersion = "25.05";
+          homeDirectory = "/Users/r3dlust";
+        };
+      };
 
-          users.users = {
-            r3dlust = {
-              name = "r3dlust";
-              home = "/Users/r3dlust";
-              isMainUser = true;
-              shell = pkgs.nushell;
-              authorizedKey = config.secrets.ssh-main-altar.path;
-            };
-
-            root = {
-              name = "root";
-              home = "/var/root";
-              shell = pkgs.nushell;
-            };
-          };
-
-          home-manager.users = {
-            root.home = {
-              stateVersion = "25.05";
-              homeDirectory = "/var/root";
-            };
-
-            r3dlust.home = {
-              stateVersion = "25.05";
-              homeDirectory = "/Users/r3dlust";
-            };
-          };
-
-          system.stateVersion = 6;
-        }
-      );
-  };
+      system.stateVersion = 6;
+    };
 }
