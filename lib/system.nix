@@ -91,6 +91,7 @@ in
       ++ modulesCommon
       ++ modulesLinux
       ++ modulesDev
+      ++ modulesServer
       ++ inputModulesLinux;
     };
 
@@ -197,6 +198,7 @@ in
       ++ modulesCommon
       ++ modulesDarwin
       ++ modulesDev
+      ++ modulesServer
       ++ inputModulesDarwin;
     };
 

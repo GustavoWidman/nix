@@ -53,7 +53,8 @@ keys
   admins = keysOf (machine: machine.admin);
   linux = keysOf (machine: machine.class == "nixos");
   darwin = keysOf (machine: machine.class == "darwin");
-  server = keysOf (machine: machine.class == "nixos" && machine.type != "desktop");
-  dev = keysOf (machine: machine.type == "desktop");
+  desktop = keysOf (machine: machine.type == "desktop");
+  server = keysOf (machine: machine.type == "dev-server" || machine.type == "server");
+  dev = keysOf (machine: machine.type == "desktop" || machine.type == "dev-server");
   all = keysOf (_: true);
 }
