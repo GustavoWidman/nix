@@ -14,7 +14,7 @@
       users.users.r3dlust.authorizedKey = config.secrets.ssh-oracle-oracle-2.path;
 
       time.timeZone = "America/Sao_Paulo";
-      system.stateVersion = "25.05";
+      system.stateVersion = "26.11";
 
       networking.firewall = {
         allowedTCPPorts = [

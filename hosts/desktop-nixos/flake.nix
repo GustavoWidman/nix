@@ -15,7 +15,7 @@
       secrets.password.file = ./password.age;
 
       time.timeZone = "America/Sao_Paulo";
-      system.stateVersion = "25.11";
+      system.stateVersion = "26.11";
 
       networking.networkmanager.enable = true;
       environment.systemPackages = [

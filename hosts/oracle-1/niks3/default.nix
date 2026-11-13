@@ -1,4 +1,9 @@
-{ config, niks3, ... }:
+{
+  config,
+  niks3,
+  pkgs,
+  ...
+}:
 let
   url = "cache.r3dlust.com";
   s3Url = "s3.cache.r3dlust.com";
@@ -46,6 +51,10 @@ in
       mode = "0400";
     };
   };
+
+  # niks3's database is a PostgreSQL 17 cluster in /var/lib/postgresql/17;
+  # the package must not follow system.stateVersion to a newer major
+  services.postgresql.package = pkgs.postgresql_17;
 
   services.niks3 = {
     enable = true;
