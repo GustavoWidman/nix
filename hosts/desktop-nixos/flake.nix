@@ -19,7 +19,7 @@ in
       inputs@{
         ...
       }:
-      inputs.lib.linuxDesktopSystem inputs (
+      inputs.lib.mkSystem inputs metadata (
         {
           config,
           pkgs,
