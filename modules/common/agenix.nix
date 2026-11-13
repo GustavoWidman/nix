@@ -18,8 +18,6 @@ in
   ];
 
   environment = mkIf config.isDev {
-    systemPackages = with pkgs; [
-      agenix
-    ];
+    systemPackages = [ pkgs.agenix ];
   };
 }

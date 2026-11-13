@@ -3,13 +3,13 @@
   ...
 }:
 {
-  environment.systemPackages = with pkgs; [
-    pkg-config
-    krb5.dev
-    krb5.lib
-    openssl.dev
-    openssl.out
-    freetds
-    llvmPackages.libcxx
+  environment.systemPackages = [
+    pkgs.pkg-config
+    pkgs.krb5.dev
+    pkgs.krb5.lib
+    pkgs.openssl.dev
+    pkgs.openssl.out
+    pkgs.freetds
+    pkgs.llvmPackages.libcxx
   ];
 }
