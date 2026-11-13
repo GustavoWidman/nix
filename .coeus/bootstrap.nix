@@ -62,8 +62,11 @@ let
   # a secret's audience follows from where it lives:
   #   hosts/<name>/**     that machine and the admins
   #   modules/common/**   every machine
+  #   modules/desktop/**  all desktops and the admins
+  #   modules/dev/**      all desktops, dev-servers and the admins
   #   modules/linux/**    the nixos machines and the admins
-  #   modules/server/**   the nixos servers and the admins
+  #   modules/macos/**    the darwin machines and the admins
+  #   modules/server/**   all servers, dev-servers and the admins
   # null: not a secret this repository manages
   recipients =
     path:
@@ -76,8 +79,14 @@ let
       unique ([ (hostKey (elemAt parts 1)) ] ++ keys.admins)
     else if startsWith "modules/common/" path then
       keys.all
+    else if startsWith "modules/desktop/" path then
+      unique (keys.desktop ++ keys.admins)
+      else if startsWith "modules/dev/" path then
+        unique (keys.dev ++ keys.admins)
     else if startsWith "modules/linux/" path then
       unique (keys.linux ++ keys.admins)
+    else if startsWith "modules/macos/" path then
+      unique (keys.darwin ++ keys.admins)
     else if startsWith "modules/server/" path then
       unique (keys.server ++ keys.admins)
     else
