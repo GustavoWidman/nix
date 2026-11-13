@@ -11,13 +11,13 @@ deploy command.
 
 this flake currently knows about 6 hosts:
 
-- **`laptop-mac`** (darwin, aarch64): my daily driver macbook. runs aerospace,
+- **`laptop-mac`** (darwin, aarch64): my daily driver macbook. runs rift,
   ghostty, homebrew bits, and the usual macos crimes.
 - **`altar`** (darwin, aarch64): a headless mac mini dev server that exists to
   run ai agents. gets the dev toolchain, but no window manager, no login apps,
   never sleeps, and comes back on its own after a power cut.
-- **`desktop-nixos`** (nixos, x86_64): my main linux desktop. runs hyprland,
-  wayland, and all the gaming/heavy lifting stuff.
+- **`desktop-nixos`** (nixos, x86_64): my main linux desktop, the nvidia box
+  for the heavy lifting. its desktop session isn't managed here (yet).
 - **`lab`** (nixos, x86_64): a remote dev server that runs at home 24/7. i ssh
   into it from anywhere and use it for development work that shouldn't depend
   on whichever laptop is open.
@@ -207,9 +207,10 @@ again picks up where it left off. on a mac, finish with `coeus doctor --fix`
 ## custom flakes
 
 this repository pulls in a bunch of project and tool flakes directly from
-github, including `kemono-pinger`, `portfolio`, `claude-who`, `rocky-bot`,
-`kache`, `taproot`, `zen-browser`, `copyparty`, and a custom autobuild of
-`zed`.
+github, including `coeus`, `heimdall`, `thoth`, `rocky-bot`, `kemono-pinger`,
+`portfolio`, `oxi`, `niks3`, `kache`, `taproot`, `copyparty`, and a custom
+autobuild of `zed`. each one's module is imported only by the machine that runs
+it; `lib/system.nix` lists the few every machine gets.
 
 nix builds what it needs, caches what it can, and still occasionally finds a way
 to make me stare at a terminal for 40 minutes. tradition matters.
