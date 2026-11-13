@@ -2,7 +2,6 @@
   config,
   fenix,
   lib,
-  nixpkgs-unstable,
   pkgs,
   ...
 }:
@@ -22,9 +21,7 @@ in
 {
   services.kache = {
     enable = true;
-    # The kache flake overlay builds kache from source. The nixpkgs-unstable
-    # branch only advances once Hydra has built its packages, so this one is cached.
-    package = nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.kache;
+    package = pkgs.kache;
     daemon.enable = true;
     rustcWrapper = true;
     settings.cache = {
