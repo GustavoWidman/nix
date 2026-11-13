@@ -40,9 +40,7 @@ in
 
   services.caddy.virtualHosts."tailscale.r3dlust.com" = {
     extraConfig = ''
-      tls ${config.networking.certificates."tailscale.r3dlust.com".paths.fullchain} ${
-        config.networking.certificates."tailscale.r3dlust.com".paths.key
-      }
+      ${config.networking.certificates."tailscale.r3dlust.com".paths.caddy}
 
       reverse_proxy /* {
         to http://127.0.0.1:59553

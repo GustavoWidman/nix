@@ -136,9 +136,7 @@ in
 
   services.caddy.virtualHosts."mail.r3dlust.com" = {
     extraConfig = ''
-      tls ${config.networking.certificates."mail.r3dlust.com".paths.fullchain} ${
-        config.networking.certificates."mail.r3dlust.com".paths.key
-      }
+      ${config.networking.certificates."mail.r3dlust.com".paths.caddy}
 
       header {
         X-Content-Type-Options nosniff

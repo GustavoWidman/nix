@@ -25,9 +25,7 @@ in
 
   services.caddy.virtualHosts."${domain}" = {
     extraConfig = ''
-      tls ${config.networking.certificates."${domain}".paths.fullchain} ${
-        config.networking.certificates."${domain}".paths.key
-      }
+      ${config.networking.certificates."${domain}".paths.caddy}
 
       reverse_proxy localhost:${toString config.services.tailscale.derper.port} {
         flush_interval -1
