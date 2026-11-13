@@ -117,7 +117,6 @@
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
     portfolio.url = "github:GustavoWidman/portfolio";
     heimdall.url = "github:GustavoWidman/heimdall";
-    # claude-who.url = "git+ssh://git@github.com/GustavoWidman/claude-who";
     rocky-bot.url = "git+ssh://git@github.com/GustavoWidman/rocky-bot";
     thoth = {
       url = "git+ssh://git@github.com/GustavoWidman/thoth";
