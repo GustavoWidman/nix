@@ -56,6 +56,9 @@ in
   # the package must not follow system.stateVersion to a newer major
   services.postgresql.package = pkgs.postgresql_17;
 
+  # niks3 looks up GitHub's OIDC issuer as it starts and exits if that fails
+  systemd.services.niks3.after = [ "dnsproxy.service" ];
+
   services.niks3 = {
     enable = true;
     httpAddr = "127.0.0.1:25915";
