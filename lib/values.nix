@@ -19,6 +19,4 @@ in
   };
 
   enabled = merge { enable = true; };
-  disabled = merge { enable = false; };
-  mergeIf = cond: value: self.merge <| self.mkIf cond value;
 }

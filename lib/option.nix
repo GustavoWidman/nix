@@ -11,11 +11,4 @@ in
     };
 
   mkValue = default: mkOption { inherit default; };
-
-  mkEnum =
-    default: values:
-    mkOption {
-      type = super.types.enum values;
-      default = default;
-    };
 }
