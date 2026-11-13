@@ -20,6 +20,13 @@ let
 
   sshAgeFiles = listFilesRecursive ./ssh |> filter (p: hasSuffix ".age" (toString p));
 
+  relative =
+    ageFile:
+    ageFile
+    |> toString
+    |> removePrefix "${toString ./ssh}/"
+    |> removeSuffix ".age";
+
   hmUsers =
     config.home-manager.users
     |> mapAttrsToList (
@@ -32,12 +39,7 @@ let
   mkSystemSshSecret = ageFile: user: {
     name =
       let
-        baseName =
-          ageFile
-          |> toString
-          |> removePrefix "${toString ./ssh}/"
-          |> removeSuffix ".age"
-          |> replaceStrings [ "/" ] [ "-" ];
+        baseName = replaceStrings [ "/" ] [ "-" ] (relative ageFile);
       in
       if user.name == config.mainUser then
         "ssh-${baseName}" # Original name for compatibility
@@ -46,7 +48,7 @@ let
 
     value = {
       file = ageFile;
-      path = "${user.home}/.ssh/${removeSuffix ".age" (removePrefix "${toString ./ssh}/" (toString ageFile))}";
+      path = "${user.home}/.ssh/${relative ageFile}";
       owner = user.name;
       mode = "0400";
       symlink = true;
@@ -76,19 +78,7 @@ in
           enableDefaultConfig = false;
 
           includes =
-            let
-              sshConfigFiles =
-                sshAgeFiles
-                |> filter (p: hasSuffix "config.age" (toString p))
-                |> map (
-                  p:
-                  let
-                    relativePath = removeSuffix ".age" (removePrefix "${toString ./ssh}/" (toString p));
-                  in
-                  "~/.ssh/${relativePath}"
-                );
-            in
-            sshConfigFiles;
+            sshAgeFiles |> filter (p: hasSuffix "config.age" (toString p)) |> map (p: "~/.ssh/${relative p}");
 
           settings."*" = {
             SetEnv = {
