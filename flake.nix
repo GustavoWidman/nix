@@ -24,6 +24,11 @@
     ];
 
     builders-use-substitutes = true;
+    # a cache that keeps failing, as cache.r3dlust.com does while lab is off,
+    # is skipped for a minute after its retries instead of costing them again
+    # for every path, and a download that stops moving fails within seconds
+    fallback = true;
+    stalled-download-timeout = 20;
     keep-outputs = true;
     flake-registry = "";
     http-connections = 50;
