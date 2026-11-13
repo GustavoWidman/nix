@@ -36,4 +36,7 @@
       extraGroups = [ "build" ];
     };
   };
+
+  # flake.nix lists @build in trusted-users, so the group has to exist
+  users.groups.build = { };
 }
