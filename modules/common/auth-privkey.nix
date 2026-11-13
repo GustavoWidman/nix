@@ -5,10 +5,18 @@
   options,
   ...
 }:
-
-with lib;
-
 let
+  inherit (lib)
+    filterAttrs
+    mapAttrs'
+    mkIf
+    mkMerge
+    mkOption
+    nameValuePair
+    optionalAttrs
+    types
+    ;
+
   usersWithPrivateKeys = filterAttrs (name: user: user.authorizedKey != null) config.users.users;
 
   generateActivationScripts = mapAttrs' (
@@ -16,53 +24,42 @@ let
     let
       group = user.group or (if config.isDarwin then "staff" else "users");
     in
-    nameValuePair "update-ssh-keys-${username}" (
-      {
-        text = # sh
-          ''
-            # Generate public key from private key for user ${username}
-            if [ ! -f "${user.authorizedKey}" ]; then
-              echo "Waiting for ${user.authorizedKey} before updating ${user.home}/.ssh/authorized_keys"
-              for _ in 1 2 3 4 5 6 7 8 9 10; do
-                [ -f "${user.authorizedKey}" ] && break
-                sleep 1
-              done
-            fi
+    nameValuePair "update-ssh-keys-${username}" {
+      deps = [
+        "agenix"
+        "users"
+      ];
+      text = # sh
+        ''
+          # Generate public key from private key for user ${username}
+          if [ ! -f "${user.authorizedKey}" ]; then
+            echo "Waiting for ${user.authorizedKey} before updating ${user.home}/.ssh/authorized_keys"
+            for _ in 1 2 3 4 5 6 7 8 9 10; do
+              [ -f "${user.authorizedKey}" ] && break
+              sleep 1
+            done
+          fi
 
-            if [ ! -f "${user.authorizedKey}" ]; then
-              echo "Missing ${user.authorizedKey}; cannot update ${user.home}/.ssh/authorized_keys" >&2
-              exit 1
-            fi
+          if [ ! -f "${user.authorizedKey}" ]; then
+            echo "Missing ${user.authorizedKey}; cannot update ${user.home}/.ssh/authorized_keys" >&2
+            exit 1
+          fi
 
-            PUBLIC_KEY=$(${pkgs.openssh}/bin/ssh-keygen -y -f "${user.authorizedKey}")
+          PUBLIC_KEY=$(${pkgs.openssh}/bin/ssh-keygen -y -f "${user.authorizedKey}")
 
-            # Ensure the .ssh directory exists
-            mkdir -p "${user.home}/.ssh"
+          # Ensure the .ssh directory exists
+          mkdir -p "${user.home}/.ssh"
 
-            # Update authorized_keys
-            echo "$PUBLIC_KEY" > "${user.home}/.ssh/authorized_keys"
-            chown ${username}:${group} "${user.home}/.ssh/authorized_keys"
-            chmod 600 "${user.home}/.ssh/authorized_keys"
+          # Update authorized_keys
+          echo "$PUBLIC_KEY" > "${user.home}/.ssh/authorized_keys"
+          chown ${username}:${group} "${user.home}/.ssh/authorized_keys"
+          chmod 600 "${user.home}/.ssh/authorized_keys"
 
-            # Also set correct permissions on .ssh directory
-            chown ${username}:${group} "${user.home}/.ssh"
-            chmod 700 "${user.home}/.ssh"
-          '';
-      }
-      // (
-        if config.isLinux then
-          {
-            deps = [
-              "agenix"
-              "users"
-            ];
-          }
-        else if config.isDarwin then
-          { }
-        else
-          { }
-      )
-    )
+          # Also set correct permissions on .ssh directory
+          chown ${username}:${group} "${user.home}/.ssh"
+          chmod 700 "${user.home}/.ssh"
+        '';
+    }
   ) usersWithPrivateKeys;
 
   generateDarwinLaunchDaemons = mapAttrs' (
