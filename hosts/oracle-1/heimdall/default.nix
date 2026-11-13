@@ -1,8 +1,10 @@
-{ config, ... }:
+{ config, heimdall, ... }:
 let
   domain = "heimdall.r3dlust.com";
 in
 {
+  imports = [ heimdall.nixosModules.default ];
+
   networking.certificates.${domain} = {
     enable = true;
     group = "dns-certs";

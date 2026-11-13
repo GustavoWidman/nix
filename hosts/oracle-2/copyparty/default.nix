@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  copyparty,
   ...
 }:
 let
@@ -10,6 +11,9 @@ let
     ;
 in
 {
+  imports = [ copyparty.nixosModules.default ];
+  nixpkgs.overlays = [ copyparty.overlays.default ];
+
   networking.certificates."files.r3dlust.com" = {
     enable = true;
     group = "caddy-certs";
