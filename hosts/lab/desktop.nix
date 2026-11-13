@@ -25,6 +25,7 @@ let
       pkgs.xset
       pkgs.xfce4-session
       pkgs.xfconf
+      config.systemd.package
     ];
     text = ''
       export DISPLAY=:2
@@ -68,6 +69,7 @@ let
       dbus-update-activation-environment --systemd \
         DISPLAY XAUTHORITY XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP \
         XDG_SESSION_TYPE XDG_CONFIG_DIRS XDG_DATA_DIRS PATH
+      systemd-notify --ready
       appearance_marker="$HOME/.config/lab-desktop/appearance-v1"
       if [ ! -e "$appearance_marker" ]; then
         xfconf-query -c xsettings -p /Net/ThemeName -n -t string -s Adwaita-dark
@@ -140,8 +142,13 @@ in
     description = "Persistent lab Xfce desktop";
     wantedBy = [ "default.target" ];
     after = [ "dbus.service" ];
+    # xfce4-notifyd opens :2 as soon as it starts, so a switch that restarts
+    # both starts it only once the session reports Xvnc ready
+    before = [ "xfce4-notifyd.service" ];
     unitConfig.ConditionUser = "r3dlust";
     serviceConfig = {
+      Type = "notify";
+      NotifyAccess = "all";
       ExecStart = "${desktopSession}/bin/lab-desktop-session";
       RuntimeDirectory = "lab-desktop";
       RuntimeDirectoryMode = "0700";
