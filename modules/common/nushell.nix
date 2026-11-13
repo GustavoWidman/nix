@@ -6,32 +6,14 @@
 }:
 let
   inherit (lib)
-    getExe
-    mkIf
-    optionals
-    optionalAttrs
+    concatStringsSep
     enabled
-    concatMapStringsSep
+    getExe
+    mapAttrsToList
+    optionalAttrs
     ;
 
-  devIncludePackages = [
-    pkgs.krb5.dev
-    pkgs.openssl.dev
-    pkgs.freetds
-  ]
-  ++ optionals config.isDarwin [ pkgs.libiconv.dev ];
-
-  devLibraryPackages = [
-    pkgs.krb5.lib
-    pkgs.openssl.out
-    pkgs.freetds
-    pkgs.llvmPackages.libcxx
-  ]
-  ++ optionals config.isDarwin [ pkgs.libiconv ];
-
-  nushellPath = "${
-    if config.isDarwin then "Library/Application Support/nushell" else ".config/nushell"
-  }";
+  nushellPath = if config.isDarwin then "Library/Application Support/nushell" else ".config/nushell";
 in
 {
   environment =
@@ -39,8 +21,6 @@ in
       sessionVariables.SHELLS = getExe pkgs.nushell;
     }
     // {
-      shells = mkIf config.isDarwin [ pkgs.nushell ];
-
       systemPackages = [
         pkgs.carapace
         pkgs.inshellisense
@@ -51,32 +31,15 @@ in
         pkgs.zoxide
       ];
 
-      variables = mkIf config.isDev {
-        NIX_LDFLAGS = concatMapStringsSep " " (pkg: "-L${pkg}/lib") devLibraryPackages;
-        NIX_CFLAGS_COMPILE = concatMapStringsSep " " (pkg: "-isystem ${pkg}/include") devIncludePackages;
-
-        LDFLAGS = concatMapStringsSep " " (pkg: "-L${pkg}/lib") devLibraryPackages;
-        CPPFLAGS = concatMapStringsSep " " (pkg: "-I${pkg}/include") devIncludePackages;
-
-        LIBRARY_PATH = concatMapStringsSep ":" (pkg: "${pkg}/lib") devLibraryPackages;
-      };
-
       etc."environment" = {
         text =
           config.environment.variables
-          |> pkgs.lib.mapAttrsToList (key: value: "${key}=\"${value}\"")
-          |> pkgs.lib.concatStringsSep "\n";
+          |> mapAttrsToList (key: value: "${key}=\"${value}\"")
+          |> concatStringsSep "\n";
       };
     };
 
   home-manager.sharedModules = [
-    (mkIf config.isDarwin {
-      home.file."${nushellPath}/autoload" = {
-        source = ../macos/nushell;
-        recursive = true;
-        force = true;
-      };
-    })
     {
       home.file."${nushellPath}" = {
         source = ./nushell;
