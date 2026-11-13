@@ -84,6 +84,9 @@ in
 
       programs.nushell = enabled {
         package = pkgs.nushell;
+        # the config loads /etc/environment itself, and the loader would start
+        # bash on every shell to read the same variables again
+        loadSessionVariables = false;
 
         configFile.text = ''
           open /etc/environment | from toml | load-env
