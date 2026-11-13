@@ -8,7 +8,6 @@
 
 let
   kacheExe = "${config.services.kache.package}/bin/kache";
-  cargoTargetDir = "/mnt/encrypted/oracle/cargo-target";
   rustToolchain = fenix.packages.${config.metadata.architecture}.complete.withComponents [
     "cargo"
     "clippy"
@@ -48,7 +47,7 @@ in
 
   home-manager.sharedModules = [
     (
-      { config, osConfig, ... }:
+      { osConfig, ... }:
       {
         home.sessionVariables = {
           RUSTC_WRAPPER = kacheExe;
@@ -66,9 +65,6 @@ in
             [build]
             rustc-wrapper="${kacheExe}"
             incremental = false
-            ${lib.optionalString (osConfig.metadata.hostname == "lab") ''
-              target-dir = "${cargoTargetDir}/${config.home.username}"
-            ''}
           '';
           force = true;
         };
