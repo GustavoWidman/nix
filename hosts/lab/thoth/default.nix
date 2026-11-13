@@ -1,5 +1,7 @@
-{ config, ... }:
+{ config, thoth, ... }:
 {
+  imports = [ thoth.nixosModules.default ];
+
   secrets.thoth-config = {
     file = ./config.toml.age;
     owner = config.services.thoth.user;

@@ -1,5 +1,6 @@
 {
   config,
+  taproot,
   ...
 }:
 let
@@ -13,6 +14,8 @@ let
   cliproxyapiAuths = "/var/lib/cliproxyapi";
 in
 {
+  imports = [ taproot.nixosModules.default ];
+
   secrets.taproot-settings = {
     file = ./settings.yaml.age;
     mode = "400";

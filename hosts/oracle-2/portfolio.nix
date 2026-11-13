@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  portfolio,
   ...
 }:
 
@@ -32,6 +33,8 @@ let
     host: config.networking.certificates."${removePrefix "blog." (removePrefix "www." host)}".paths.caddy;
 in
 {
+  imports = [ portfolio.nixosModules.default ];
+
   # Static files served by Caddy from the package's generated snippet, which
   # also sets the security headers.
   services.portfolio = {

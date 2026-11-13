@@ -2,6 +2,8 @@
   config,
   lib,
   pkgs,
+  nixos-mailserver,
+  oxi,
   ...
 }:
 let
@@ -11,6 +13,11 @@ let
     ;
 in
 {
+  imports = [
+    nixos-mailserver.nixosModules.default
+    oxi.nixosModules.default
+  ];
+
   networking.certificates."mail.r3dlust.com" = {
     enable = true;
     group = "mail-certs";
