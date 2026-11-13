@@ -190,7 +190,7 @@ in
     networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ apiPort dashboardPort ];
     networking.firewall.interfaces.mem00.allowedTCPPorts = [
       11434
-      config.services.cliproxyapi.port
+      config.services.taproot.settings.server.port
     ];
   };
 }

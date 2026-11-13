@@ -112,7 +112,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    cliproxyapi.url = "github:GustavoWidman/nix-cliproxyapi";
+    # a release tag with taproot's own nixpkgs, which 265866.cachix.org builds
+    taproot.url = "github:265866/taproot/taproot-v0.7.0";
     coeus.url = "github:GustavoWidman/coeus";
     kache.url = "github:kunobi-ninja/kache";
 
