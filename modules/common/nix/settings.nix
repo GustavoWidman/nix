@@ -21,7 +21,9 @@ let
     id
     ;
 
-  registry = inputs |> filterAttrs (const <| isType "flake");
+  # the config's own source would make every commit a new generation on every
+  # machine, even one that touches a single host, and nothing looks it up
+  registry = removeAttrs inputs [ "self" ] |> filterAttrs (const <| isType "flake");
 
   settings =
     (import <| self + /flake.nix).nixConfig
