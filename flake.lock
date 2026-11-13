@@ -1111,11 +1111,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1765675949,
-        "narHash": "sha256-qkPvIyfB2RYginb+fuMWP+FdkqMkYQdcpZIRgrwrMfc=",
+        "lastModified": 1794579697,
+        "narHash": "sha256-SBNjz3Uk0oc50k3hNItHRNFvwffI3hFQa0QoWShxZ2g=",
         "owner": "GustavoWidman",
         "repo": "kemono-pinger",
-        "rev": "1e24df5a7f6b203a30119fd22bb69e9c819c7777",
+        "rev": "b5d2c7223b57f88efe8db4ac7b7defefd28a1959",
         "type": "github"
       },
       "original": {
@@ -1752,11 +1752,11 @@
         "systems": "systems_4"
       },
       "locked": {
-        "lastModified": 1794496461,
-        "narHash": "sha256-AiiVMkvO66gJr+3iCYCTzKzHN6MvWunzBcYVf0yTY0k=",
+        "lastModified": 1794585634,
+        "narHash": "sha256-JJ2ojOnB3KqfsYFMZiL42o3SML4Ged5d528XICN97YA=",
         "owner": "c0h1b4",
         "repo": "oxi",
-        "rev": "c65b045997d31c0822e22b6158e116aaa101171c",
+        "rev": "240143750d09480f45c8e068cd48e806c2ab315f",
         "type": "github"
       },
       "original": {
@@ -1865,11 +1865,11 @@
         "systems": "systems_7"
       },
       "locked": {
-        "lastModified": 1785608425,
-        "narHash": "sha256-oPTHe6BnM8KfZ66ByC0eCysGjXw4s5v11CCBL1dHd8w=",
+        "lastModified": 1794579727,
+        "narHash": "sha256-lmCik8SGwlbafQiCjhB6Wx6TU1p+MzVJ98vp0uGWMas=",
         "ref": "refs/heads/main",
-        "rev": "149f3ad6f0453caa3c17a774631fc2e168c2fbc4",
-        "revCount": 45,
+        "rev": "71602c36820018141292503b8292803e825a6195",
+        "revCount": 46,
         "type": "git",
         "url": "ssh://git@github.com/GustavoWidman/rocky-bot"
       },
@@ -2243,11 +2243,11 @@
         "systems": "systems_9"
       },
       "locked": {
-        "lastModified": 1790949533,
-        "narHash": "sha256-6pqCZYwBQ5crFY0+0ZYqCXu25Y+1suEwMaaRTpXkRDU=",
+        "lastModified": 1794603317,
+        "narHash": "sha256-WR6kaZwF5q39eoHD6krtlzgSfNU73XksIiiW9KvWGWk=",
         "ref": "refs/heads/main",
-        "rev": "fd1536c9ae33d59552d86ec8c395cd4dd331cf39",
-        "revCount": 327,
+        "rev": "1395acfa5aa9c06739cf7e371d0e6e064369fcf2",
+        "revCount": 328,
         "type": "git",
         "url": "ssh://git@github.com/GustavoWidman/thoth"
       },
