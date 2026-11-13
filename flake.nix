@@ -5,6 +5,7 @@
     extra-substituters = [
       "https://cache.nixos.org"
       "https://nix-community.cachix.org"
+      "https://265866.cachix.org"
       "https://install.determinate.systems"
       "https://cache.r3dlust.com"
     ];
@@ -14,6 +15,7 @@
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "cache.r3dlust.com-1:Wdkf9mes2ued0P7C7CL3Jax1b4KPuJwQpM3h4G/Z+yI="
+      "265866.cachix.org-1:KeHQ4qkDufShpWve8YcDhFsmWLEzMDrDoinVpahhBEc="
     ];
 
     experimental-features = [
