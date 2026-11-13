@@ -13,10 +13,6 @@ in
     users = [
       "caddy"
     ];
-
-    postRun = ''
-      systemctl reload-or-restart caddy.service
-    '';
   };
 
   services.tailscale.derper = enabled {

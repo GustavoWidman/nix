@@ -87,7 +87,7 @@ in
   options.networking.certificates = mkOption {
     type = attrsOf (
       submodule (
-        { name, ... }:
+        cert@{ name, ... }:
         {
           options = {
             enable = mkEnableOption "certificate generation for ${name}";
@@ -140,16 +140,11 @@ in
               description = "List of users who can access the certificate files. All users in this list will be added to the group specified in 'group', defaulting to 'acme'.";
             };
 
-            postRun = mkOption {
-              type = str;
-              default = "";
-              description = "Commands to run after certificate renewal";
-            };
-
             reloadServices = mkOption {
               type = listOf str;
-              default = [ ];
-              description = "The list of systemd services to call `systemctl try-reload-or-restart` on.";
+              default = cert.config.users |> map (user: "${user}.service");
+              defaultText = lib.literalExpression ''users |> map (user: "''${user}.service")'';
+              description = "The systemd services to `systemctl try-reload-or-restart` after a renewal. Every user in `users` runs a service of the same name that reads the certificate, so they default to those.";
             };
 
             paths = mkOption {
@@ -251,7 +246,6 @@ in
             environmentFile = certCfg.environmentFile;
             dnsResolver = certCfg.dnsResolver;
             group = certCfg.group;
-            postRun = certCfg.postRun;
             reloadServices = certCfg.reloadServices;
             extraDomainNames =
               ([ certCfg.wildcard ] |> filter id |> map (_: "*.${domain}")) ++ certCfg.extraDomainNames;

@@ -36,10 +36,6 @@ in
     users = [
       "caddy"
     ];
-
-    postRun = ''
-      systemctl reload-or-restart caddy.service
-    '';
   };
 
   services.caddy.virtualHosts."tailscale.r3dlust.com" = {

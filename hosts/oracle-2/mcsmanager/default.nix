@@ -44,10 +44,6 @@ in
     users = [
       "caddy"
     ];
-
-    postRun = ''
-      systemctl reload-or-restart caddy.service
-    '';
   };
 
   virtualisation.arion.projects.mcsmanager.settings = {
