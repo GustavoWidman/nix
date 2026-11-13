@@ -179,5 +179,10 @@
       inherit lib machineMetadata machineFlakes;
 
       coeus.clientConfig = lib.coeusClientConfig;
+
+      # vm tests of this repository's modules
+      checks = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ] (system: {
+        tailscale-certificate = nixpkgs.legacyPackages.${system}.testers.runNixOSTest ./tests/tailscale-certificate.nix;
+      });
     };
 }
