@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   niks3,
   pkgs,
   ...
@@ -56,8 +57,20 @@ in
   # the package must not follow system.stateVersion to a newer major
   services.postgresql.package = pkgs.postgresql_17;
 
-  # niks3 looks up GitHub's OIDC issuer as it starts and exits if that fails
-  systemd.services.niks3.after = [ "dnsproxy.service" ];
+  # niks3 fetches each OIDC issuer's configuration as it starts and exits if
+  # that fails, so it waits for them to answer: a switch restarts it while the
+  # network and the resolver restart too
+  systemd.services.niks3.serviceConfig.ExecStartPre =
+    let
+      issuers = lib.mapAttrsToList (_: provider: provider.issuer) config.services.niks3.oidc.providers;
+    in
+    pkgs.writeShellScript "niks3-wait-for-issuers" ''
+      for issuer in ${lib.escapeShellArgs issuers}; do
+        until ${lib.getExe pkgs.curl} -sfo /dev/null --max-time 5 "$issuer/.well-known/openid-configuration"; do
+          sleep 1
+        done
+      done
+    '';
 
   services.niks3 = {
     enable = true;
