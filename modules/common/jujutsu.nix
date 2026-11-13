@@ -8,10 +8,10 @@ let
   inherit (lib) enabled;
 in
 {
-  environment.systemPackages = with pkgs; [
-    mergiraf
-    difftastic
-    jjui
+  environment.systemPackages = [
+    pkgs.mergiraf
+    pkgs.difftastic
+    pkgs.jjui
   ];
 
   home-manager.sharedModules = [
