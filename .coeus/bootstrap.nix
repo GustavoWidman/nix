@@ -74,8 +74,8 @@ let
       keys.all
     else if startsWith "modules/desktop/" path then
       unique (keys.desktop ++ keys.admins)
-      else if startsWith "modules/dev/" path then
-        unique (keys.dev ++ keys.admins)
+    else if startsWith "modules/dev/" path then
+      unique (keys.dev ++ keys.admins)
     else if startsWith "modules/linux/" path then
       unique (keys.linux ++ keys.admins)
     else if startsWith "modules/macos/" path then
