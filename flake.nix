@@ -132,50 +132,24 @@
   outputs =
     inputs@{ nixpkgs, nix-darwin, ... }:
     let
-      inherit (builtins) readDir;
       inherit (nixpkgs.lib)
-        attrsToList
         const
-        groupBy
-        listToAttrs
+        filterAttrs
         mapAttrs
-        nameValuePair
         ;
 
       lib = (nixpkgs.lib.extend (const <| const <| nix-darwin.lib)).extend <| import ./lib inputs;
 
-      machineFlakes =
-        readDir ./hosts
-        |> mapAttrs (name: const <| (import ./hosts/${name}/flake.nix (inputs // { inherit lib; })));
-
       machineMetadata = lib.fleet;
-
-      hostsByType =
-        machineFlakes
-        |> mapAttrs (
-          name: flake:
-          (flake.outputs.config flake.inputs)
-          // {
-            inherit (flake.outputs) metadata;
-          }
-        )
-        |> attrsToList
-        |> groupBy (
-          { value, ... }:
-          if value.metadata.class == "nixos" then "nixosConfigurations" else "darwinConfigurations"
-        )
-        |> mapAttrs (const listToAttrs);
-
-      hostConfigs =
-        hostsByType.darwinConfigurations // hostsByType.nixosConfigurations
-        |> attrsToList
-        |> map ({ name, value }: nameValuePair name value.config)
-        |> listToAttrs;
+      systems = machineMetadata |> mapAttrs (name: _: lib.mkSystem inputs name);
+      systemsOf = class: systems |> filterAttrs (name: _: machineMetadata.${name}.class == class);
     in
-    hostsByType
-    // hostConfigs
+    mapAttrs (_: system: system.config) systems
     // {
-      inherit lib machineMetadata machineFlakes;
+      nixosConfigurations = systemsOf "nixos";
+      darwinConfigurations = systemsOf "darwin";
+
+      inherit lib machineMetadata;
 
       coeus.clientConfig = lib.coeusClientConfig;
 

@@ -1,62 +1,33 @@
-parent:
-let
+{
   metadata = {
     hostname = "lab";
     class = "nixos";
     type = "dev-server";
     architecture = "x86_64-linux";
     admin = true;
-    build-architectures = [
-      metadata.architecture
-    ];
+    build-architectures = [ "x86_64-linux" ];
   };
-in
-{
-  inputs = parent;
 
-  outputs = {
-    inherit metadata;
+  module =
+    { config, ... }:
+    {
+      secrets.password.file = ./password.age;
+      users.users.r3dlust.authorizedKey = config.secrets.ssh-main-lab.path;
 
-    config =
-      inputs@{
-        ...
-      }:
-      inputs.lib.mkSystem inputs metadata (
-        {
-          config,
-          lib,
-          ...
-        }:
-        let
-          inherit (lib) collectNix remove;
+      time.timeZone = "America/Sao_Paulo";
+      system.stateVersion = "25.05";
 
-          extra-platforms = metadata.build-architectures |> remove metadata.architecture;
-        in
-        {
-          inherit metadata;
+      # lab builds only for its own architecture; unset, nix would add
+      # i686-linux and the x86_64 microarchitecture levels
+      nix.settings.extra-platforms = [ ];
 
-          imports = collectNix ./. |> remove ./flake.nix;
+      services.netbird.enable = true;
 
-          networking.hostName = metadata.hostname;
-          nixpkgs.hostPlatform = metadata.architecture;
-
-          secrets.password.file = ./password.age;
-          users.users.r3dlust.authorizedKey = config.secrets.ssh-main-lab.path;
-
-          time.timeZone = "America/Sao_Paulo";
-          system.stateVersion = "25.05";
-
-          nix.settings.extra-platforms = extra-platforms;
-
-          services.netbird.enable = true;
-
-          tailscale = {
-            exit-node = true;
-            advertise-routes = [
-              "192.168.101.0/24"
-            ];
-          };
-        }
-      );
-  };
+      tailscale = {
+        exit-node = true;
+        advertise-routes = [
+          "192.168.101.0/24"
+        ];
+      };
+    };
 }

@@ -1,58 +1,29 @@
-parent:
-let
+{
   metadata = {
     hostname = "oracle-2";
     class = "nixos";
     type = "server";
     architecture = "aarch64-linux";
-    build-architectures = [
-      metadata.architecture
-    ];
+    build-architectures = [ "aarch64-linux" ];
   };
-in
-{
-  inputs = parent;
 
-  outputs = {
-    inherit metadata;
+  module =
+    { config, ... }:
+    {
+      secrets.password.file = ./password.age;
+      users.users.r3dlust.authorizedKey = config.secrets.ssh-oracle-oracle-2.path;
 
-    config =
-      inputs@{
-        ...
-      }:
-      inputs.lib.mkSystem inputs metadata (
-        {
-          config,
-          lib,
-          ...
-        }:
-        let
-          inherit (lib) collectNix remove;
-        in
-        {
-          inherit metadata;
+      time.timeZone = "America/Sao_Paulo";
+      system.stateVersion = "25.05";
 
-          imports = collectNix ./. |> remove ./flake.nix;
+      networking.firewall = {
+        allowedTCPPorts = [
+          80
+          443
+        ];
+        allowedUDPPorts = [ 443 ];
+      };
 
-          networking.hostName = metadata.hostname;
-          nixpkgs.hostPlatform = metadata.architecture;
-
-          secrets.password.file = ./password.age;
-          users.users.r3dlust.authorizedKey = config.secrets.ssh-oracle-oracle-2.path;
-
-          time.timeZone = "America/Sao_Paulo";
-          system.stateVersion = "25.05";
-
-          networking.firewall = {
-            allowedTCPPorts = [
-              80
-              443
-            ];
-            allowedUDPPorts = [ 443 ];
-          };
-
-          tailscale.exit-node = true;
-        }
-      );
-  };
+      tailscale.exit-node = true;
+    };
 }

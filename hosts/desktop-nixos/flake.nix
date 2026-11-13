@@ -1,5 +1,4 @@
-parent:
-let
+{
   metadata = {
     hostname = "desktop-nixos";
     class = "nixos";
@@ -8,46 +7,19 @@ let
     admin = true;
     build-architectures = [ ]; # no builds, not always on
   };
-in
-{
-  inputs = parent;
 
-  outputs = {
-    inherit metadata;
+  module =
+    { config, pkgs, ... }:
+    {
+      users.users.r3dlust.authorizedKey = config.secrets.ssh-main-desktop.path;
+      secrets.password.file = ./password.age;
 
-    config =
-      inputs@{
-        ...
-      }:
-      inputs.lib.mkSystem inputs metadata (
-        {
-          config,
-          pkgs,
-          lib,
-          ...
-        }:
-        let
-          inherit (lib) collectNix remove;
-        in
-        {
-          inherit metadata;
+      time.timeZone = "America/Sao_Paulo";
+      system.stateVersion = "25.11";
 
-          imports = collectNix ./. |> remove ./flake.nix;
-
-          networking.hostName = metadata.hostname;
-          nixpkgs.hostPlatform = metadata.architecture;
-
-          users.users.r3dlust.authorizedKey = config.secrets.ssh-main-desktop.path;
-          secrets.password.file = ./password.age;
-
-          time.timeZone = "America/Sao_Paulo";
-          system.stateVersion = "25.11";
-
-          networking.networkmanager.enable = true;
-          environment.systemPackages = [
-            pkgs.sbctl
-          ];
-        }
-      );
-  };
+      networking.networkmanager.enable = true;
+      environment.systemPackages = [
+        pkgs.sbctl
+      ];
+    };
 }
