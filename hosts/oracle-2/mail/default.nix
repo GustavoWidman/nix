@@ -34,7 +34,7 @@ in
   };
 
   mailserver = enabled {
-    stateVersion = 3;
+    stateVersion = 5;
     fqdn = "mail.r3dlust.com";
     domains = [ "r3dlust.com" ];
 
