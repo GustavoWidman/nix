@@ -26,7 +26,7 @@ let
   machine =
     name:
     let
-      metadata = (import ./hosts/${name}/flake.nix { }).outputs.metadata;
+      metadata = (import ./hosts/${name}/flake.nix).metadata;
     in
     metadata
     // {

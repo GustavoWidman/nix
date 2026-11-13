@@ -6,6 +6,7 @@ let
     filter
     getAttrFromPath
     hasAttrByPath
+    remove
     ;
 
   # a machine that runs another input's service imports that module itself
@@ -66,10 +67,11 @@ let
   };
 in
 {
-  # the system of a machine of the fleet, from its metadata and its module
   mkSystem =
-    inputs: metadata: module:
+    inputs: name:
     let
+      host = import ../hosts/${name}/flake.nix;
+      inherit (host) metadata;
       class = classes.${metadata.class};
       inputModules = [
         class.inputModules
@@ -85,7 +87,13 @@ in
       };
 
       modules = [
-        module
+        host.module
+        {
+          inherit metadata;
+          imports = collectNix ../hosts/${name} |> remove ../hosts/${name}/flake.nix;
+          networking.hostName = metadata.hostname;
+          nixpkgs.hostPlatform = metadata.architecture;
+        }
         { nixpkgs.overlays = map (input: inputs.${input}.overlays.default) fleetOverlays; }
       ]
       ++ concatMap (directory: collectNix ../modules/${directory}) (
