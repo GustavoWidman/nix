@@ -17,11 +17,6 @@ in
       "adguardhome"
       "caddy"
     ];
-
-    postRun = ''
-      systemctl reload-or-restart adguardhome.service
-      systemctl reload-or-restart caddy.service
-    '';
   };
 
   services.caddy = {
