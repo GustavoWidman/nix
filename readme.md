@@ -169,17 +169,19 @@ shape. in practice `coeus bootstrap` writes those 20 lines for me.
 
 ## secrets
 
-secrets are handled by `agenix`, and nobody writes keys or rules by hand:
-each machine's ssh host key sits in `hosts/<name>/host.pub`, and `keys.nix`
-builds the recipient groups (`admins`, `linux`, `darwin`, `server`, `dev`,
+secrets are handled by `agenix`, and nobody writes keys or rules by hand: each
+machine's ssh host key sits in `hosts/<name>/host.pub`, and `keys.nix` builds
+the recipient groups (`admins`, `linux`, `darwin`, `desktop`, `dev`, `server`,
 `all`) from host metadata. a machine with `admin = true;` opens every secret.
 
 who opens a secret depends on where it lives, and `recipients` in
 `.coeus/bootstrap.nix` spells it out: `hosts/<name>/` is that machine plus the
-admins, `modules/common/` is everyone, `modules/linux/` and `modules/server/`
-are those machines plus the admins. `secrets.nix` is just that function applied
-to every `.age` file on disk, so `agenix -e` works as usual. a brand new secret
-needs its file before its rule:
+admins, `modules/common/` is everyone, and every other module directory is the
+machines that import it plus the admins: `modules/linux/` and `modules/macos/`
+go by platform, `modules/desktop/` to desktops, `modules/dev/` to desktops and
+dev servers, `modules/server/` to servers and dev servers. `secrets.nix` is
+just that function applied to every `.age` file on disk, so `agenix -e` works
+as usual. a brand new secret needs its file before its rule:
 
 ```bash
 touch hosts/lab/new.age && agenix -e hosts/lab/new.age < plaintext
