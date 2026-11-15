@@ -304,8 +304,10 @@ after. on a server, `sudo norn report` prints the plan by hand and
 this repository pulls in a bunch of project and tool flakes directly from
 github, including `coeus`, `norn`, `heimdall`, `thoth`, `rocky-bot`,
 `kemono-pinger`, `portfolio`, `oxi`, `niks3`, `kache`, `taproot`, `copyparty`,
-and a custom autobuild of `zed`. each one's module is imported only by the machine that runs
-it; `lib/system.nix` lists the few every machine gets.
+`upstreamer`, and a custom autobuild of `zed`. each one's module is imported only
+by the machine that runs it; `lib/system.nix` lists the few every machine gets,
+and `modules/server/upstreamer.nix` gives every server upstreamer, the reverse
+proxy in front of all their sites.
 
 nix builds what it needs, caches what it can, and still occasionally finds a way
 to make me stare at a terminal for 40 minutes. tradition matters.
