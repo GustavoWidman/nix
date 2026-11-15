@@ -93,7 +93,8 @@ in
 
             email = mkOption {
               type = str;
-              default = "admin@r3dlust.com";
+              default = config.security.acme.defaults.email;
+              defaultText = lib.literalExpression "config.security.acme.defaults.email";
               description = "Email for ACME registration";
             };
 
@@ -233,7 +234,7 @@ in
         environmentFile = config.secrets.acme-environment.path;
         dnsProvider = "cloudflare";
         dnsResolver = "1.1.1.1:53";
-        email = "security@${config.networking.domain}";
+        email = "admin@${config.networking.domain}";
       };
 
       certs =
