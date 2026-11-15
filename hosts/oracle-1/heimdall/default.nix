@@ -7,23 +7,16 @@ in
 
   cloudflare.dns.${domain}.a.proxied = true;
 
-  networking.certificates.${domain} = {
-    enable = true;
-    group = "dns-certs";
-    users = [ "caddy" ];
-  };
-
   # Holds the argon2id hash of the password, read as root by systemd and handed to the
   # service as a credential.
   secrets.heimdall-password.file = ./password.age;
 
-  # Caddy serves the web app from its files and proxies /api to heimdall.
+  # upstreamer serves the web app from its files and proxies /api to heimdall, over TLS
+  # with a certificate named after the host.
   services.heimdall = {
     enable = true;
+    proxy = "upstreamer";
     virtualHost = domain;
     passwordHashFile = config.secrets.heimdall-password.path;
   };
-
-  services.caddy.virtualHosts.${domain}.extraConfig =
-    config.networking.certificates.${domain}.paths.caddy;
 }

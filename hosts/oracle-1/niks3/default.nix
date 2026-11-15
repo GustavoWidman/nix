@@ -18,20 +18,6 @@ in
     ${s3Url}.a = { };
   };
 
-  networking.certificates.${url} = {
-    enable = true;
-    group = "dns-certs";
-    users = [
-      "caddy"
-    ];
-  };
-
-  networking.certificates.${s3Url} = {
-    enable = true;
-    group = "dns-certs";
-    users = [ "caddy" ];
-  };
-
   secrets = {
     cache-token = {
       owner = config.services.niks3.user;
@@ -143,59 +129,64 @@ in
     };
   };
 
-  services.caddy= {
-    enable = true;
-    virtualHosts.${s3Url}.extraConfig = ''
-      ${config.networking.certificates.${s3Url}.paths.caddy}
-
-      # Preserve the signed Host, path, and query; never strip the bucket prefix.
-      @cacheBucket path /${bucket} /${bucket}/*
-      handle @cacheBucket {
-        reverse_proxy ${config.services.niks3.s3.endpoint} {
-          transport http {
-            dial_timeout 5s
-            response_header_timeout 300s
-            keepalive 2m
-          }
-        }
+  services.upstreamer.virtualHosts = {
+    # Preserve the signed Host, path, and query; never strip the bucket prefix.
+    ${s3Url}.routes = [
+      {
+        when.path = [
+          "/${bucket}"
+          "/${bucket}/*"
+        ];
+        proxy = {
+          to = config.services.niks3.s3.endpoint;
+          timeouts = {
+            dial = "5s";
+            responseHeader = "300s";
+            idle = "2m";
+          };
+        };
       }
-
-      handle {
-        respond "Not found" 404
+      {
+        respond = {
+          status = 404;
+          body = "Not found";
+        };
       }
-    '';
-    virtualHosts.${url} = {
-      extraConfig = ''
-        ${config.networking.certificates.${url}.paths.caddy}
+    ];
 
-        # reads are one S3 object each, which answers within seconds, even
-        # from a disk spinning up; without the storage they would wait out
-        # the timeout, so they get a short one. /api/ is uploads and admin,
-        # which may check a whole closure before answering.
-        @reads {
-          method GET HEAD
-          not path /api/*
-        }
-        handle @reads {
-          reverse_proxy ${config.services.niks3.httpAddr} {
-            transport http {
-              dial_timeout 5s
-              response_header_timeout 15s
-              keepalive 2m
-            }
-          }
-        }
-
-        handle {
-          reverse_proxy ${config.services.niks3.httpAddr} {
-            transport http {
-              dial_timeout 5s
-              response_header_timeout 60s
-              keepalive 2m
-            }
-          }
-        }
-      '';
-    };
+    # reads are one S3 object each, which answers within seconds, even from a
+    # disk spinning up; without the storage they would wait out the timeout,
+    # so they get a short one. /api/ is uploads and admin, which may check a
+    # whole closure before answering.
+    ${url}.routes = [
+      {
+        name = "reads";
+        when = {
+          method = [
+            "GET"
+            "HEAD"
+          ];
+          none = [ { path = "/api/*"; } ];
+        };
+        proxy = {
+          to = "http://${config.services.niks3.httpAddr}";
+          timeouts = {
+            dial = "5s";
+            responseHeader = "15s";
+            idle = "2m";
+          };
+        };
+      }
+      {
+        proxy = {
+          to = "http://${config.services.niks3.httpAddr}";
+          timeouts = {
+            dial = "5s";
+            responseHeader = "60s";
+            idle = "2m";
+          };
+        };
+      }
+    ];
   };
 }
