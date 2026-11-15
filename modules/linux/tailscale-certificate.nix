@@ -62,7 +62,7 @@ in
     reloadServices = mkOption {
       type = types.listOf types.str;
       default = [ ];
-      example = [ "caddy" ];
+      example = [ "upstreamer" ];
       description = "Services that read the certificate: they join `group`, start after tailscale-cert, and get `systemctl try-reload-or-restart` when the certificate changes.";
     };
 
@@ -73,9 +73,8 @@ in
         # the certificate and its chain
         cert = "${dir}/cert.pem";
         key = "${dir}/key.pem";
-        caddy = "tls ${dir}/cert.pem ${dir}/key.pem";
       };
-      description = "Where the certificate is: `cert` (with its chain), `key`, and `caddy`, a caddy tls directive.";
+      description = "Where the certificate is: `cert` (with its chain) and `key`.";
     };
   };
 

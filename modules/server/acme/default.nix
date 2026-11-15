@@ -48,16 +48,13 @@ let
 
   getGroupedUserAssignments = getUserGroupAssignments |> groupBy (assignment: assignment.user);
 
-  # Certificates Caddy reads, by domain.
-  caddyCertificates =
-    enabledCertificates |> filterAttrs (domain: certCfg: lib.elem "caddy" certCfg.users) |> lib.attrNames;
-
-  # A switch reloads the units that already run before it starts new ones, so Caddy
-  # reloads into a config naming a new certificate before acme-<domain>.service has
-  # written even its placeholder, and the reload fails. Activation runs before both, so it
-  # writes a one-day self-signed placeholder for every certificate that has no files yet.
-  # acme-<domain>.service replaces it, and lego still orders the real certificate: it
-  # tracks its own state, not these files.
+  # The services that read these certificates (AdGuard Home, Dovecot) fail to start
+  # without the files, and a switch can start or restart them before
+  # acme-<domain>.service has written even its self-signed placeholder. Activation runs
+  # before both, so it writes a one-day self-signed placeholder for every certificate that
+  # has no files yet. acme-<domain>.service replaces it, and lego still orders the real
+  # certificate: it tracks its own state, not these files. upstreamer needs none: it
+  # answers with its own self-signed certificate until the files exist.
   placeholderScript =
     enabledCertificates
     |> mapAttrsToList (
@@ -177,13 +174,6 @@ in
                     readOnly = true;
                     description = "Path to full certificate (cert + key)";
                   };
-
-                  caddy = mkOption {
-                    type = str;
-                    default = "tls /var/lib/acme/${name}/cert.pem /var/lib/acme/${name}/key.pem";
-                    readOnly = true;
-                    description = "Pre-formatted Caddy TLS directive";
-                  };
                 };
               };
               default = { };
@@ -195,7 +185,11 @@ in
       )
     );
     default = { };
-    description = "Certificate configurations";
+    description = ''
+      ACME certificates that services other than upstreamer read. upstreamer's virtual hosts
+      declare their own certificates; one it shares with another service is declared here, and
+      upstreamer joins its group and its reloadServices.
+    '';
   };
 
   config = {
@@ -219,12 +213,6 @@ in
         "groups"
       ];
       text = placeholderScript;
-    };
-
-    # On boot, start Caddy once its certificates exist, as useACMEHost would.
-    systemd.services.caddy = lib.mkIf (caddyCertificates != [ ]) {
-      wants = caddyCertificates |> map (domain: "acme-${domain}.service");
-      after = caddyCertificates |> map (domain: "acme-${domain}.service");
     };
 
     security.acme = {
