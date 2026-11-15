@@ -16,14 +16,6 @@ in
 
   cloudflare.dns."files.r3dlust.com".a.proxied = true;
 
-  networking.certificates."files.r3dlust.com" = {
-    enable = true;
-    group = "caddy-certs";
-    users = [
-      "caddy"
-    ];
-  };
-
   secrets.copyparty-password = {
     file = ./password.age;
     owner = config.services.copyparty.user;
@@ -87,7 +79,7 @@ in
       theme = 2; # Flat pm-monokai theme (modern dark theme)
       grid = true; # Default to grid view for images
 
-      # Reverse proxy settings (for Caddy)
+      # Reverse proxy settings (for upstreamer)
       xff-src = "127.0.0.1"; # Trust X-Forwarded-For from localhost
       xff-hdr = "X-Forwarded-For";
       rproxy = 1; # Running behind reverse proxy
@@ -99,7 +91,7 @@ in
       ban-pw = "24,9,3600"; # Ban after 9 failed password attempts in 1 hour for 24 hours
       ah-alg = "argon2"; # Enable password hashing
       ah-salt = "a5knE+xT1x5dWZJBODb+eRZp";
-      http-only = true; # Configure HTTPs in Caddy
+      http-only = true; # HTTPS is upstreamer's
 
       # Enable shares feature for per-file sharing
       shr = "/shares"; # Virtual folder for temporary shares
@@ -180,11 +172,5 @@ in
     };
   };
 
-  services.caddy.virtualHosts."files.r3dlust.com".extraConfig = ''
-    ${config.networking.certificates."files.r3dlust.com".paths.caddy}
-
-    reverse_proxy /* {
-      to http://127.0.0.1:46971
-    }
-  '';
+  services.upstreamer.virtualHosts."files.r3dlust.com".proxy = "http://127.0.0.1:46971";
 }

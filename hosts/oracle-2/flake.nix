@@ -16,13 +16,8 @@
       time.timeZone = "America/Sao_Paulo";
       system.stateVersion = "26.11";
 
-      networking.firewall = {
-        allowedTCPPorts = [
-          80
-          443
-        ];
-        allowedUDPPorts = [ 443 ];
-      };
+      # opens tcp 80 and 443 and udp 443 for its virtual hosts
+      services.upstreamer.enable = true;
 
       tailscale.exit-node = true;
     };

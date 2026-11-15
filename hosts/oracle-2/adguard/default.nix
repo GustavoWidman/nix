@@ -15,34 +15,17 @@ in
   networking.certificates."dns.r3dlust.com" = {
     enable = true;
     group = "dns-certs";
-    users = [
-      "adguardhome"
-      "caddy"
-    ];
+    users = [ "adguardhome" ];
   };
 
-  services.caddy = {
-    enable = true;
-    virtualHosts."dns.r3dlust.com" = {
-      extraConfig = ''
-        ${config.networking.certificates."dns.r3dlust.com".paths.caddy}
-
-        reverse_proxy /* {
-          to https://127.0.0.1:3443
-
-          transport http {
-            tls_insecure_skip_verify
-          }
-
-          header_up Host {host}
-          header_up X-Real-IP {remote_host}
-          header_up X-Forwarded-For {remote_host}
-          header_up X-Forwarded-Proto {scheme}
-
-          header_up X-Original-IP {remote_host}
-          header_up CF-Connecting-IP {remote_host}
-        }
-      '';
+  # Host, X-Forwarded-For and X-Forwarded-Proto are the proxy's defaults.
+  services.upstreamer.virtualHosts."dns.r3dlust.com".proxy = {
+    to = "https://127.0.0.1:3443";
+    tlsSkipVerify = true;
+    headers = {
+      X-Real-IP = "{remote_host}";
+      X-Original-IP = "{remote_host}";
+      CF-Connecting-IP = "{remote_host}";
     };
   };
 
@@ -55,7 +38,7 @@ in
       dns = {
         # i'd like to be able to specify what host i want to bind each port in
         # i don't like binding 3443 to 0.0.0.0, i'd like to have
-        # 127.0.0.0.1:3443 -> 0.0.0.0:443 (via caddy)
+        # 127.0.0.0.1:3443 -> 0.0.0.0:443 (via upstreamer)
         # 0.0.0.0:853 (DNS over TLS, exposed)
         # but... it's whatever, the firewall holds it, i guess.
 
@@ -145,10 +128,7 @@ in
   };
 
   networking.firewall = {
-    allowedTCPPorts = [
-      443
-      853
-    ];
+    allowedTCPPorts = [ 853 ];
     allowedUDPPorts = [ 853 ];
   };
 }

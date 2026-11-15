@@ -38,12 +38,10 @@ in
     ];
   };
 
+  # Dovecot and Postfix read it too.
   networking.certificates."mail.r3dlust.com" = {
     enable = true;
     group = "mail-certs";
-    users = [
-      "caddy"
-    ];
   };
 
   secrets = {
@@ -154,17 +152,12 @@ in
     };
   };
 
-  services.caddy.virtualHosts."mail.r3dlust.com" = {
-    extraConfig = ''
-      ${config.networking.certificates."mail.r3dlust.com".paths.caddy}
-
-      header {
-        X-Content-Type-Options nosniff
-        X-Frame-Options SAMEORIGIN
-        Referrer-Policy same-origin
-      }
-
-      reverse_proxy http://127.0.0.1:${toString config.services.oxi.port}
-    '';
+  services.upstreamer.virtualHosts."mail.r3dlust.com" = {
+    headers = {
+      X-Content-Type-Options = "nosniff";
+      X-Frame-Options = "SAMEORIGIN";
+      Referrer-Policy = "same-origin";
+    };
+    proxy = "http://127.0.0.1:${toString config.services.oxi.port}";
   };
 }
