@@ -175,22 +175,28 @@ in
     };
   };
 
-  services.caddy = {
+  services.upstreamer = {
     enable = true;
-    # Bind before Tailscale assigns its address; the firewall limits ingress.
-    virtualHosts."http://:80".extraConfig = ''
-      bind 0.0.0.0
-      @root path /
-      redir @root /vnc.html?autoconnect=1&resize=scale 302
-      reverse_proxy 127.0.0.1:6080
-    '';
-  };
-  systemd.services.caddy = {
-    unitConfig.StartLimitIntervalSec = lib.mkForce 0;
-    serviceConfig = {
-      Restart = lib.mkForce "on-failure";
-      RestartPreventExitStatus = lib.mkForce "";
+    # Bind before Tailscale assigns its address; the firewall limits ingress,
+    # on tailscale0 only.
+    listen.addresses = [ "0.0.0.0" ];
+    openFirewall = false;
+    virtualHosts.desktop = {
+      serverName = "*";
+      tls.enable = false;
+      routes = [
+        {
+          when.path = "/";
+          redirect = {
+            to = "/vnc.html?autoconnect=1&resize=scale";
+            status = 302;
+          };
+        }
+        { proxy = "http://127.0.0.1:6080"; }
+      ];
     };
+  };
+  systemd.services.upstreamer = {
     after = [
       "tailscaled.service"
       "lab-desktop-novnc.service"
