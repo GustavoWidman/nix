@@ -9,35 +9,19 @@ in
 {
   cloudflare.dns.${domain}.a = { };
 
-  networking.certificates."${domain}" = {
-    enable = true;
-    group = "caddy-certs";
-    users = [
-      "caddy"
-    ];
-  };
-
   services.tailscale.derper = enabled {
     port = 48822;
     domain = "derp.r3dlust.com";
     openFirewall = false;
     verifyClients = true;
-    configureNginx = false; # we use caddy in this house
+    configureNginx = false; # we use upstreamer in this house
   };
 
-  services.caddy.virtualHosts."${domain}" = {
-    extraConfig = ''
-      ${config.networking.certificates."${domain}".paths.caddy}
-
-      reverse_proxy localhost:${toString config.services.tailscale.derper.port} {
-        flush_interval -1
-
-        transport http {
-          read_timeout 3600s
-          write_timeout 3600s
-        }
-      }
-    '';
+  # The proxy writes each response chunk as it arrives. A DERP connection that
+  # carries nothing either way for an hour is closed.
+  services.upstreamer.virtualHosts.${domain}.proxy = {
+    to = "http://127.0.0.1:${toString config.services.tailscale.derper.port}";
+    timeouts.tunnelIdle = "3600s";
   };
 
   networking.firewall.allowPing = true;

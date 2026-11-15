@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   portfolio,
   ...
@@ -17,28 +16,15 @@ let
     "guswid.com"
     "r3dlust.com"
   ];
-
-  mkCertConfig = domain: {
-    enable = true;
-    group = "caddy-certs";
-    extraDomainNames = [
-      "www.${domain}"
-      "blog.${domain}"
-    ];
-    users = [ "caddy" ];
-  };
-
-  # Every host uses the certificate of its registrable domain.
-  tlsFor =
-    host: config.networking.certificates."${removePrefix "blog." (removePrefix "www." host)}".paths.caddy;
 in
 {
   imports = [ portfolio.nixosModules.default ];
 
-  # Static files served by Caddy from the package's generated snippet, which
-  # also sets the security headers.
+  # Static files, routed by the fragments the package generates, which also
+  # set the security headers.
   services.portfolio = {
     enable = true;
+    proxy = "upstreamer";
     domains = concatMap (d: [
       d
       "www.${d}"
@@ -57,16 +43,15 @@ in
     }) domains
   );
 
-  networking.certificates = genAttrs domains mkCertConfig;
-
-  services.caddy.virtualHosts =
+  # Every host uses the certificate of its registrable domain, which then
+  # covers its www. and blog. names.
+  services.upstreamer.virtualHosts =
     genAttrs
       (concatMap (d: [
-        d
         "www.${d}"
         "blog.${d}"
       ]) domains)
       (host: {
-        extraConfig = tlsFor host;
+        tls.acmeCert = removePrefix "blog." (removePrefix "www." host);
       });
 }

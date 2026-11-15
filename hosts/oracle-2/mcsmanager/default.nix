@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 let
   # The upstream 10.21.2 images still contain Node 24.22.0/20.x.
@@ -41,14 +41,6 @@ in
   cloudflare.dns = {
     "minecraft.r3dlust.com".a = { };
     "realms.r3dlust.com".a = { };
-  };
-
-  networking.certificates."minecraft.r3dlust.com" = {
-    enable = true;
-    group = "caddy-certs";
-    users = [
-      "caddy"
-    ];
   };
 
   virtualisation.arion.projects.mcsmanager.settings = {
@@ -113,19 +105,14 @@ in
     ];
   };
 
-  services.caddy.virtualHosts."minecraft.r3dlust.com" = {
-    extraConfig = ''
-      ${config.networking.certificates."minecraft.r3dlust.com".paths.caddy}
-
-      handle_path /daemon/* {
-        reverse_proxy http://127.0.0.1:52930
-      }
-
-      handle {
-        reverse_proxy /* {
-          to http://127.0.0.1:27613
-        }
-      }
-    '';
-  };
+  services.upstreamer.virtualHosts."minecraft.r3dlust.com".routes = [
+    {
+      when.path = "/daemon/*";
+      routes = [
+        { stripPrefix = "/daemon"; }
+        { proxy = "http://127.0.0.1:52930"; }
+      ];
+    }
+    { proxy = "http://127.0.0.1:27613"; }
+  ];
 }

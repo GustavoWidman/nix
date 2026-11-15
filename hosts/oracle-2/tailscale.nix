@@ -1,8 +1,4 @@
-{
-  pkgs,
-  config,
-  ...
-}:
+{ pkgs, ... }:
 let
   proxyt = pkgs.buildGoModule {
     name = "proxyt";
@@ -32,29 +28,13 @@ in
 
   cloudflare.dns."tailscale.r3dlust.com".a.proxied = true;
 
-  networking.certificates."tailscale.r3dlust.com" = {
-    enable = true;
-    group = "caddy-certs";
-    users = [
-      "caddy"
-    ];
-  };
-
-  services.caddy.virtualHosts."tailscale.r3dlust.com" = {
-    extraConfig = ''
-      ${config.networking.certificates."tailscale.r3dlust.com".paths.caddy}
-
-      reverse_proxy /* {
-        to http://127.0.0.1:59553
-
-        header_up Host {host}
-        header_up X-Real-IP {remote_host}
-        header_up X-Forwarded-For {remote_host}
-        header_up X-Forwarded-Proto {scheme}
-
-        header_up X-Original-IP {remote_host}
-        header_up CF-Connecting-IP {remote_host}
-      }
-    '';
+  # Host, X-Forwarded-For and X-Forwarded-Proto are the proxy's defaults.
+  services.upstreamer.virtualHosts."tailscale.r3dlust.com".proxy = {
+    to = "http://127.0.0.1:59553";
+    headers = {
+      X-Real-IP = "{remote_host}";
+      X-Original-IP = "{remote_host}";
+      CF-Connecting-IP = "{remote_host}";
+    };
   };
 }
