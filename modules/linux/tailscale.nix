@@ -21,6 +21,17 @@ in
     };
     extraUpFlags = cfg.join-flags;
     extraSetFlags = cfg.up-flags;
-    useRoutingFeatures = mkIf (cfg.exit-node || length cfg.advertise-routes > 0) "server";
+    useRoutingFeatures =
+      let
+        serves = cfg.exit-node || length cfg.advertise-routes > 0;
+      in
+      if serves && cfg.accept-routes then
+        "both"
+      else if serves then
+        "server"
+      else if cfg.accept-routes then
+        "client"
+      else
+        "none";
   };
 }

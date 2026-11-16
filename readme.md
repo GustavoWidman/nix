@@ -79,7 +79,8 @@ every machine reaches the tailnet without a click, as `tag:fleet`. the key in
 secret of a tailscale oauth client allowed to write auth keys for that tag: it
 never expires, and a machine it signs in joins preauthorized, owned by the tag
 rather than a person, with key expiry off. `tailscale.enable` (with
-`tailscale.exit-node`, `tailscale.advertise-routes` and `tailscale.tags`)
+`tailscale.exit-node`, `tailscale.advertise-routes`, `tailscale.accept-routes`
+and `tailscale.tags`)
 drives both platforms, and it is on by default. nixos signs in through
 `services.tailscale.authKeyFile`. on a mac, nix-darwin runs `tailscaled`, and a
 `tailscale-autoconnect` launchd daemon runs `tailscale up` with the key

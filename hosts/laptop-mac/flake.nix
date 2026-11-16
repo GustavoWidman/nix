@@ -25,5 +25,8 @@
       system.stateVersion = 7;
 
       environment.systemPackages = [ pkgs.libheif ];
+
+      # reaches lab's home network from anywhere
+      tailscale.accept-routes = true;
     };
 }

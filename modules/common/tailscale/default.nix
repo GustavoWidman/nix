@@ -43,6 +43,12 @@ in
       description = "Whether this device should act as an exit node for the Tailscale network.";
     };
 
+    accept-routes = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Whether to route to the subnets other machines advertise, such as lab's home network.";
+    };
+
     tags = mkOption {
       type = types.listOf types.str;
       default = [ "tag:fleet" ];
@@ -76,6 +82,7 @@ in
       "--accept-dns=false"
     ]
     ++ optional cfg.exit-node "--advertise-exit-node=true"
+    ++ optional cfg.accept-routes "--accept-routes=true"
     ++ optional (length cfg.advertise-routes > 0) (
       "--advertise-routes=" + concatStringsSep "," cfg.advertise-routes
     );
