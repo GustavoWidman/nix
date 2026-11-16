@@ -71,7 +71,8 @@ nobody has to start rollouts by hand, though. every push to `main` makes
 `coeus deploy` on the pushed commit: lab goes first, everyone else follows if
 it survives, and any reachable machine failing fails the run. when the whole
 fleet switches cleanly, the workflow moves the `deployed` branch to that
-commit. machines that were asleep or offline look `deployed` up as soon as
+commit and runs `coeus catch-up`, so every machine that answers sees it moved
+at once. machines that were asleep or offline look `deployed` up as soon as
 they come back, and every 15 minutes after, and catch up on their own.
 
 every machine reaches the tailnet without a click, as `tag:fleet`. the key in

@@ -1,5 +1,6 @@
 # Rolls every push to `main` out to the fleet with coeus, canary first, then
-# advances the `deployed` branch that machines which were offline catch up with.
+# advances the `deployed` branch that machines which were offline catch up with,
+# and has every machine that answers look it up at once.
 #
 # The runner joins the tailnet as `tag:ci` through a Tailscale OAuth client
 # (TS_OAUTH_CLIENT_ID, TS_OAUTH_SECRET) and relies on this tailnet policy:
@@ -133,3 +134,13 @@ jobs:
       - name: Advance `deployed`
         if: env.ACTION == 'switch' && env.TARGETS == '@all' && env.REF == 'main'
         run: git push --force origin "$(git rev-parse HEAD):refs/heads/deployed"
+
+      # a machine otherwise sees `deployed` move only on its next scheduled
+      # look, and shows it held until then. `deployed` already moved, so a
+      # machine that cannot look marks this step without failing the run.
+      - name: Have the fleet look up `deployed`
+        if: env.ACTION == 'switch' && env.TARGETS == '@all' && env.REF == 'main'
+        continue-on-error: true
+        env:
+          COEUS_KEY: ${{ secrets.COEUS_KEY }}
+        run: coeus catch-up @all --skip-unreachable
