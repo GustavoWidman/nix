@@ -53,9 +53,12 @@ let
       escapeShellArgs [ config.tailscale.auth-key-parameters ]
     } > "$joining"
 
+    # an earlier tailscaled may have saved settings of its own, and tailscale
+    # up refuses to run unless it repeats every one, so --reset replaces them
+    # with the fleet's
     delay=10
     for attempt in 1 2 3 4 5; do
-      if ${tailscale} up --auth-key="file:$joining" --timeout=60s ${escapeShellArgs config.tailscale.join-flags}; then
+      if ${tailscale} up --reset --auth-key="file:$joining" --timeout=60s ${escapeShellArgs config.tailscale.join-flags}; then
         echo "joined the tailnet"
         exit 0
       fi
