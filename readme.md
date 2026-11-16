@@ -80,13 +80,13 @@ secret of a tailscale oauth client allowed to write auth keys for that tag: it
 never expires, and a machine it signs in joins preauthorized, owned by the tag
 rather than a person, with key expiry off. `tailscale.enable` (with
 `tailscale.exit-node`, `tailscale.advertise-routes` and `tailscale.tags`)
-drives both platforms. nixos turns it on by
-default and signs in through `services.tailscale.authKeyFile`. on a mac it is
-opt-in: nix-darwin runs `tailscaled`, and a `tailscale-autoconnect` launchd
-daemon runs `tailscale up` with the key whenever `tailscaled` says it needs a
-login, retrying a few times before giving up (see
-`/var/log/tailscale-autoconnect.log`). a mac already signed in is left alone,
-and `laptop-mac` keeps signing in through the Tailscale app.
+drives both platforms, and it is on by default. nixos signs in through
+`services.tailscale.authKeyFile`. on a mac, nix-darwin runs `tailscaled`, and a
+`tailscale-autoconnect` launchd daemon runs `tailscale up` with the key
+whenever `tailscaled` says it needs a login, retrying a few times before giving
+up (see `/var/log/tailscale-autoconnect.log`). a mac already signed in is left
+alone. the Tailscale app runs a tailscale of its own, so a mac running
+`tailscaled` must not have the app installed too.
 
 one-time step on each mac: nix-darwin needs full disk access to create or
 delete users, and only a person can grant it. coeus runs activations under its
