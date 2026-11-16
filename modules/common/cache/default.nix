@@ -97,7 +97,11 @@ in
       };
 
       # Determinate writes the daemon's settings on Darwin; nix.settings never reaches it.
-      determinateNix.customSettings.post-build-hook = config.nix.settings.post-build-hook;
+      # The daemon reads them only when it starts and keeps running through
+      # switches, so it names the hook by a link every generation repoints,
+      # not by a store path a garbage collection can delete under it.
+      environment.etc."nix/niks3-post-build-hook".source = filteredHook;
+      determinateNix.customSettings.post-build-hook = "/etc/nix/niks3-post-build-hook";
     })
   ];
 }
