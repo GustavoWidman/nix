@@ -8,7 +8,6 @@
 # preauthorized and as a node that stays when it goes offline.
 {
   config,
-  isDarwin,
   lib,
   ...
 }:
@@ -28,9 +27,7 @@ in
   options.tailscale = {
     enable = mkOption {
       type = types.bool;
-      # macs that run the Tailscale app sign in through it instead
-      default = !isDarwin;
-      defaultText = "true on nixos, false on darwin";
+      default = true;
       description = "Whether to run tailscaled and join the tailnet with the fleet's auth key.";
     };
 
