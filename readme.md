@@ -206,12 +206,25 @@ means editing that file. stopping it halfway is fine: running the same command
 again picks up where it left off. on a mac, finish with `coeus doctor --fix`
 (see [coeus](#coeus)).
 
+## dns
+
+cloudflare dns lives next to the services that need it: each name is a
+`cloudflare.dns` entry in the module of the service that answers it, on the
+machine that serves it, and [norn](https://github.com/GustavoWidman/norn)
+keeps cloudflare in line with that. two machines claiming the same name, or a
+`CNAME` sharing a name with anything, fails the build.
+
+for now the servers only report. every switch, and every 5 minutes after,
+they log what they would change, and `sudo norn report` on a server prints
+the same plan by hand. nothing gets written until a server's
+`services.norn.mode` says so.
+
 ## custom flakes
 
 this repository pulls in a bunch of project and tool flakes directly from
-github, including `coeus`, `heimdall`, `thoth`, `rocky-bot`, `kemono-pinger`,
-`portfolio`, `oxi`, `niks3`, `kache`, `taproot`, `copyparty`, and a custom
-autobuild of `zed`. each one's module is imported only by the machine that runs
+github, including `coeus`, `norn`, `heimdall`, `thoth`, `rocky-bot`,
+`kemono-pinger`, `portfolio`, `oxi`, `niks3`, `kache`, `taproot`, `copyparty`,
+and a custom autobuild of `zed`. each one's module is imported only by the machine that runs
 it; `lib/system.nix` lists the few every machine gets.
 
 nix builds what it needs, caches what it can, and still occasionally finds a way
