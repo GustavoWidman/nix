@@ -119,7 +119,7 @@ in
         }
         {
           scopes = [ "write" ];
-          pins = [ "heimdall-*" "coeus-*" ];
+          pins = [ "heimdall-*" "coeus-*" "norn-*" ];
           boundClaims = {
             repository_owner = [ "GustavoWidman" ];
             event_name = [ "push" ];
