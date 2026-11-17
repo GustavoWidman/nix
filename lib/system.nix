@@ -17,6 +17,7 @@ let
     "home-manager"
     "kache"
     "nix-homebrew"
+    "norn"
     "rift"
   ];
 
