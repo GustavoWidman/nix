@@ -1,6 +1,6 @@
 { config, lib, ... }:
 lib.mkIf config.services.norn.enable {
-  # where agenix puts the norn-cloudflare-token secret. agenix can only
-  # declare it once its file, modules/server/norn/cloudflare-token.age, exists
-  services.norn.tokenFile = "${config.age.secretsDir}/norn-cloudflare-token";
+  # zone read and dns edit on the three managed zones, nothing else
+  secrets.norn-cloudflare-token.file = ./cloudflare-token.age;
+  services.norn.tokenFile = config.secrets.norn-cloudflare-token.path;
 }
