@@ -14,5 +14,8 @@
     # hand edits and retries failed runs. keep it under 30 minutes, where
     # `norn status` starts treating a quiet norn as troubled
     interval = 15 * 60;
+    # orders the fleet's shared records: a newer commit outranks an older one,
+    # and a build of an uncommitted tree never writes them
+    revision = if self ? rev then self.lastModified else null;
   };
 }
