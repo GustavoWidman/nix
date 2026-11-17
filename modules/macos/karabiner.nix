@@ -67,20 +67,6 @@ let
 
   allStandardKeys = letters ++ punctuation;
 
-  simple_modifications = [
-    {
-      from.key_code = "caps_lock";
-
-      to = [ { key_code = "escape"; } ];
-    }
-
-    {
-      from.key_code = "escape";
-
-      to = [ { key_code = "caps_lock"; } ];
-    }
-  ];
-
   complex_modifications.rules = [
     {
       description = "Disable alt+key combos";
@@ -120,14 +106,6 @@ lib.mkIf config.isDesktop {
             selected = true;
 
             virtual_hid_keyboard.keyboard_type_v2 = "ansi";
-
-            devices = [
-              {
-                inherit simple_modifications;
-
-                identifiers.is_keyboard = true;
-              }
-            ];
           }
         ];
       };
