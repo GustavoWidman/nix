@@ -1,4 +1,9 @@
-{ lib, self, ... }:
+{
+  config,
+  lib,
+  self,
+  ...
+}:
 {
   cloudflare.zones = [
     "guswid.com"
@@ -17,5 +22,9 @@
     # orders the fleet's shared records: a newer commit outranks an older one,
     # and a build of an uncommitted tree never writes them
     revision = if self ? rev then self.lastModified else null;
+    # coeusd rewrites it whenever it looks `deployed` up, and `deployed` moves
+    # only once every reachable machine runs the commit, so a shared record
+    # is deleted only after the whole fleet stopped declaring it
+    rollout.file = config.services.coeus.follow.stateFile;
   };
 }
