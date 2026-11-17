@@ -214,10 +214,12 @@ machine that serves it, and [norn](https://github.com/GustavoWidman/norn)
 keeps cloudflare in line with that. two machines claiming the same name, or a
 `CNAME` sharing a name with anything, fails the build.
 
-for now the servers only report. every switch, and every 5 minutes after,
-they log what they would change, and `sudo norn report` on a server prints
-the same plan by hand. nothing gets written until a server's
-`services.norn.mode` says so.
+how far norn goes is up to each server's `services.norn.mode`. `report`
+only logs what it would change, `adopt` also claims the records that already
+match by writing norn's mark into their comment, and `enforce` creates,
+updates and deletes as well. norn runs on every switch and every 5 minutes
+after. on a server, `sudo norn report` prints the plan by hand and
+`sudo norn status` says how the last run went.
 
 ## custom flakes
 

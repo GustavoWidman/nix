@@ -1,7 +1,7 @@
 {
   services.norn = {
     enable = true;
-    mode = "report";
+    mode = "adopt";
   };
 
   cloudflare = {
