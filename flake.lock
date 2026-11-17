@@ -1809,11 +1809,11 @@
         "nixpkgs": "nixpkgs_13"
       },
       "locked": {
-        "lastModified": 1794929632,
-        "narHash": "sha256-Sj/eNY03/kfTkXh++dgC7LTnJEBlXDFcpiIn3W98gGU=",
+        "lastModified": 1794955666,
+        "narHash": "sha256-rJSfDA7l0UW7qm0BsP9mOs4rcn5C9OsaL+y4Cqm2ZvU=",
         "owner": "GustavoWidman",
         "repo": "norn",
-        "rev": "76dabac91e8f531112f326981ab717dffd36dec8",
+        "rev": "d07e43f2b6af4101beb4b9ab7d6e4244a401306c",
         "type": "github"
       },
       "original": {
