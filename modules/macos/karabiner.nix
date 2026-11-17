@@ -72,22 +72,6 @@ let
       description = "Disable alt+key combos";
       manipulators = makeOptionDisableManipulators allStandardKeys;
     }
-    {
-      description = "Rift workspace back-and-forth";
-      manipulators = [
-        {
-          from.key_code = "tab";
-          from.modifiers.mandatory = [ "command" ];
-
-          to = [
-            {
-              shell_command = "${config.services.rift.package}/bin/rift-cli execute workspace last";
-            }
-          ];
-          type = "basic";
-        }
-      ];
-    }
   ];
 in
 lib.mkIf config.isDesktop {

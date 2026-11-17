@@ -100,6 +100,8 @@ app_rules = [
 "Alt + F" = "toggle_fullscreen"
 "Alt + Tab" = "next_window"
 "Alt + Shift + Tab" = "prev_window"
+# Takes Cmd+Tab from the macOS app switcher: back and forth between workspaces.
+"Meta + Tab" = "switch_to_last_workspace"
 
 # Swallow macOS Hide / Hide Others, as in the AeroSpace config.
 "Meta + H" = { exec = ["/usr/bin/true"] }
