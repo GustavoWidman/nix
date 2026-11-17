@@ -14,6 +14,8 @@ in
   imports = [ copyparty.nixosModules.default ];
   nixpkgs.overlays = [ copyparty.overlays.default ];
 
+  cloudflare.dns."files.r3dlust.com".a.proxied = true;
+
   networking.certificates."files.r3dlust.com" = {
     enable = true;
     group = "caddy-certs";

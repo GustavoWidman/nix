@@ -30,6 +30,8 @@ in
     };
   };
 
+  cloudflare.dns."tailscale.r3dlust.com".a.proxied = true;
+
   networking.certificates."tailscale.r3dlust.com" = {
     enable = true;
     group = "caddy-certs";

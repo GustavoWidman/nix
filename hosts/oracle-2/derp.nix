@@ -7,6 +7,8 @@ let
   domain = "derp.r3dlust.com";
 in
 {
+  cloudflare.dns.${domain}.a = { };
+
   networking.certificates."${domain}" = {
     enable = true;
     group = "caddy-certs";

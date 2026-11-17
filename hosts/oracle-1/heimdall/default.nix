@@ -5,6 +5,8 @@ in
 {
   imports = [ heimdall.nixosModules.default ];
 
+  cloudflare.dns.${domain}.a.proxied = true;
+
   networking.certificates.${domain} = {
     enable = true;
     group = "dns-certs";

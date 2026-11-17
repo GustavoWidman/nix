@@ -13,6 +13,11 @@ in
 {
   imports = [ niks3.nixosModules.default ];
 
+  cloudflare.dns = {
+    ${url}.a = { };
+    ${s3Url}.a = { };
+  };
+
   networking.certificates.${url} = {
     enable = true;
     group = "dns-certs";
