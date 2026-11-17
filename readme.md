@@ -217,7 +217,7 @@ keeps cloudflare in line with that. two machines claiming the same name, or a
 how far norn goes is up to each server's `services.norn.mode`. `report`
 only logs what it would change, `adopt` also claims the records that already
 match by writing norn's mark into their comment, and `enforce` creates,
-updates and deletes as well. norn runs on every switch and every 5 minutes
+updates and deletes as well. norn runs on every switch and every 15 minutes
 after. on a server, `sudo norn report` prints the plan by hand and
 `sudo norn status` says how the last run went.
 
