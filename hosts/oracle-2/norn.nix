@@ -1,7 +1,7 @@
 {
   services.norn = {
     enable = true;
-    mode = "adopt";
+    mode = "enforce";
   };
 
   cloudflare.address.ipv4 = "144.22.211.110";
