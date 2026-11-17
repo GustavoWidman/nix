@@ -112,6 +112,7 @@
     taproot.url = "github:265866/taproot/taproot-v0.7.0";
     coeus.url = "github:GustavoWidman/coeus";
     kache.url = "github:kunobi-ninja/kache";
+    norn.url = "github:GustavoWidman/norn";
 
     zed.url = "github:GustavoWidman/zed-autobuild";
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
