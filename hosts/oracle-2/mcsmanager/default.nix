@@ -38,6 +38,11 @@ in
 {
   system.build.mcsmanager-node = node;
 
+  cloudflare.dns = {
+    "minecraft.r3dlust.com".a = { };
+    "realms.r3dlust.com".a = { };
+  };
+
   networking.certificates."minecraft.r3dlust.com" = {
     enable = true;
     group = "caddy-certs";

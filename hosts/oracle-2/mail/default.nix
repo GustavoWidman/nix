@@ -18,6 +18,26 @@ in
     oxi.nixosModules.default
   ];
 
+  cloudflare.dns = {
+    "mail.r3dlust.com".a = { };
+    "r3dlust.com" = {
+      mx = [
+        {
+          exchange = "mail.r3dlust.com";
+          priority = 10;
+        }
+      ];
+      txt = [
+        "v=spf1 include:rp.oracleemaildelivery.com ~all"
+        "brevo-code:5ba0154555d819372c9dfa33dfae7ba6"
+      ];
+    };
+    "_dmarc.r3dlust.com".txt = [ "v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com" ];
+    "mail._domainkey.r3dlust.com".txt = [
+      "k=rsa;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDeMVIzrCa3T14JsNY0IRv5/2V1/v2itlviLQBwXsa7shBD6TrBkswsFUToPyMRWC9tbR/5ey0nRBH0ZVxp+lsmTxid2Y2z+FApQ6ra2VsXfbJP3HE6wAO0YTVEJt1TmeczhEd2Jiz/fcabIISgXEdSpTYJhb0ct0VJRxcg4c8c7wIDAQAB"
+    ];
+  };
+
   networking.certificates."mail.r3dlust.com" = {
     enable = true;
     group = "mail-certs";

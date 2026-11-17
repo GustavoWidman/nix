@@ -9,6 +9,7 @@ let
   inherit (lib)
     concatMap
     genAttrs
+    mergeAttrsList
     removePrefix
     ;
 
@@ -44,6 +45,17 @@ in
     ]) domains;
     blogDomains = map (d: "blog.${d}") domains;
   };
+
+  cloudflare.dns = mergeAttrsList (
+    map (domain: {
+      ${domain}.a.proxied = true;
+      "blog.${domain}".a.proxied = true;
+      "www.${domain}".cname = {
+        target = domain;
+        proxied = true;
+      };
+    }) domains
+  );
 
   networking.certificates = genAttrs domains mkCertConfig;
 

@@ -10,6 +10,8 @@ let
     ;
 in
 {
+  cloudflare.dns."dns.r3dlust.com".a = { };
+
   networking.certificates."dns.r3dlust.com" = {
     enable = true;
     group = "dns-certs";
