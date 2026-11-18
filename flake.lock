@@ -198,11 +198,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1795040486,
-        "narHash": "sha256-YNFl1Ru3fXUeG6zORGpNv7kYj+H5sZT2ezMk61ySzLE=",
+        "lastModified": 1795043256,
+        "narHash": "sha256-+a4rV6QaGS1Ss5Rb8PWfdkmU5nLSNUhklnm7zj96GT4=",
         "owner": "GustavoWidman",
         "repo": "coeus",
-        "rev": "4860e07d99bac784a45bd27db3e5b3113473b976",
+        "rev": "0a87ff51cb041a75be9a1b9c3f9c99d1914007bc",
         "type": "github"
       },
       "original": {
