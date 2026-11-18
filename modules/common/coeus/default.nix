@@ -7,10 +7,13 @@
     mode = "400";
   };
 
-  # may only watch the fleet and read history and logs, for the dashboard
+  # may only watch the fleet and read history and logs, for the dashboard.
+  # root's coeusd reads it whoever owns it; on a mac coeus web reads it as
+  # its own user, which owns it there
   secrets.coeus-read-key = {
     file = ./read-key.age;
-    owner = config.mainUser;
+    owner =
+      if config.isDarwin && config.services.coeus.web.enable then "_coeusweb" else config.mainUser;
     mode = "400";
   };
 
