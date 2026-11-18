@@ -7,9 +7,17 @@
     mode = "400";
   };
 
+  # may only watch the fleet and read history and logs, for the dashboard
+  secrets.coeus-read-key = {
+    file = ./read-key.age;
+    owner = config.mainUser;
+    mode = "400";
+  };
+
   services.coeus = {
     enable = true;
     keyFile = config.secrets.coeus-key.path;
+    readKeyFile = config.secrets.coeus-read-key.path;
     flake = "git+https://github.com/GustavoWidman/nix";
     follow = {
       ref = "deployed";
