@@ -1833,11 +1833,11 @@
         "nixpkgs": "nixpkgs_13"
       },
       "locked": {
-        "lastModified": 1794963864,
-        "narHash": "sha256-z2732RWwHYxG2hns060zOl1lnlv3qbYHujkHYVYM/YE=",
+        "lastModified": 1794971535,
+        "narHash": "sha256-WLdUr/S9r9hg6qI63xrJ3ecaykByXPgSKndS4KKKv0w=",
         "owner": "GustavoWidman",
         "repo": "norn",
-        "rev": "3a3d619d986278b4892ed27bffb003a8174c2ff1",
+        "rev": "5a8dcf50fb2067af900ff1cdd0ed60e8a3305d28",
         "type": "github"
       },
       "original": {
