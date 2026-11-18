@@ -1885,11 +1885,11 @@
         "nixpkgs": "nixpkgs_14"
       },
       "locked": {
-        "lastModified": 1794319241,
-        "narHash": "sha256-ZWu2NkBbRTM73sdjCm6alGON1Bm6DSIpj6CITfL9nt8=",
+        "lastModified": 1795007924,
+        "narHash": "sha256-av0kjUy9tbUCq27qT/E5FnGYwLY8yrOZ8cjLsbl/Wc0=",
         "owner": "GustavoWidman",
         "repo": "portfolio",
-        "rev": "3bc234f29bf0edeb57f2323ffbe12b5eb8a3f404",
+        "rev": "5515719f5e5a25b5c1b62e0d4802a5619534d57f",
         "type": "github"
       },
       "original": {
