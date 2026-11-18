@@ -194,14 +194,15 @@
         "crane": "crane",
         "devshell": "devshell",
         "flake-parts": "flake-parts_3",
+        "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1794969028,
-        "narHash": "sha256-jxl76++ntAwjheIjT8iqr9SfFkaTdFuiKhyyvyguxhQ=",
+        "lastModified": 1795030754,
+        "narHash": "sha256-UVUgjbCFNIvefkhx7BLwUc//3OwX6cvvPRSJ9c2Dc6s=",
         "owner": "GustavoWidman",
         "repo": "coeus",
-        "rev": "8252811a006b0aa38cc1748d13d2cd6b17f7e54f",
+        "rev": "99a59a6d4a234ad82602818faebf62fd4e82c769",
         "type": "github"
       },
       "original": {
@@ -1247,6 +1248,27 @@
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
+          "coeus",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793418699,
+        "narHash": "sha256-+RpTlcdh9KqZ+ZiLkNSTvibQWm935EcIdBzRPCTFsrQ=",
+        "owner": "nix-darwin",
+        "repo": "nix-darwin",
+        "rev": "ff0e21a414d4547183396da1b44a66f2577b65e9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-darwin",
+        "repo": "nix-darwin",
+        "type": "github"
+      }
+    },
+    "nix-darwin_2": {
+      "inputs": {
+        "nixpkgs": [
           "nixpkgs"
         ]
       },
@@ -1264,7 +1286,7 @@
         "type": "github"
       }
     },
-    "nix-darwin_2": {
+    "nix-darwin_3": {
       "inputs": {
         "nixpkgs": [
           "rift",
@@ -1950,7 +1972,7 @@
         "devshell": "devshell_5",
         "fenix": "fenix_4",
         "flake-parts": "flake-parts_11",
-        "nix-darwin": "nix-darwin_2",
+        "nix-darwin": "nix-darwin_3",
         "nixpkgs": "nixpkgs_16"
       },
       "locked": {
@@ -2007,7 +2029,7 @@
         "kache": "kache",
         "kemono-pinger": "kemono-pinger",
         "niks3": "niks3",
-        "nix-darwin": "nix-darwin",
+        "nix-darwin": "nix-darwin_2",
         "nix-homebrew": "nix-homebrew",
         "nixos-mailserver": "nixos-mailserver",
         "nixpkgs": "nixpkgs_11",
