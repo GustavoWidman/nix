@@ -1,4 +1,4 @@
-{ coeus, ... }:
+{ coeus, lib, ... }:
 let
   id = "97355560-d822-4fcf-9fe7-e359a026ff85";
 in
@@ -15,14 +15,7 @@ in
   # answers with coeus's own offline page when no server is connected to the
   # tunnel; the dashboard's api and live stream bypass it
   cloudflare.fleet.workers.coeus-offline = {
-    module = coeus.lib.offlineWorker {
-      hosts = [
-        "altar"
-        "lab"
-        "oracle-1"
-        "oracle-2"
-      ];
-    };
+    module = coeus.lib.offlineWorker { hosts = lib.coeusWebHosts; };
     compatibilityDate = "2026-11-01";
     routes = [ "coeus.r3dlust.com/*" ];
     bypass = [ "coeus.r3dlust.com/api/*" ];
