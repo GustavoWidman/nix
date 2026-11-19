@@ -9,28 +9,30 @@
 #   - taproot is pinned to a release tag, whose nixpkgs 265866.cachix.org builds
 #   - rift follows a branch of my fork, not upstream, so it moves when i push
 
-triggers = ["nixpkgs"]
-
-passengers = [
-  "agenix",
-  "arion",
+triggers = [
   "coeus",
-  "copyparty",
-  "crane",
   "determinate",
-  "fenix",
   "heimdall",
-  "home-manager",
-  "homebrew-cask",
-  "homebrew-core",
-  "kache",
   "kemono-pinger",
-  "niks3",
-  "nix-darwin",
-  "nix-homebrew",
-  "nixos-mailserver",
+  "nixpkgs",
   "norn",
   "oxi",
   "portfolio",
   "zed",
+]
+
+passengers = [
+  "agenix",
+  "arion",
+  "crane",
+  "copyparty",
+  "fenix",
+  "home-manager",
+  "homebrew-cask",
+  "homebrew-core",
+  "kache",
+  "niks3",
+  "nix-darwin",
+  "nix-homebrew",
+  "nixos-mailserver",
 ]
