@@ -1,0 +1,34 @@
+error:
+       … while evaluating the attribute 'config.system.build.toplevel.drvPath'
+         at «github:NixOS/nixpkgs/0490633»/lib/customisation.nix:420:11:
+          419|         // {
+          420|           drvPath =
+             |           ^
+          421|             assert condition;
+
+       … while calling the 'derivationStrict' builtin
+         at «nix-internal»/derivation-internal.nix:38:12:
+           37|
+           38|   strict = drvFunc drvAttrs;
+             |            ^
+       … while calling the 'throw' builtin
+         at «github:NixOS/nixpkgs/0490633»/pkgs/stdenv/generic/check-meta.nix:645:13:
+          644|           else
+          645|             throw msg;
+             |             ^
+          646|
+
+       error: Refusing to evaluate package 'seadrive-fuse-3.0.26' in /nix/store/64d7bdawbnr6pwp2sgjm83jl6r95gimc-source/pkgs/by-name/se/seadrive-fuse/package.nix:54 because it has problems:
+       - broken: This package is broken.
+
+       See also https://nixos.org/manual/nixpkgs/unstable#sec-problems
+       To allow evaluation regardless, use:
+       - Nixpkgs import: import nixpkgs { config = <below code>; }
+       - NixOS: nixpkgs.config = <below code>;
+       - nix-* commands: Put below code in ~/.config/nixpkgs/config.nix
+
+         {
+           problems.handlers = {
+             seadrive-fuse.broken = "warn"; # or "ignore"
+           };
+         }

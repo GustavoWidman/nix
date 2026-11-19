@@ -1,0 +1,43 @@
+error:
+       … while evaluating the attribute 'config.system.build.toplevel.drvPath'
+         at «github:NixOS/nixpkgs/0490633»/lib/customisation.nix:420:11:
+          419|         // {
+          420|           drvPath =
+             |           ^
+          421|             assert condition;
+
+       … while calling the 'derivationStrict' builtin
+         at «nix-internal»/derivation-internal.nix:38:12:
+           37|
+           38|   strict = drvFunc drvAttrs;
+             |            ^
+       … while calling the 'throw' builtin
+         at «github:NixOS/nixpkgs/0490633»/pkgs/stdenv/generic/check-meta.nix:645:13:
+          644|           else
+          645|             throw msg;
+             |             ^
+          646|
+
+       error: Refusing to evaluate package 'spacedrive-0.4.3' in /nix/store/64d7bdawbnr6pwp2sgjm83jl6r95gimc-source/pkgs/by-name/sp/spacedrive/package.nix:38 because it is not available on the requested hostPlatform:
+         hostPlatform.system = "aarch64-linux"
+         package.meta.platforms = [
+           "aarch64-darwin"
+           "x86_64-linux"
+         ]
+         package.meta.badPlatforms = [ ]
+
+       a) To temporarily allow packages that are unsupported for this system, you can use an environment variable
+          for a single invocation of the nix tools.
+
+            $ export NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1
+
+          Note: When using `nix shell`, `nix build`, `nix develop`, etc with a flake,
+                then pass `--impure` in order to allow use of environment variables.
+
+       b) For `nixos-rebuild` you can set
+         { nixpkgs.config.allowUnsupportedSystem = true; }
+       in configuration.nix to override this.
+
+       c) For `nix-env`, `nix-build`, `nix-shell` or any other Nix command you can add
+         { allowUnsupportedSystem = true; }
+       to ~/.config/nixpkgs/config.nix.

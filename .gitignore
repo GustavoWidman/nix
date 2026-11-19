@@ -6,3 +6,6 @@ result-*
 # Ignore automatically generated direnv output
 .direnv
 .omx/
+
+# python bytecode from the flake-update bot and its tests
+__pycache__/

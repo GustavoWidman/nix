@@ -1,0 +1,36 @@
+# which of flake.nix's root inputs the flake-update workflow keeps current.
+#
+# a trigger opens the flake-update pull request on its own when it moves. a
+# passenger never does: it is updated only when a trigger moved, or on any
+# run while that pull request is open.
+#
+# an input in neither list is manual, and the bot never touches it:
+#   - thoth and rocky-bot are private, and move when i ship them
+#   - taproot is pinned to a release tag, whose nixpkgs 265866.cachix.org builds
+#   - rift follows a branch of my fork, not upstream, so it moves when i push
+
+triggers = ["nixpkgs"]
+
+passengers = [
+  "agenix",
+  "arion",
+  "coeus",
+  "copyparty",
+  "crane",
+  "determinate",
+  "fenix",
+  "heimdall",
+  "home-manager",
+  "homebrew-cask",
+  "homebrew-core",
+  "kache",
+  "kemono-pinger",
+  "niks3",
+  "nix-darwin",
+  "nix-homebrew",
+  "nixos-mailserver",
+  "norn",
+  "oxi",
+  "portfolio",
+  "zed",
+]

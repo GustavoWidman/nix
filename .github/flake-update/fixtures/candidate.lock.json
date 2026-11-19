@@ -1,0 +1,173 @@
+{
+  "nodes": {
+    "root": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_11",
+        "determinate": "determinate",
+        "nixos-mailserver": "nixos-mailserver",
+        "thoth": "thoth",
+        "copyparty": "copyparty",
+        "taproot": "taproot",
+        "arion": "arion",
+        "crane": "crane_2",
+        "rift": "rift",
+        "coeus": "coeus"
+      }
+    },
+    "nixpkgs_11": {
+      "locked": {
+        "lastModified": 1794890597,
+        "narHash": "sha256-lME2lHoDHAaSHP3/okgiVoJ0icVEvsQH8LeU3We7tcc=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "04906337b6d53e8bb0eaf0470ae9f070a4d4eb55",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "determinate": {
+      "locked": {
+        "lastModified": 1795047249,
+        "narHash": "sha256-cIFgw0dKxzQULB8OSVLsXSrKfPfWzfzJA17rss9dqCg=",
+        "rev": "49968eb8f0f1a3c9c8790e9ead7ce7b5196f6c0f",
+        "revCount": 458,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/DeterminateSystems/determinate/3.24.3/01a1f12b-29f0-7623-8ebb-9b32a98f9538/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/DeterminateSystems/determinate/%2A"
+      }
+    },
+    "nixos-mailserver": {
+      "locked": {
+        "lastModified": 1792611588,
+        "narHash": "sha256-K6tvVoF+DSoMpgddGk6Xhern6pcBm3KktHV4c9MWrxM=",
+        "owner": "simple-nixos-mailserver",
+        "repo": "nixos-mailserver",
+        "rev": "9004c7d9b0986719a76ca6945a718434508d7b2e",
+        "type": "gitlab"
+      },
+      "original": {
+        "owner": "simple-nixos-mailserver",
+        "ref": "main",
+        "repo": "nixos-mailserver",
+        "type": "gitlab"
+      }
+    },
+    "thoth": {
+      "locked": {
+        "lastModified": 1794603317,
+        "narHash": "sha256-WR6kaZwF5q39eoHD6krtlzgSfNU73XksIiiW9KvWGWk=",
+        "ref": "refs/heads/main",
+        "rev": "1395acfa5aa9c06739cf7e371d0e6e064369fcf2",
+        "revCount": 328,
+        "type": "git",
+        "url": "ssh://git@github.com/GustavoWidman/thoth"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/GustavoWidman/thoth"
+      }
+    },
+    "copyparty": {
+      "locked": {
+        "lastModified": 1792559340,
+        "narHash": "sha256-IRpSJIA0ijCUDndWSZk7MdbtzAjj30t9mkCQ2VspHdo=",
+        "owner": "9001",
+        "repo": "copyparty",
+        "rev": "1af7efeca858dcfa29f797d7ae93f22eb2fdecf0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "9001",
+        "repo": "copyparty",
+        "type": "github"
+      }
+    },
+    "taproot": {
+      "locked": {
+        "lastModified": 1794538923,
+        "narHash": "sha256-b9b11l0qbgJbWMQaA6W/weJ9zsLPejDa1wSDi3GUoV4=",
+        "owner": "265866",
+        "repo": "taproot",
+        "rev": "a61f3cb66dca3cdcaf192a6844f71fddb2192c2a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "265866",
+        "ref": "taproot-v0.7.0",
+        "repo": "taproot",
+        "type": "github"
+      }
+    },
+    "arion": {
+      "locked": {
+        "lastModified": 1794920985,
+        "narHash": "sha256-V7oZrRltvJ55YwLeGWtTdZ/LMTWZM7CLGgypLpWi1Us=",
+        "owner": "hercules-ci",
+        "repo": "arion",
+        "rev": "a7c8163c7fb739e224d66380a677912de7cb15a7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "hercules-ci",
+        "repo": "arion",
+        "type": "github"
+      }
+    },
+    "crane_2": {
+      "locked": {
+        "lastModified": 1794962885,
+        "narHash": "sha256-zrweT2tXbcWiJMACOhOr2eYFJKVa6g59ouRaZ3BS5Do=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "95e62def851e9d650f0eab63cb4f59a3306e20bd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
+    "rift": {
+      "locked": {
+        "lastModified": 1793279266,
+        "narHash": "sha256-qAHzHpJgAQSAwzKBp9ET/xEwbNcuu6jJvqv55z2rrjo=",
+        "owner": "gustavowidman",
+        "repo": "rift",
+        "rev": "837ab6d5b752204742c5b9553ddc9931a56d85be",
+        "type": "github"
+      },
+      "original": {
+        "owner": "gustavowidman",
+        "ref": "feat/nix-compat",
+        "repo": "rift",
+        "type": "github"
+      }
+    },
+    "coeus": {
+      "locked": {
+        "lastModified": 1795091262,
+        "narHash": "sha256-t/yCIbD5HnkaUVjph4Hd2LC9CrbM8YeYAZNWSMEh8UI=",
+        "owner": "GustavoWidman",
+        "repo": "coeus",
+        "rev": "846bee01302aeea36c6403ef2bcc8aa1623002a9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "GustavoWidman",
+        "repo": "coeus",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
