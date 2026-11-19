@@ -121,14 +121,31 @@ keeps exactly one pull request, on the `flake-update` branch, holding
 whatever is waiting. `.github/flake-update/inputs.toml` splits the inputs it
 tracks into two lists:
 
-- **triggers** (just `nixpkgs` for now) open the pull request when they move.
+- **triggers** open the pull request when they move.
 - **passengers** ride along: they're updated when a trigger moved, or on any
   run while the pull request is open, but never open one on their own,
   because nobody needs a pull request for every homebrew-core commit.
 
-inputs in neither list (thoth, rocky-bot, taproot, rift) are bumped by hand,
-and the toml says why. an input that fails to update keeps main's pin and is
-listed as stuck, with its error, instead of stopping the rest.
+every root input is in one of the two, so nothing is bumped by hand anymore.
+
+an input pinned to a release tag, like taproot, would never move on its own,
+since a tag never moves. a third list, **releases**, names those, and for
+each one the bot rewrites the tag in flake.nix's url before it relocks it,
+so its commit carries flake.nix along with flake.lock. an entry is either a
+bare name, which follows the release github marks latest, or a table with a
+regex, which follows the highest tag that fully matches it:
+
+```toml
+releases = [{ input = "taproot", tag = 'taproot-v\d+\.\d+\.\d+' }]
+```
+
+the regex has to match the whole tag, so taproot's release candidates stay
+out, and "highest" is version order, numbers compared as numbers, so
+`0.10.0` beats `0.9.0` and a backport tagged after a newer release doesn't
+win. the bot only touches the url when it appears in flake.nix exactly once.
+
+an input that fails to update keeps main's pin and is listed as stuck, with
+its error, instead of stopping the rest.
 
 every push of the branch gets checked twice. the runner evaluates all six
 hosts and names any nixpkgs package that refuses to evaluate (broken,
