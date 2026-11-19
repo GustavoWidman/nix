@@ -1,0 +1,27 @@
+# Starts the flake-update bot when a push to main touches flake.lock or
+# flake.nix, the only files the bot's commit changes, so a manual bump on main
+# gets the pull request rebased and checked within minutes instead of at the
+# next scheduled run. Any other push to main cannot conflict with it.
+#
+# It lives apart from flake-update.yml because a push trigger takes one paths
+# filter for all its branches, and a person's push to the flake-update branch
+# must start the bot whatever files it touches. A run that GITHUB_TOKEN
+# dispatches is the one kind GitHub lets a workflow start.
+name: flake-update-rebase
+
+on:
+  push:
+    branches: [main]
+    paths: [flake.lock, flake.nix]
+
+permissions:
+  actions: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Start the flake-update bot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run flake-update.yml --repo "$GITHUB_REPOSITORY" --ref main
