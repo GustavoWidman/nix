@@ -1,0 +1,120 @@
+# Keeps one pull request, on the `flake-update` branch, open and current with
+# the flake's input updates. .github/flake-update/update.py does the work;
+# inputs.toml says which inputs open the pull request when they move
+# (triggers) and which ride along (passengers).
+#
+# Every push of the branch is checked: the runner evaluates all six hosts,
+# and coeus builds the commit on every machine that answers without
+# activating it. The bot pushes with GITHUB_TOKEN, which starts no workflow,
+# so a push event is a person's, and the bot checks that head as it is. That takes the same inventory, coeus CLI and tailnet seat as
+# deploy.yml (.github/actions/coeus), and COEUS_KEY. FLAKE_INPUTS_TOKEN, a
+# fine-grained token that reads thoth and rocky-bot, lets nix fetch those
+# private inputs over https.
+#
+# A pull request that changes the bot runs it with --dry-run: it computes the
+# plan, evaluates the hosts with the candidate lock and prints the pull
+# request it would open, and writes nothing.
+name: flake-update
+
+on:
+  schedule:
+    # 00:17 BRT, off the hour since GitHub delays scheduled runs at :00
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+    inputs:
+      open:
+        description: Open the pull request even when only passengers moved
+        type: boolean
+        default: false
+  push:
+    branches: [flake-update]
+  pull_request:
+    paths:
+      - .github/flake-update/**
+      - .github/workflows/flake-update.yml
+      - .github/actions/coeus/**
+
+# one run at a time writes the branch; a dry run writes nothing, so it waits
+# for no one and a queued scheduled run never gives way to it
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('flake-update-pr-{0}', github.event.number) || 'flake-update' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  statuses: write
+
+jobs:
+  flake-update:
+    runs-on: ubuntu-24.04
+    # a nixpkgs bump can rebuild a lot on the fleet
+    timeout-minutes: 150
+    steps:
+      # the bot builds its branch from main; a pull request tries itself
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name != 'pull_request' && 'main' || '' }}
+          fetch-depth: 0
+
+      # some inputs' own nixpkgs fetch a rust toolchain manifest during
+      # evaluation, as a derivation of the host's system. emulation lets this
+      # x86_64 runner fetch the oracles' aarch64-linux ones
+      - uses: docker/setup-qemu-action@v4
+        with:
+          platforms: arm64
+
+      # the fleet runs Determinate Nix, and evaluation differs between nix
+      # versions. flake.nix's nixConfig asks for experimental features
+      # (pipe operators, cgroups for its use-cgroups) it cannot turn on, and
+      # names caches only a trusted user may add, so both are
+      # here too: what the fleet already fetched is downloaded, not refetched.
+      # `github:` inputs resolve refs through GitHub's API, which rate-limits
+      # a runner without a token
+      - uses: DeterminateSystems/determinate-nix-action@v3
+        with:
+          extra-conf: |
+            extra-experimental-features = cgroups pipe-operators
+            extra-platforms = aarch64-linux
+            extra-substituters = https://cache.r3dlust.com https://nix-community.cachix.org https://265866.cachix.org
+            extra-trusted-public-keys = cache.r3dlust.com-1:Wdkf9mes2ued0P7C7CL3Jax1b4KPuJwQpM3h4G/Z+yI= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= 265866.cachix.org-1:KeHQ4qkDufShpWve8YcDhFsmWLEzMDrDoinVpahhBEc=
+            access-tokens = github.com=${{ github.token }}
+            accept-flake-config = true
+
+      # nix's git fetcher runs git, which follows insteadOf
+      - name: Reach the private inputs
+        env:
+          TOKEN: ${{ secrets.FLAKE_INPUTS_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::warning::FLAKE_INPUTS_TOKEN is empty, so lab and oracle-1, which import thoth and rocky-bot, will not evaluate"
+            exit 0
+          fi
+          git config --global url."https://x-access-token:$TOKEN@github.com/GustavoWidman/".insteadOf "ssh://git@github.com/GustavoWidman/"
+
+      - name: Commit as github-actions[bot]
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Test the bot
+        working-directory: .github/flake-update
+        run: python3 -m unittest -v
+
+      - uses: ./.github/actions/coeus
+        if: github.event_name != 'pull_request'
+        with:
+          tailscale-oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          tailscale-oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+
+      - name: Update the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COEUS_KEY: ${{ secrets.COEUS_KEY }}
+          EVENT: ${{ github.event_name }}
+          OPEN: ${{ inputs.open }}
+        run: |
+          flags=()
+          if [ "$EVENT" = pull_request ]; then flags+=(--dry-run); fi
+          if [ "$OPEN" = true ]; then flags+=(--open); fi
+          python3 .github/flake-update/update.py "${flags[@]}"
