@@ -27,6 +27,10 @@ triggers = [
   "norn",
   "oxi",
   "portfolio",
+  "rift",
+  "rocky-bot",
+  "taproot",
+  "thoth",
   "zed",
 ]
 
@@ -44,10 +48,6 @@ passengers = [
   "nix-darwin",
   "nix-homebrew",
   "nixos-mailserver",
-  "rift",
-  "rocky-bot",
-  "taproot",
-  "thoth",
 ]
 
 releases = [{ input = "taproot", tag = 'taproot-v\d+\.\d+\.\d+' }]
