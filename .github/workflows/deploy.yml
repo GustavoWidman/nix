@@ -63,62 +63,19 @@ jobs:
             substituters = https://cache.nixos.org/ https://cache.r3dlust.com
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= cache.r3dlust.com-1:Wdkf9mes2ued0P7C7CL3Jax1b4KPuJwQpM3h4G/Z+yI=
 
-      - uses: tailscale/github-action@v4.4.0
+      # the action comes from this workflow's own commit, so a dispatch can
+      # still deploy a ref from before .github/actions existed
+      - uses: actions/checkout@v7
         with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-          tags: tag:ci
+          ref: ${{ github.sha }}
+          path: .ci
+          sparse-checkout: .github/actions
 
-      # from `hosts/` alone: the flake's `coeus.clientConfig` would first fetch
-      # nixpkgs for the few lib functions it uses
-      - name: Write the fleet inventory
-        run: |
-          nix eval --raw --file .github/coeus.nix > "$RUNNER_TEMP/coeus.toml"
-          echo "COEUS_CONFIG=$RUNNER_TEMP/coeus.toml" >> "$GITHUB_ENV"
-
-      - name: Find the coeus the fleet runs
-        id: coeus
-        run: |
-          locked=$(jq -r '.nodes[.nodes.root.inputs.coeus].locked | "\(.owner)/\(.repo)/\(.rev)"' flake.lock)
-          printf 'locked=%s\n' "$locked" >> "$GITHUB_OUTPUT"
-          printf 'key=%s\n' "${locked//\//-}" >> "$GITHUB_OUTPUT"
-
-      # the store path of that coeus and its closure, saved for each locked
-      # coeus: naming a coeus build means evaluating coeus' flake, most of a
-      # minute, and the closure comes faster from here than from a binary cache
-      - name: Recall that coeus
-        id: recalled
-        uses: actions/cache/restore@v6
+      # the fleet inventory, the coeus CLI the fleet runs, and the tailnet seat
+      - uses: ./.ci/.github/actions/coeus
         with:
-          path: ${{ runner.temp }}/coeus-saved
-          key: coeus-cli-x86_64-linux-${{ steps.coeus.outputs.key }}
-
-      - name: Fetch the coeus CLI
-        env:
-          COEUS: github:${{ steps.coeus.outputs.locked }}#packages.x86_64-linux.default
-          SAVED: ${{ runner.temp }}/coeus-saved
-        run: |
-          if [ -s "$SAVED/path" ]; then
-            path=$(cat "$SAVED/path")
-            # unsigned when built here; only runs on main save what main restores
-            nix copy --no-check-sigs --from "file://$SAVED/store" "$path"
-          else
-            path=$(nix eval --raw "$COEUS.outPath")
-            # a released coeus comes from the binary cache; any other commit builds here
-            nix build --no-link "$path" || nix build --no-link "$COEUS"
-            nix copy --to "file://$SAVED/store?compression=zstd" "$path"
-            printf '%s\n' "$path" > "$SAVED/path"
-          fi
-          nix build --out-link "$RUNNER_TEMP/coeus" "$path"
-          echo "$RUNNER_TEMP/coeus/bin" >> "$GITHUB_PATH"
-
-      # right away, so a deployment that fails still leaves it for the next run
-      - name: Remember that coeus
-        if: steps.recalled.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v6
-        with:
-          path: ${{ runner.temp }}/coeus-saved
-          key: coeus-cli-x86_64-linux-${{ steps.coeus.outputs.key }}
+          tailscale-oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          tailscale-oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
 
       # coeus pushes the deploy's summary to the owner's devices. it opens the
       # checkout's two push secrets in memory with the workflow's own key,
