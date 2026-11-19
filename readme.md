@@ -90,6 +90,23 @@ up (see `/var/log/tailscale-autoconnect.log`). a mac already signed in is left
 alone. the Tailscale app runs a tailscale of its own, so a mac running
 `tailscaled` must not have the app installed too.
 
+the fleet also pushes notifications to my phone and desktop, through the
+dashboard at `coeus.r3dlust.com`: one summary per deploy, from the terminal or
+from CI, a note whenever a machine catches up or gives up catching up, and
+norn's word when a server's dns runs stay troubled for half an hour and when
+they recover. the key that signs them and the list of devices are
+`modules/common/coeus/push/vapid.age` and `subscriptions.age`; every machine
+opens both, and CI opens them in memory with `COEUS_PUSH_IDENTITY`, the private
+half of `.github/ci.pub`. a device subscribes on the dashboard's "this device"
+screen, which shows the entry to add:
+
+```bash
+agenix -e modules/common/coeus/push/subscriptions.age   # paste the entry into the array
+```
+
+commit it and deploy, and `coeus push test` says hello to every device on the
+list.
+
 one-time step on each mac: nix-darwin needs full disk access to create or
 delete users, and only a person can grant it. coeus runs activations under its
 own `coeus-launcher`, installed once and never replaced, so the grant outlives
@@ -159,7 +176,10 @@ who opens a secret depends on where it lives, and `recipients` in
 admins, `modules/common/` is everyone, and every other module directory is the
 machines that import it plus the admins: `modules/linux/` and `modules/macos/`
 go by platform, `modules/desktop/` to desktops, `modules/dev/` to desktops and
-dev servers, `modules/server/` to servers and dev servers. `secrets.nix` is
+dev servers, `modules/server/` to servers and dev servers. one directory is
+an exception: `modules/common/coeus/push/` also goes to `keys.ci`, the deploy
+workflow's own key in `.github/ci.pub`, which is in no group and opens nothing
+else. `secrets.nix` is
 just that function applied to every `.age` file on disk, so `agenix -e` works
 as usual. a brand new secret needs its file before its rule:
 
