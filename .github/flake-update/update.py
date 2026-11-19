@@ -352,6 +352,17 @@ REFUSAL = re.compile(
 REMOVED = re.compile(r"^\s*error: '(?P<attr>[^']+)' has been (?:removed|renamed)")
 
 
+# nix's notes about the flake's own nixConfig, which say nothing about a failure
+FLAKE_CONFIG_NOTE = re.compile(r"^(warning: ignoring untrusted flake configuration setting|Pass '--accept-flake-config')")
+
+
+def update_error(stderr: str) -> str:
+    """why `nix flake update` failed, keeping what git said before nix's `error:`,
+    since nix's own message only says the fetch failed"""
+    lines = [line for line in ANSI.sub("", stderr).splitlines() if not FLAKE_CONFIG_NOTE.match(line)]
+    return "\n".join(lines[-40:]).strip()
+
+
 def error_block(stderr: str) -> str:
     """a nix command's error, from its first `error:` on, without the warnings before it"""
     lines = ANSI.sub("", stderr).splitlines()
@@ -946,7 +957,7 @@ def build_candidate(config: Config, root: Path, main_lock_text: str, main_flake_
                     follow_release(name, release, json.loads(lock_before), flake_path)
                 proc = run(["nix", "flake", "update", "--accept-flake-config", name], check=False)
                 if proc.returncode != 0:
-                    error = error_block(proc.stderr)
+                    error = update_error(proc.stderr)
             except (ReleaseError, CommandFailed) as failure:
                 error = str(failure)
             if error is not None:
