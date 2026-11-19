@@ -268,6 +268,22 @@ class Render(unittest.TestCase):
         self.assertEqual(comment, "Checked 4444444: 1 of 1 hosts evaluate; Skipped for this run.\n")
 
 
+    def test_a_stuck_update_keeps_what_git_said(self):
+        stderr = (
+            "warning: ignoring untrusted flake configuration setting 'fallback'.\n"
+            "Pass '--accept-flake-config' to trust it\n"
+            "fatal: could not read Username for 'https://github.com': terminal prompts disabled\n"
+            "error:\n"
+            "       … while fetching the input 'git+ssh://git@github.com/GustavoWidman/thoth'\n\n"
+            "       error: Failed to fetch git repository 'ssh://git@github.com/GustavoWidman/thoth'\n"
+        )
+        error = u.update_error(stderr)
+        self.assertTrue(error.startswith("fatal: could not read Username"))
+        self.assertNotIn("untrusted", error)
+        stuck = u.Stuck("thoth", u.Policy.PASSENGER, error)
+        self.assertEqual(stuck.summary, "Failed to fetch git repository 'ssh://git@github.com/GustavoWidman/thoth'")
+
+
 class Classify(unittest.TestCase):
     def test_broken_package(self):
         error = u.classify(text("eval-broken.err"), NIXPKGS)
