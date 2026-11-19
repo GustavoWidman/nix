@@ -1,0 +1,8 @@
+error:
+       … while updating the lock file of flake 'git+file:///home/runner/work/nix/nix'
+
+       … while updating the flake input 'copyparty'
+
+       … while updating the flake input 'copyparty/nixpkgs'
+
+       error: cannot find flake 'flake:nixpkgs/nixos-26.05' in the flake registries
