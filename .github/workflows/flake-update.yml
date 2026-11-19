@@ -96,6 +96,26 @@ jobs:
           fi
           git config --global url."https://x-access-token:$TOKEN@github.com/GustavoWidman/".insteadOf "ssh://git@github.com/GustavoWidman/"
 
+          # actions/checkout leaves this workflow's own token in the checkout's
+          # git config as a header for all of github.com, and git sends it
+          # ahead of the token in the url. that token cannot read these repos,
+          # so github answers "not found". an empty header at each one's own
+          # url is the more specific match, and only these lose it; the bot's
+          # push to this repository keeps it
+          private=$(jq -r '.nodes[] | .original // empty | select(.type == "git") | .url
+            | select(startswith("ssh://git@github.com/GustavoWidman/"))
+            | ltrimstr("ssh://git@github.com/") | sub("[?].*$"; "")' flake.lock | sort -u)
+          for repo in $private; do
+            git config --global "http.https://github.com/$repo.extraheader" ""
+          done
+
+          # from inside the checkout, where nix runs git, so a token that
+          # expired or lost a repository shows here rather than as stuck inputs
+          for repo in $private; do
+            git ls-remote --heads "ssh://git@github.com/$repo" >/dev/null \
+              || echo "::warning::FLAKE_INPUTS_TOKEN cannot read $repo"
+          done
+
       - name: Commit as github-actions[bot]
         run: |
           git config --global user.name "github-actions[bot]"
