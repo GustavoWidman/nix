@@ -7,7 +7,9 @@
 #   - `tagOwners` declares `tag:ci` and `tag:fleet`, which every machine of
 #     the fleet carries;
 #   - `tag:ci` may reach only `tag:fleet:45729` (coeusd) over tcp.
-# COEUS_KEY holds the fleet's pre-shared key.
+# COEUS_KEY holds the fleet's pre-shared key. COEUS_PUSH_IDENTITY is the
+# private half of .github/ci.pub, which opens modules/common/coeus/push/ and
+# no other secret.
 #
 # `coeus deploy` exits non-zero when a reachable machine fails, which fails
 # the run and leaves `deployed` where it was. Unreachable machines are skipped
@@ -118,10 +120,33 @@ jobs:
           path: ${{ runner.temp }}/coeus-saved
           key: coeus-cli-x86_64-linux-${{ steps.coeus.outputs.key }}
 
+      # coeus pushes the deploy's summary to the owner's devices. it opens the
+      # checkout's two push secrets in memory with the workflow's own key,
+      # which lives only in a 0600 file for this step; without that key it
+      # sends nothing, and a push that fails never fails the deploy
       - name: Deploy
         env:
           COEUS_KEY: ${{ secrets.COEUS_KEY }}
+          COEUS_PUSH_IDENTITY: ${{ secrets.COEUS_PUSH_IDENTITY }}
         run: |
+          if [ -n "$COEUS_PUSH_IDENTITY" ]; then
+            identity="$RUNNER_TEMP/push-identity"
+            config="$RUNNER_TEMP/coeus-push.toml"
+            trap 'rm -f "$identity" "$config"' EXIT
+            (umask 077 && printf '%s\n' "$COEUS_PUSH_IDENTITY" > "$identity")
+            secrets="$GITHUB_WORKSPACE/modules/common/coeus/push"
+            {
+              cat "$COEUS_CONFIG"
+              printf '\n[settings.push]\n'
+              printf 'origin = "https://coeus.r3dlust.com"\n'
+              printf 'vapid_key_file = "%s"\n' "$secrets/vapid.age"
+              printf 'subscriptions_file = "%s"\n' "$secrets/subscriptions.age"
+              printf 'identity_file = "%s"\n' "$identity"
+            } > "$config"
+            export COEUS_CONFIG="$config"
+          fi
+          unset COEUS_PUSH_IDENTITY
+
           read -ra targets <<< "$TARGETS"
           mode=()
           if [ "$ACTION" != switch ]; then mode=("--$ACTION"); fi
