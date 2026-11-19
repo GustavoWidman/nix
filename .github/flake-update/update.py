@@ -2,7 +2,8 @@
 """keeps one pull request, on the `flake-update` branch, open and current.
 
 inputs.toml sorts the flake's root inputs into triggers, which open the pull
-request when they move, and passengers, which ride along. the core below
+request when they move, and passengers, which ride along; its releases move
+inputs pinned to a tag to their newest release in flake.nix. the core below
 (parse, diff, decide, render) is pure and tested by test_update.py; the shell
 after it runs nix, git, gh and coeus.
 """
@@ -22,7 +23,7 @@ import tempfile
 import textwrap
 import tomllib
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from itertools import takewhile
 from pathlib import Path
 
@@ -45,9 +46,26 @@ class ConfigError(ValueError):
 
 
 @dataclass(frozen=True)
+class Latest:
+    """follow the forge's latest release, which GitHub marks and keeps off drafts and prereleases"""
+
+
+@dataclass(frozen=True)
+class TagPattern:
+    """follow the highest tag whose whole name matches"""
+
+    regex: re.Pattern[str]
+
+
+Release = Latest | TagPattern
+
+
+@dataclass(frozen=True)
 class Config:
     triggers: tuple[str, ...]
     passengers: tuple[str, ...]
+    # inputs pinned to a release tag, which the bot moves by rewriting flake.nix
+    releases: dict[str, Release] = field(default_factory=dict)
 
     def policy(self, name: str) -> Policy | None:
         if name in self.triggers:
@@ -62,17 +80,36 @@ class Config:
         return tuple(sorted(self.triggers)) + tuple(sorted(self.passengers))
 
 
-def parse_config(text: str, root_inputs: Iterable[str]) -> Config:
+def parse_release(entry: object) -> tuple[str, Release]:
+    if isinstance(entry, str):
+        return entry, Latest()
+    if not isinstance(entry, dict):
+        raise ConfigError("each of `releases` must be an input name or { input = ..., tag = ... }")
+    unknown = sorted(set(entry) - {"input", "tag"})
+    if unknown:
+        raise ConfigError(f"a `releases` entry has unknown keys: {', '.join(unknown)}")
+    name, tag = entry.get("input"), entry.get("tag")
+    if not isinstance(name, str) or not isinstance(tag, str):
+        raise ConfigError(
+            "a `releases` table needs an `input` and a `tag` regex; a bare name follows the latest release"
+        )
+    try:
+        return name, TagPattern(re.compile(tag))
+    except re.error as error:
+        raise ConfigError(f"{name}'s tag regex {tag!r} does not compile: {error}") from None
+
+
+def parse_config(text: str, lock: dict) -> Config:
     try:
         data = tomllib.loads(text)
     except tomllib.TOMLDecodeError as error:
         raise ConfigError(f"inputs.toml is not valid TOML: {error}") from None
 
-    unknown = sorted(set(data) - {"triggers", "passengers"})
+    unknown = sorted(set(data) - {"triggers", "passengers", "releases"})
     if unknown:
         raise ConfigError(f"inputs.toml has unknown keys: {', '.join(unknown)}")
 
-    known = set(root_inputs)
+    known, originals = set(root_inputs(lock)), root_originals(lock)
     lists: dict[str, tuple[str, ...]] = {}
     for key in ("triggers", "passengers"):
         names = data.get(key, [])
@@ -89,7 +126,21 @@ def parse_config(text: str, root_inputs: Iterable[str]) -> Config:
     both = sorted(set(lists["triggers"]) & set(lists["passengers"]))
     if both:
         raise ConfigError(f"both a trigger and a passenger: {', '.join(both)}")
-    return Config(triggers=lists["triggers"], passengers=lists["passengers"])
+
+    entries = data.get("releases", [])
+    if not isinstance(entries, list):
+        raise ConfigError("`releases` in inputs.toml must be a list")
+    releases: dict[str, Release] = {}
+    for name, release in map(parse_release, entries):
+        if name in releases:
+            raise ConfigError(f"`releases` lists {name} more than once")
+        # the list an input is in still decides whether its release opens the pull request
+        if name not in lists["triggers"] + lists["passengers"]:
+            raise ConfigError(f"{name} follows releases, so it must also be a trigger or a passenger")
+        if not originals.get(name, {}).get("ref"):
+            raise ConfigError(f"{name} follows releases, so flake.nix must pin it to a tag")
+        releases[name] = release
+    return Config(triggers=lists["triggers"], passengers=lists["passengers"], releases=releases)
 
 
 # --- lock --------------------------------------------------------------------
@@ -112,9 +163,12 @@ class Pin:
     owner: str | None = None
     repo: str | None = None
     url: str | None = None
+    # the branch or tag flake.nix asks for, from the node's `original`
+    ref: str | None = None
 
     @classmethod
-    def from_locked(cls, locked: dict) -> Pin:
+    def from_node(cls, node: dict) -> Pin:
+        locked = node["locked"]
         kind = locked["type"]
         url = locked.get("url")
         forge, owner, repo, version = None, locked.get("owner"), locked.get("repo"), None
@@ -134,6 +188,7 @@ class Pin:
             owner=owner,
             repo=repo,
             url=url,
+            ref=node.get("original", {}).get("ref"),
         )
 
     @property
@@ -161,14 +216,18 @@ def root_inputs(lock: dict) -> tuple[str, ...]:
     return tuple(lock["nodes"][lock["root"]]["inputs"])
 
 
-def root_pins(lock: dict) -> dict[str, Pin]:
-    """each root input's pin; an input that follows another has none of its own"""
+def root_nodes(lock: dict) -> dict[str, dict]:
+    """each root input's lock node; an input that follows another has none of its own"""
     nodes = lock["nodes"]
-    return {
-        name: Pin.from_locked(nodes[key]["locked"])
-        for name, key in nodes[lock["root"]]["inputs"].items()
-        if isinstance(key, str)
-    }
+    return {name: nodes[key] for name, key in nodes[lock["root"]]["inputs"].items() if isinstance(key, str)}
+
+
+def root_pins(lock: dict) -> dict[str, Pin]:
+    return {name: Pin.from_node(node) for name, node in root_nodes(lock).items()}
+
+
+def root_originals(lock: dict) -> dict[str, dict]:
+    return {name: node.get("original", {}) for name, node in root_nodes(lock).items()}
 
 
 @dataclass(frozen=True)
@@ -183,8 +242,16 @@ class Bump:
         return compare_link(self.old, self.new)
 
     @property
+    def labels(self) -> tuple[str, str]:
+        """the refs when flake.nix moved to another tag, else the revs or versions"""
+        if self.old.ref != self.new.ref and self.old.ref and self.new.ref:
+            return self.old.ref, self.new.ref
+        return self.old.name, self.new.name
+
+    @property
     def line(self) -> str:
-        return f"{self.name}: {self.old.name} ({self.old.date}) to {self.new.name} ({self.new.date})."
+        old, new = self.labels
+        return f"{self.name}: {old} ({self.old.date}) to {new} ({self.new.date})."
 
 
 def diff(config: Config, old_lock: dict, new_lock: dict) -> tuple[Bump, ...]:
@@ -195,6 +262,84 @@ def diff(config: Config, old_lock: dict, new_lock: dict) -> tuple[Bump, ...]:
         for name in config.tracked
         if name in old and name in new and old[name] != new[name]
     )
+
+
+# --- releases ----------------------------------------------------------------
+
+
+class ReleaseError(RuntimeError):
+    pass
+
+
+@dataclass(frozen=True)
+class Origin:
+    """the repository and ref a root input's url names, from its lock node's `original`"""
+
+    kind: str
+    ref: str
+    owner: str | None = None
+    repo: str | None = None
+    url: str | None = None
+
+    @classmethod
+    def from_original(cls, original: dict) -> Origin:
+        get = original.get
+        return cls(original["type"], original["ref"], get("owner"), get("repo"), get("url"))
+
+    @property
+    def git_url(self) -> str | None:
+        match self.kind:
+            case "github" | "gitlab":
+                return f"https://{self.kind}.com/{self.owner}/{self.repo}"
+            case "git":
+                return self.url
+        return None
+
+    def spellings(self, ref: str) -> tuple[str, ...]:
+        """the ways flake.nix may write this url with that ref"""
+        match self.kind:
+            case "github" | "gitlab":
+                base = f"{self.kind}:{self.owner}/{self.repo}"
+                return f"{base}/{ref}", f"{base}?ref={ref}"
+            case "git":
+                return (f"git+{self.url}?ref={ref}",)
+        return ()
+
+
+VERSION_PART = re.compile(r"\d+|\D+")
+
+
+def version_key(tag: str) -> tuple[tuple[int, int, str], ...]:
+    """digit runs compare as numbers, so 0.10.0 sorts above 0.9.0"""
+    return tuple(
+        (1, int(part), "") if part.isdigit() else (0, 0, part) for part in VERSION_PART.findall(tag)
+    )
+
+
+def newest_tag(tags: Iterable[str], regex: re.Pattern[str]) -> str | None:
+    """the highest matching tag in version order; creation order would let a backport win"""
+    return max((tag for tag in tags if regex.fullmatch(tag)), key=version_key, default=None)
+
+
+def tags_from_ls_remote(listed: str) -> tuple[str, ...]:
+    refs = (line.split("\t", 1)[-1] for line in listed.splitlines())
+    return tuple(ref.removeprefix("refs/tags/") for ref in refs if ref.startswith("refs/tags/"))
+
+
+def rewrite_url(flake_text: str, name: str, origin: Origin, ref: str) -> str:
+    """flake.nix with name's url moved to ref, matched exactly so a commented-out
+    or second copy of it is never taken for the live one"""
+    found = [
+        (match, new)
+        for old, new in zip(origin.spellings(origin.ref), origin.spellings(ref))
+        for match in re.finditer(f'(?<=")' + re.escape(old) + '(?=["?&])', flake_text)
+    ]
+    if not found:
+        raise ReleaseError(f"can't find {name}'s url in flake.nix")
+    if len(found) > 1:
+        raise ReleaseError(f"{name}'s url is in flake.nix {len(found)} times, so which is live is unclear")
+    [(match, new)] = found
+    return flake_text[: match.start()] + new + flake_text[match.end() :]
 
 
 # --- nix errors --------------------------------------------------------------
@@ -227,7 +372,7 @@ def innermost_error(stderr: str) -> str:
 
 @dataclass(frozen=True)
 class Stuck:
-    """a tracked input whose `nix flake update` failed; main's pin stays"""
+    """a tracked input whose `nix flake update`, or its release lookup, failed; main's pin stays"""
 
     name: str
     policy: Policy
@@ -373,9 +518,11 @@ def parse_coeus_summary(markdown: str) -> tuple[str, tuple[Machine, ...]]:
 
 @dataclass(frozen=True)
 class Candidate:
-    """main's lock with every tracked input updated that would update"""
+    """main's lock with every tracked input updated that would update, and
+    main's flake.nix with every release input's url moved to its newest tag"""
 
     lock_text: str
+    flake_text: str
     bumps: tuple[Bump, ...]
     stuck: tuple[Stuck, ...]
 
@@ -615,9 +762,10 @@ def render_body(
         parts.append("| input | policy | from | to | link |\n| --- | --- | --- | --- | --- |")
         for bump in candidate.bumps:
             link = f"[compare]({bump.link})" if bump.link else ""
+            old, new = bump.labels
             parts.append(
-                f"| {code(bump.name)} | {bump.policy.value} | {code(bump.old.name)} ({bump.old.date}) "
-                f"| {code(bump.new.name)} ({bump.new.date}) | {link} |"
+                f"| {code(bump.name)} | {bump.policy.value} | {code(old)} ({bump.old.date}) "
+                f"| {code(new)} ({bump.new.date}) | {link} |"
             )
         parts.append("")
     else:
@@ -654,7 +802,7 @@ def describe_plan(plan: Plan) -> str:
 
 
 def refresh_comment(plan: Refresh, main_sha: str, evals: tuple[HostEval, ...], fleet: Fleet) -> str:
-    moved = "; ".join(f"{code(bump.name)} {bump.old.name} to {bump.new.name}" for bump in plan.since)
+    moved = "; ".join(f"{code(bump.name)} {' to '.join(bump.labels)}" for bump in plan.since)
     lines = [f"Moved since the last push: {moved}." if moved else "No input moved since the last push."]
     if plan.rebased:
         lines.append(f"main moved under it, so the branch now starts from {main_sha[:7]}.")
@@ -729,6 +877,7 @@ class Context:
     config: Config
     main_sha: str
     main_lock_text: str
+    main_flake_text: str
     repo: str
     # the branch as this run read it, the lease every push holds
     branch_sha: str | None
@@ -739,24 +888,80 @@ class Context:
     def lock_path(self) -> Path:
         return self.root / "flake.lock"
 
+    @property
+    def flake_path(self) -> Path:
+        return self.root / "flake.nix"
 
-def build_candidate(config: Config, lock_path: Path, main_lock_text: str) -> Candidate:
+    def files(self, candidate: Candidate) -> list[str]:
+        """what the bot's commit changes; flake.nix only when a release moved"""
+        return ["flake.lock"] + ["flake.nix"] * (candidate.flake_text != self.main_flake_text)
+
+    def write(self, candidate: Candidate) -> None:
+        self.lock_path.write_text(candidate.lock_text)
+        self.flake_path.write_text(candidate.flake_text)
+
+    def restore(self) -> None:
+        self.lock_path.write_text(self.main_lock_text)
+        self.flake_path.write_text(self.main_flake_text)
+
+
+def release_tag(name: str, release: Release, origin: Origin) -> str:
+    match release:
+        case Latest():
+            if origin.kind != "github":
+                raise ReleaseError(
+                    f"{name} is on {origin.kind}, where the bot knows no latest release; "
+                    "give it a tag regex in inputs.toml"
+                )
+            latest = f"repos/{origin.owner}/{origin.repo}/releases/latest"
+            return out("gh", "api", latest, "--jq", ".tag_name")
+        case TagPattern(regex=regex):
+            if origin.git_url is None:
+                raise ReleaseError(f"the bot can't list {name}'s tags from a {origin.kind} input")
+            listed = out("git", "ls-remote", "--tags", "--refs", origin.git_url)
+            tag = newest_tag(tags_from_ls_remote(listed), regex)
+            if tag is None:
+                raise ReleaseError(f"no tag of {name}'s fully matches {regex.pattern}")
+            return tag
+
+
+def follow_release(name: str, release: Release, lock: dict, flake_path: Path) -> None:
+    """moves name's url in flake.nix to its newest tag, for nix flake update to lock"""
+    origin = Origin.from_original(root_originals(lock)[name])
+    tag = release_tag(name, release, origin)
+    if tag != origin.ref:
+        flake_path.write_text(rewrite_url(flake_path.read_text(), name, origin, tag))
+
+
+def build_candidate(config: Config, root: Path, main_lock_text: str, main_flake_text: str) -> Candidate:
     """updates one tracked input at a time, since one that fails would stop the rest"""
+    lock_path, flake_path = root / "flake.lock", root / "flake.nix"
     stuck = []
     try:
         for name in config.tracked:
-            before = lock_path.read_text()
-            proc = run(["nix", "flake", "update", "--accept-flake-config", name], check=False)
-            if proc.returncode != 0:
-                lock_path.write_text(before)
-                stuck.append(Stuck(name, config.policy(name), error_block(proc.stderr)))
-            moved = lock_path.read_text() != before
-            log(f"{name}: {'stuck' if proc.returncode else 'moved' if moved else 'current'}")
-        lock_text = lock_path.read_text()
+            lock_before, flake_before = lock_path.read_text(), flake_path.read_text()
+            error = None
+            try:
+                if release := config.releases.get(name):
+                    follow_release(name, release, json.loads(lock_before), flake_path)
+                proc = run(["nix", "flake", "update", "--accept-flake-config", name], check=False)
+                if proc.returncode != 0:
+                    error = error_block(proc.stderr)
+            except (ReleaseError, CommandFailed) as failure:
+                error = str(failure)
+            if error is not None:
+                lock_path.write_text(lock_before)
+                flake_path.write_text(flake_before)
+                stuck.append(Stuck(name, config.policy(name), error))
+                log(f"{name}: stuck")
+                continue
+            log(f"{name}: {'moved' if lock_path.read_text() != lock_before else 'current'}")
+        lock_text, flake_text = lock_path.read_text(), flake_path.read_text()
     finally:
         lock_path.write_text(main_lock_text)
+        flake_path.write_text(main_flake_text)
     bumps = diff(config, json.loads(main_lock_text), json.loads(lock_text))
-    return Candidate(lock_text, bumps, tuple(stuck))
+    return Candidate(lock_text, flake_text, bumps, tuple(stuck))
 
 
 def foreign_commits(main_sha: str, head_sha: str) -> tuple[str, ...]:
@@ -863,8 +1068,8 @@ def build_branch(ctx: Context, candidate: Candidate, foreign: tuple[str, ...]) -
     """main's tip, the bot's commit, then the foreign commits; None when one does not apply"""
     out("git", "checkout", "--quiet", "--detach", ctx.main_sha)
     if candidate.bumps:
-        ctx.lock_path.write_text(candidate.lock_text)
-        out("git", "add", "flake.lock")
+        ctx.write(candidate)
+        out("git", "add", *ctx.files(candidate))
         out("git", "commit", "--quiet", "--file", "-", stdin=commit_message(candidate.bumps))
     for sha in foreign:
         if run(["git", "cherry-pick", sha], check=False).returncode != 0:
@@ -991,14 +1196,15 @@ def apply(ctx: Context, plan: Plan, candidate: Candidate) -> None:
 def dry_run(ctx: Context, plan: Plan, candidate: Candidate) -> None:
     """everything but the writes: the hosts evaluate on this tree with the candidate's lock"""
     try:
-        ctx.lock_path.write_text(candidate.lock_text)
+        ctx.write(candidate)
         evals = eval_hosts(candidate.lock)
     finally:
-        ctx.lock_path.write_text(ctx.main_lock_text)
+        ctx.restore()
     fleet = NotBuilt("Not built on a dry run.")
     by_hand = isinstance(plan, Open) and plan.by_hand
     print(f"plan: {describe_plan(plan)}\n")
     print(f"commit message:\n\n{textwrap.indent(commit_message(candidate.bumps), '    ')}")
+    print(f"commit changes: {names(ctx.files(candidate)) if candidate.bumps else 'nothing'}\n")
     print(f"pull request body:\n\n{render_body(candidate, ctx.config, by_hand, evals, fleet)}")
     write_summary(render_summary(plan, candidate, evals, fleet))
 
@@ -1018,17 +1224,15 @@ def main(argv: list[str]) -> int:
 
     root = Path(__file__).resolve().parents[2]
     os.chdir(root)
-    main_lock_text = (root / "flake.lock").read_text()
+    main_lock_text, main_flake_text = (root / "flake.lock").read_text(), (root / "flake.nix").read_text()
     try:
-        config = parse_config(
-            (Path(__file__).parent / "inputs.toml").read_text(), root_inputs(json.loads(main_lock_text))
-        )
+        config = parse_config((Path(__file__).parent / "inputs.toml").read_text(), json.loads(main_lock_text))
     except ConfigError as error:
         print(f"::error::{error}")
         return 2
 
     main_sha = out("git", "rev-parse", "HEAD")
-    candidate = build_candidate(config, root / "flake.lock", main_lock_text)
+    candidate = build_candidate(config, root, main_lock_text, main_flake_text)
     for stuck in candidate.stuck:
         print(f"::warning::{stuck.name} would not update: {stuck.summary}")
     if len(candidate.stuck) == len(config.tracked):
@@ -1044,6 +1248,7 @@ def main(argv: list[str]) -> int:
         config=config,
         main_sha=main_sha,
         main_lock_text=main_lock_text,
+        main_flake_text=main_flake_text,
         repo=repo,
         branch_sha=branch_sha,
         run_url=f"{server}/{repo}/actions/runs/{run_id}" if server and run_id else None,

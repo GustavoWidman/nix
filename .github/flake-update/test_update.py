@@ -6,11 +6,13 @@ updated as `nix flake update <name>` did it. fixtures/*.err are nix's stderr:
 oracle-2 evaluated with a broken, an unsupported and a removed package added,
 desktop-nixos with a renamed one, and `nix flake update copyparty` failing on
 copyparty's registry lookup. coeus-summary.md has the shape coeus' step
-summary table takes.
+summary table takes. the release tests rewrite the committed flake.nix.
 """
 
+import copy
 import dataclasses
 import json
+import re
 import unittest
 from pathlib import Path
 
@@ -18,6 +20,7 @@ import update as u
 
 HERE = Path(__file__).parent
 FIXTURES = HERE / "fixtures"
+REPO = HERE.parents[1]
 
 # the nixpkgs the eval fixtures came from
 NIXPKGS = u.Nixpkgs(
@@ -39,7 +42,7 @@ def lock(name: str) -> dict:
 
 
 def candidate(base: str, new: str, stuck: tuple[u.Stuck, ...] = ()) -> u.Candidate:
-    return u.Candidate(text(f"{new}.lock.json"), u.diff(CONFIG, lock(base), lock(new)), stuck)
+    return u.Candidate(text(f"{new}.lock.json"), "", u.diff(CONFIG, lock(base), lock(new)), stuck)
 
 
 def open_pr(
@@ -326,12 +329,22 @@ class Coeus(unittest.TestCase):
 
 
 class Config(unittest.TestCase):
-    roots = ("nixpkgs", "coeus", "thoth")
+    tracked = 'triggers = ["nixpkgs"]\npassengers = ["coeus", "taproot", "thoth"]\n'
+
+    def parse(self, toml: str) -> u.Config:
+        return u.parse_config(toml, lock("main"))
 
     def test_the_committed_config_fits_the_committed_lock(self):
         # which input goes in which list is the config's to say; only that it parses is checked
-        flake_lock = json.loads((HERE.parents[1] / "flake.lock").read_text())
-        u.parse_config((HERE / "inputs.toml").read_text(), u.root_inputs(flake_lock))
+        flake_lock = json.loads((REPO / "flake.lock").read_text())
+        u.parse_config((HERE / "inputs.toml").read_text(), flake_lock)
+
+    def test_releases_take_a_bare_name_or_a_tag_regex(self):
+        config = self.parse(self.tracked + 'releases = ["taproot"]')
+        self.assertEqual(config.releases, {"taproot": u.Latest()})
+        config = self.parse(self.tracked + "releases = [{ input = \"taproot\", tag = 'taproot-v\\d+' }]")
+        self.assertEqual(config.releases, {"taproot": u.TagPattern(re.compile(r"taproot-v\d+"))})
+        self.assertEqual(self.parse(self.tracked).releases, {})
 
     def test_rejects(self):
         for toml in (
@@ -341,9 +354,111 @@ class Config(unittest.TestCase):
             'triggers = ["nixpkgs"]\npassengers = ["nixpkgs"]',
             'passengers = ["coeus", "coeus"]',
             'triggers = "nixpkgs"',
+            # a release input in neither list
+            'triggers = ["nixpkgs"]\nreleases = ["taproot"]',
+            # thoth's url names no ref, so it has no tag to move
+            self.tracked + 'releases = ["thoth"]',
+            self.tracked + 'releases = ["taproot", { input = "taproot", tag = "v.*" }]',
+            self.tracked + 'releases = [{ input = "taproot", tag = "v(" }]',
+            self.tracked + 'releases = [{ input = "taproot", tag = "v.*", prerelease = true }]',
+            self.tracked + 'releases = [{ input = "taproot" }]',
+            self.tracked + "releases = [3]",
+            self.tracked + 'releases = "taproot"',
         ):
             with self.subTest(toml=toml), self.assertRaises(u.ConfigError):
-                u.parse_config(toml, self.roots)
+                self.parse(toml)
+
+
+TAPROOT = re.compile(r"taproot-v\d+\.\d+\.\d+")
+
+
+class Releases(unittest.TestCase):
+    def test_version_order_compares_numbers(self):
+        self.assertEqual(u.newest_tag(["v0.9.0", "v0.10.0", "v0.2.0"], re.compile(r"v[\d.]+")), "v0.10.0")
+
+    def test_the_anchored_regex_leaves_out_release_candidates(self):
+        tags = ["taproot-v0.5.0", "taproot-v0.6.0", "taproot-v0.7.0"]
+        tags += [f"taproot-v0.8.0-rc.{n}" for n in range(1, 6)]
+        self.assertEqual(u.newest_tag(tags, TAPROOT), "taproot-v0.7.0")
+
+    def test_a_backport_cut_after_a_newer_release_loses(self):
+        self.assertEqual(u.newest_tag(["taproot-v0.7.1", "taproot-v0.6.3"], TAPROOT), "taproot-v0.7.1")
+
+    def test_no_match_is_none(self):
+        self.assertIsNone(u.newest_tag(["v1.0.0"], TAPROOT))
+
+    def test_tags_from_ls_remote(self):
+        listed = "aaa\trefs/tags/taproot-v0.7.0\nbbb\trefs/tags/taproot-v0.7.1\nccc\trefs/heads/main\n"
+        self.assertEqual(u.tags_from_ls_remote(listed), ("taproot-v0.7.0", "taproot-v0.7.1"))
+
+    flake = (REPO / "flake.nix").read_text()
+    taproot = u.Origin.from_original(
+        u.root_originals(json.loads((REPO / "flake.lock").read_text()))["taproot"]
+    )
+
+    def test_rewrites_the_committed_url_and_nothing_else(self):
+        new = u.rewrite_url(self.flake, "taproot", self.taproot, "taproot-v9.9.9")
+        changed = [(a, b) for a, b in zip(self.flake.splitlines(), new.splitlines()) if a != b]
+        self.assertEqual(len(changed), 1)
+        before, after = changed[0]
+        self.assertIn(f'"github:265866/taproot/{self.taproot.ref}"', before)
+        self.assertEqual(after, before.replace(self.taproot.ref, "taproot-v9.9.9"))
+
+    def test_the_ref_query_spelling(self):
+        origin = u.Origin("github", "v1.0.0", "o", "r")
+        self.assertEqual(
+            u.rewrite_url('x.url = "github:o/r?ref=v1.0.0";', "x", origin, "v1.1.0"),
+            'x.url = "github:o/r?ref=v1.1.0";',
+        )
+        thoth = u.Origin("git", "v1.0.0", url="ssh://git@github.com/GustavoWidman/thoth")
+        old = 'url = "git+ssh://git@github.com/GustavoWidman/thoth?ref=v1.0.0&shallow=1";'
+        self.assertEqual(
+            u.rewrite_url(old, "thoth", thoth, "v2"),
+            'url = "git+ssh://git@github.com/GustavoWidman/thoth?ref=v2&shallow=1";',
+        )
+
+    def test_a_longer_url_is_not_the_old_one(self):
+        origin = u.Origin("github", "v1.0.0", "o", "r")
+        with self.assertRaisesRegex(u.ReleaseError, "can't find x's url"):
+            u.rewrite_url('x.url = "github:o/r/v1.0.0-rc.1";', "x", origin, "v1.1.0")
+
+    def test_refuses_a_missing_url(self):
+        gone = dataclasses.replace(self.taproot, ref="taproot-v0.0.1")
+        with self.assertRaisesRegex(u.ReleaseError, "can't find taproot's url in flake.nix"):
+            u.rewrite_url(self.flake, "taproot", gone, "taproot-v9.9.9")
+
+    def test_refuses_a_url_written_twice(self):
+        # a commented-out copy is as good as a live one to a text match
+        commented = f'inputs = {{\n    # url = "github:265866/taproot/{self.taproot.ref}";'
+        twice = self.flake.replace("inputs = {", commented, 1)
+        with self.assertRaisesRegex(u.ReleaseError, "2 times"):
+            u.rewrite_url(twice, "taproot", self.taproot, "taproot-v9.9.9")
+
+
+class RefChange(unittest.TestCase):
+    """taproot's url moved from one release tag to the next"""
+
+    config = dataclasses.replace(CONFIG, passengers=(*CONFIG.passengers, "taproot"))
+    new = copy.deepcopy(lock("main"))
+    new["nodes"]["taproot"]["original"]["ref"] = "taproot-v0.7.1"
+    new["nodes"]["taproot"]["locked"] |= {"rev": "9" * 40, "lastModified": 1794920400}
+    bumps = u.diff(config, lock("main"), new)
+
+    def test_the_bump_names_the_tags(self):
+        self.assertEqual(
+            [bump.line for bump in self.bumps],
+            ["taproot: taproot-v0.7.0 (2026-11-13) to taproot-v0.7.1 (2026-11-17)."],
+        )
+
+    def test_the_table_row_names_the_tags_and_links_the_revs(self):
+        cand = u.Candidate(json.dumps(self.new), "", self.bumps, ())
+        body = u.render_body(cand, self.config, False, (), u.NotBuilt("Not built on a dry run."))
+        old_rev = lock("main")["nodes"]["taproot"]["locked"]["rev"]
+        self.assertIn(
+            "| `taproot` | passenger | `taproot-v0.7.0` (2026-11-13) | `taproot-v0.7.1` (2026-11-17) "
+            f"| [compare](https://github.com/265866/taproot/compare/{old_rev}...{'9' * 40}) |",
+            body,
+        )
 
 
 if __name__ == "__main__":
