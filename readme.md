@@ -113,6 +113,43 @@ own `coeus-launcher`, installed once and never replaced, so the grant outlives
 every update. run `coeus doctor --fix` on the mac and drag `coeus-launcher` into
 the list it opens. routine deployments work without it.
 
+## flake updates
+
+input updates arrive as a pull request. every night at 00:17 (brt),
+`.github/workflows/flake-update.yml` updates the flake's inputs on `main` and
+keeps exactly one pull request, on the `flake-update` branch, holding
+whatever is waiting. `.github/flake-update/inputs.toml` splits the inputs it
+tracks into two lists:
+
+- **triggers** (just `nixpkgs` for now) open the pull request when they move.
+- **passengers** ride along: they're updated when a trigger moved, or on any
+  run while the pull request is open, but never open one on their own,
+  because nobody needs a pull request for every homebrew-core commit.
+
+inputs in neither list (thoth, rocky-bot, taproot, rift) are bumped by hand,
+and the toml says why. an input that fails to update keeps main's pin and is
+listed as stuck, with its error, instead of stopping the rest.
+
+every push of the branch gets checked twice. the runner evaluates all six
+hosts and names any nixpkgs package that refuses to evaluate (broken,
+insecure, unsupported, removed), and coeus builds the commit on every machine
+that answers, without activating anything. both show up as commit statuses
+and in the pull request's body, which is rebuilt from scratch on every push,
+and a comment says what moved since the last one. merging it is a push to
+`main`, so the usual deploy takes it from there.
+
+- `gh workflow run flake-update` starts it by hand; add `-f open=true` to
+  open the pull request even when only passengers moved.
+- closing the pull request parks it: nothing reopens until a trigger moves
+  past what the closed one had.
+- commits you push to the branch are kept, and checked as soon as you push
+  them. each refresh rebuilds the branch as main, the bot's commit, then
+  yours, cherry-picked in order. if one no longer applies, the bot says so
+  on the pull request once and leaves the branch alone.
+- `FLAKE_INPUTS_TOKEN`, a fine-grained token that can read thoth and
+  rocky-bot, is how the runner fetches the private inputs lab and oracle-1
+  import.
+
 ## file structure
 
 the repository is structured around modularity and avoiding spaghetti code.
