@@ -54,6 +54,9 @@ let
 
   # a secret's audience follows from where it lives:
   #   hosts/<name>/**     that machine and the admins
+  #   modules/common/coeus/push/**
+  #                       every machine and the deploy workflow's key, which
+  #                       sends each deploy's summary and opens nothing else
   #   modules/common/**   every machine
   #   modules/desktop/**  all desktops and the admins
   #   modules/dev/**      all desktops, dev-servers and the admins
@@ -70,6 +73,8 @@ let
       null
     else if head parts == "hosts" && length parts > 2 then
       unique ([ (hostKey (elemAt parts 1)) ] ++ keys.admins)
+    else if startsWith "modules/common/coeus/push/" path then
+      keys.all ++ [ keys.ci ]
     else if startsWith "modules/common/" path then
       keys.all
     else if startsWith "modules/desktop/" path then
