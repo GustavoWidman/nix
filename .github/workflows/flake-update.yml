@@ -3,10 +3,14 @@
 # inputs.toml says which inputs open the pull request when they move
 # (triggers) and which ride along (passengers).
 #
+# It runs every night, by hand, when flake-update-rebase.yml sees a push to
+# main touch flake.lock or flake.nix, and on pushes to the flake-update
+# branch. The bot pushes with GITHUB_TOKEN, which starts no workflow, so a
+# push event is a person's, and the bot checks that head as it is.
+#
 # Every push of the branch is checked: the runner evaluates all six hosts,
 # and coeus builds the commit on every machine that answers without
-# activating it. The bot pushes with GITHUB_TOKEN, which starts no workflow,
-# so a push event is a person's, and the bot checks that head as it is. That takes the same inventory, coeus CLI and tailnet seat as
+# activating it. That takes the same inventory, coeus CLI and tailnet seat as
 # deploy.yml (.github/actions/coeus), and COEUS_KEY. FLAKE_INPUTS_TOKEN, a
 # fine-grained token that reads thoth and rocky-bot, lets nix fetch those
 # private inputs over https.

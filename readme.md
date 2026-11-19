@@ -155,6 +155,10 @@ and in the pull request's body, which is rebuilt from scratch on every push,
 and a comment says what moved since the last one. merging it is a push to
 `main`, so the usual deploy takes it from there.
 
+- a push to `main` that touches `flake.lock` or `flake.nix`, like a manual
+  bump, starts it too (`flake-update-rebase.yml`), so the pull request gets
+  rebased and checked within minutes, dependabot style. pushes that touch
+  anything else can't conflict with it and leave it alone.
 - `gh workflow run flake-update` starts it by hand; add `-f open=true` to
   open the pull request even when only passengers moved.
 - closing the pull request parks it: nothing reopens until a trigger moves
