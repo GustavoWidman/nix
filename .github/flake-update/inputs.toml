@@ -4,6 +4,18 @@
 # passenger never does: it is updated only when a trigger moved, or on any
 # run while that pull request is open.
 #
+# a tag never moves, so `nix flake update` alone leaves an input pinned to
+# one where it is. `releases` names such inputs, each also a trigger or a
+# passenger, and the bot rewrites the tag in its flake.nix url before it
+# updates the lock. an entry is either
+#   - a bare name, "foo": the release github marks latest, which is never a
+#     draft or a prerelease. github only.
+#   - a table, { input = "taproot", tag = 'taproot-v\d+\.\d+\.\d+' }: the
+#     highest tag whose whole name matches the regex, on any git forge. the
+#     regex is anchored at both ends, so taproot-v0.5.0-rc.1 doesn't match.
+#     highest means version order, with digit runs compared as numbers, so
+#     0.10.0 beats 0.9.0 and a backport tagged after a newer release loses.
+#
 # an input in neither list is manual, and the bot never touches it:
 #   - thoth and rocky-bot are private, and move when i ship them
 #   - taproot is pinned to a release tag, whose nixpkgs 265866.cachix.org builds
