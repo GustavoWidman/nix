@@ -1,0 +1,80 @@
+# What a job needs before it can talk to the fleet: the fleet's inventory in
+# COEUS_CONFIG, the coeus CLI the fleet runs on PATH, and a seat on the
+# tailnet as `tag:ci`. It reads the checkout's `hosts/` and flake.lock, so
+# actions/checkout and a Nix come first. deploy.yml's header describes the
+# tailnet policy the seat relies on.
+name: coeus
+description: Write the fleet inventory, fetch the coeus CLI the fleet runs and join the tailnet as tag:ci
+
+inputs:
+  tailscale-oauth-client-id:
+    description: Tailscale OAuth client allowed to write auth keys for tag:ci
+    required: true
+  tailscale-oauth-secret:
+    description: The secret of that OAuth client
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # from `hosts/` alone: the flake's `coeus.clientConfig` would first fetch
+    # nixpkgs for the few lib functions it uses
+    - name: Write the fleet inventory
+      shell: bash
+      run: |
+        nix eval --raw --file .github/coeus.nix > "$RUNNER_TEMP/coeus.toml"
+        echo "COEUS_CONFIG=$RUNNER_TEMP/coeus.toml" >> "$GITHUB_ENV"
+
+    - name: Find the coeus the fleet runs
+      id: coeus
+      shell: bash
+      run: |
+        locked=$(jq -r '.nodes[.nodes.root.inputs.coeus].locked | "\(.owner)/\(.repo)/\(.rev)"' flake.lock)
+        printf 'locked=%s\n' "$locked" >> "$GITHUB_OUTPUT"
+        printf 'key=%s\n' "${locked//\//-}" >> "$GITHUB_OUTPUT"
+
+    # the store path of that coeus and its closure, saved for each locked
+    # coeus: naming a coeus build means evaluating coeus' flake, most of a
+    # minute, and the closure comes faster from here than from a binary cache
+    - name: Recall that coeus
+      id: recalled
+      uses: actions/cache/restore@v6
+      with:
+        path: ${{ runner.temp }}/coeus-saved
+        key: coeus-cli-x86_64-linux-${{ steps.coeus.outputs.key }}
+
+    - name: Fetch the coeus CLI
+      shell: bash
+      env:
+        COEUS: github:${{ steps.coeus.outputs.locked }}#packages.x86_64-linux.default
+        SAVED: ${{ runner.temp }}/coeus-saved
+      run: |
+        if [ -s "$SAVED/path" ]; then
+          path=$(cat "$SAVED/path")
+          # unsigned when built here; only runs on main save what main restores
+          nix copy --no-check-sigs --from "file://$SAVED/store" "$path"
+        else
+          path=$(nix eval --raw "$COEUS.outPath")
+          # a released coeus comes from the binary cache; any other commit builds here
+          nix build --no-link "$path" || nix build --no-link "$COEUS"
+          nix copy --to "file://$SAVED/store?compression=zstd" "$path"
+          printf '%s\n' "$path" > "$SAVED/path"
+        fi
+        nix build --out-link "$RUNNER_TEMP/coeus" "$path"
+        echo "$RUNNER_TEMP/coeus/bin" >> "$GITHUB_PATH"
+
+    # right away, so a job that fails later still leaves it for the next run
+    - name: Remember that coeus
+      if: steps.recalled.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v6
+      with:
+        path: ${{ runner.temp }}/coeus-saved
+        key: coeus-cli-x86_64-linux-${{ steps.coeus.outputs.key }}
+
+    # last, once everything that comes from the internet is here: `tag:ci`
+    # reaches nothing on the tailnet but coeusd
+    - uses: tailscale/github-action@v4.4.0
+      with:
+        oauth-client-id: ${{ inputs.tailscale-oauth-client-id }}
+        oauth-secret: ${{ inputs.tailscale-oauth-secret }}
+        tags: tag:ci
