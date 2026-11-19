@@ -16,10 +16,7 @@
 #     highest means version order, with digit runs compared as numbers, so
 #     0.10.0 beats 0.9.0 and a backport tagged after a newer release loses.
 #
-# an input in neither list is manual, and the bot never touches it:
-#   - thoth and rocky-bot are private, and move when i ship them
-#   - taproot is pinned to a release tag, whose nixpkgs 265866.cachix.org builds
-#   - rift follows a branch of my fork, not upstream, so it moves when i push
+# an input in neither list is left alone.
 
 triggers = [
   "coeus",
@@ -47,4 +44,10 @@ passengers = [
   "nix-darwin",
   "nix-homebrew",
   "nixos-mailserver",
+  "rift",
+  "rocky-bot",
+  "taproot",
+  "thoth",
 ]
+
+releases = [{ input = "taproot", tag = 'taproot-v\d+\.\d+\.\d+' }]
