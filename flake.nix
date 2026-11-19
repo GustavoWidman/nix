@@ -113,7 +113,7 @@
     };
 
     # a release tag with taproot's own nixpkgs, which 265866.cachix.org builds
-    taproot.url = "github:265866/taproot/taproot-v0.7.0";
+    taproot.url = "github:265866/taproot/taproot-v0.7.1";
     coeus.url = "github:GustavoWidman/coeus";
     kache.url = "github:kunobi-ninja/kache";
     norn.url = "github:GustavoWidman/norn";
