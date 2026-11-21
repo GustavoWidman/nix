@@ -120,8 +120,8 @@
 
     zed.url = "github:GustavoWidman/zed-autobuild";
     kemono-pinger.url = "github:GustavoWidman/kemono-pinger";
-    portfolio.url = "github:GustavoWidman/portfolio/feat/upstreamer";
-    heimdall.url = "github:GustavoWidman/heimdall/feat/upstreamer";
+    portfolio.url = "github:GustavoWidman/portfolio";
+    heimdall.url = "github:GustavoWidman/heimdall";
     upstreamer.url = "github:GustavoWidman/upstreamer";
     rocky-bot.url = "git+ssh://git@github.com/GustavoWidman/rocky-bot";
     thoth = {
