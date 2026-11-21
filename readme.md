@@ -150,10 +150,11 @@ its error, instead of stopping the rest.
 every push of the branch gets checked twice. the runner evaluates all six
 hosts and names any nixpkgs package that refuses to evaluate (broken,
 insecure, unsupported, removed), and coeus builds the commit on every machine
-that answers, without activating anything. both show up as commit statuses
-and in the pull request's body, which is rebuilt from scratch on every push,
-and a comment says what moved since the last one. merging it is a push to
-`main`, so the usual deploy takes it from there.
+that answers, without activating anything, naming the derivation that broke a
+machine's build, under the pile of dependents nix fails along with it. both
+show up as commit statuses and in the pull request's body, which is rebuilt
+from scratch on every push, and a comment says what moved since the last one.
+merging it is a push to `main`, so the usual deploy takes it from there.
 
 - a push to `main` that touches `flake.lock` or `flake.nix`, like a manual
   bump, starts it too (`flake-update-rebase.yml`), so the pull request gets
