@@ -1070,8 +1070,9 @@ def build_fleet(sha: str) -> Built:
     logs = []
     for machine in machines:
         if machine.ok is False and machine.job:
+            # coeus exits with the job's outcome, so a failed job's log comes with a nonzero exit
             job = run(["coeus", "logs", machine.host, machine.job], check=False)
-            logs.append((machine.host, job.stdout if job.returncode == 0 else job.stderr))
+            logs.append((machine.host, job.stdout or job.stderr))
     return Built(proc.returncode == 0, table, machines, tuple(logs))
 
 
