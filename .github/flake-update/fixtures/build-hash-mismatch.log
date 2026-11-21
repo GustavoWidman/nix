@@ -1,0 +1,90 @@
+coeus › altar job #102
+  build flake-update@7673fa4 by github flake-update #44927926633 · ordered 59m ago (2026-11-21 14:08:03)
+
+14:08:03 [›] runner started (coeus 0.21.1)
+  building darwin-version.json
+  building etc-registry.json
+  building taps-env
+ssh: connect to host laptop-mac port 22: Operation timed out
+SSH master stdout first line:
+cannot build on 'ssh-ng://build@laptop-mac': error: failed to start SSH master connection to 'laptop-mac'
+  building cargo-nightly-aarch64-apple-darwin.tar.gz
+  building options.json
+  building rust-analyzer-nightly-aarch64-apple-darwin.tar.gz
+  building rust-src-nightly.tar.gz
+  building rustfmt-nightly-aarch64-apple-darwin.tar.gz
+  building coeus-web-cert
+  building com.tailscale.tailscaled.plist
+  building hm_.cargoconfig.toml
+  building hm_gitconfig
+  building hm_gitconfig
+  building ninja.kunobi.kache.plist
+  building org.nixos.coeus-web.plist
+  building tailscale-autoconnect
+  building brew-7.0.11-patched
+  building clippy-nightly-aarch64-apple-darwin.tar.gz
+  building mitmproxy_macos-0.12.16-py3-none-any.whl
+  building rust-std-nightly-aarch64-apple-darwin.tar.gz
+  building rustc-nightly-aarch64-apple-darwin.tar.gz
+  building org.nixos.coeus-web-cert.plist
+  building rust-src-nightly-complete-2026-11-21
+  building options.json
+  building org.nixos.tailscale-autoconnect.plist
+  building darwin-manpages
+  building darwin-manual-html
+  building launchd
+error: hash mismatch in fixed-output derivation '/nix/store/ssjhrnz22a40hdg2wxpzlbbi1hybqr5j-mitmproxy_macos-0.12.16-py3-none-any.whl.drv':
+         specified: sha256-7VaT+JsMvR0qjFoxuu0r16dLCq1oZy4IREwYaMOPSfg=
+            got:    sha256-ruw6Tl0NG8XJiyltwszNaXAxiOWUYlDU9n8eaxSYI+A=
+error: Cannot build '/nix/store/s6vsaf834jynwj1nzvd2wsfyvcwfqvzr-python3.14-mitmproxy-macos-0.12.16.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/n1bpni9q1sx9y4gqcmh5dwggzlw28475-python3.14-mitmproxy-macos-0.12.16-dist
+         /nix/store/zsp47qlbnq7zcg8rlrq5c1kyx81mgq7x-python3.14-mitmproxy-macos-0.12.16
+error: Cannot build '/nix/store/lr95v7cva6q8zj6x3c3n9sha1nvfxm42-python3.14-mitmproxy-rs-0.12.16.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/mhy819smvqbcv7kpzmmyv98incl5kvf6-python3.14-mitmproxy-rs-0.12.16
+         /nix/store/za2lwnap47nqf4l1wy727qqy9m8jrpv0-python3.14-mitmproxy-rs-0.12.16-dist
+error: Cannot build '/nix/store/jm9n2n1pqa09jg095f8sbymba0ys0zj0-python3.14-mitmproxy-12.3.1.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/fxz2r22m7w52gp2zi59s77syxw75f1wv-python3.14-mitmproxy-12.3.1-dist
+         /nix/store/wafybaf2ny1cl2szv4ia9d4vwvk9g80c-python3.14-mitmproxy-12.3.1
+error: Cannot build '/nix/store/fj7sh1z6j1ff3h9wdx9874g9kq07srj2-system-applications.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/mq2wq846szz6ly7qdj1qdzs1g4b33ksm-system-applications
+error: Cannot build '/nix/store/z66z0m92fsydsm9xdrqkmpfdnl6fyfwp-system-path.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/74m6iqh6mwgpzmhiicf8khr0p7z07q71-system-path
+❌ /nix/store/4midx41k3axx6vaddgyv1ky90am00afn-darwin-system-26.11.ff0e21a.drv^*
+error: Cannot build '/nix/store/4midx41k3axx6vaddgyv1ky90am00afn-darwin-system-26.11.ff0e21a.drv'.
+       Reason: 1 dependency failed.
+       Output paths:
+         /nix/store/9c3xc1rf72n7jck9j37n585zbbn10bgv-darwin-system-26.11.ff0e21a
+14:10:12 [✗] failed in building: Cannot build '/nix/store/4midx41k3axx6vaddgyv1ky90am00afn-darwin-system-26.11.ff0e21a.drv'.
+
+✗ altar job #102 failed in 2m09s
+in building: Cannot build '/nix/store/4midx41k3axx6vaddgyv1ky90am00afn-darwin-system-26.11.ff0e21a.drv'.
+  │          /nix/store/mhy819smvqbcv7kpzmmyv98incl5kvf6-python3.14-mitmproxy-rs-0.12.16
+  │          /nix/store/za2lwnap47nqf4l1wy727qqy9m8jrpv0-python3.14-mitmproxy-rs-0.12.16-dist
+  │ error: Cannot build '/nix/store/jm9n2n1pqa09jg095f8sbymba0ys0zj0-python3.14-mitmproxy-12.3.1.drv'.
+  │        Reason: 1 dependency failed.
+  │        Output paths:
+  │          /nix/store/fxz2r22m7w52gp2zi59s77syxw75f1wv-python3.14-mitmproxy-12.3.1-dist
+  │          /nix/store/wafybaf2ny1cl2szv4ia9d4vwvk9g80c-python3.14-mitmproxy-12.3.1
+  │ error: Cannot build '/nix/store/fj7sh1z6j1ff3h9wdx9874g9kq07srj2-system-applications.drv'.
+  │        Reason: 1 dependency failed.
+  │        Output paths:
+  │          /nix/store/mq2wq846szz6ly7qdj1qdzs1g4b33ksm-system-applications
+  │ error: Cannot build '/nix/store/z66z0m92fsydsm9xdrqkmpfdnl6fyfwp-system-path.drv'.
+  │        Reason: 1 dependency failed.
+  │        Output paths:
+  │          /nix/store/74m6iqh6mwgpzmhiicf8khr0p7z07q71-system-path
+  │ ❌ /nix/store/4midx41k3axx6vaddgyv1ky90am00afn-darwin-system-26.11.ff0e21a.drv^*
+  │ error: Cannot build '/nix/store/4midx41k3axx6vaddgyv1ky90am00afn-darwin-system-26.11.ff0e21a.drv'.
+  │        Reason: 1 dependency failed.
+  │        Output paths:
+  │          /nix/store/9c3xc1rf72n7jck9j37n585zbbn10bgv-darwin-system-26.11.ff0e21a

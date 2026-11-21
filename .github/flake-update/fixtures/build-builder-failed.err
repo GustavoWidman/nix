@@ -1,0 +1,15 @@
+this derivation will be built:
+  /nix/store/c02rgcpzbm140j499byss0kk82zaiavm-flake-update-fixture-1.0.drv
+ssh: connect to host laptop-mac port 22: Operation timed out
+cannot build on 'ssh-ng://build@laptop-mac': error: failed to start SSH master connection to 'laptop-mac'
+building '/nix/store/c02rgcpzbm140j499byss0kk82zaiavm-flake-update-fixture-1.0.drv'...
+❌ 
+error: Cannot build '/nix/store/c02rgcpzbm140j499byss0kk82zaiavm-flake-update-fixture-1.0.drv'.
+       Reason: builder failed with exit code 2.
+       Output paths:
+         /nix/store/p4jwjs3g2yxsxsgc8w4226xrj6si7zrv-flake-update-fixture-1.0
+       Last 2 log lines:
+       > configuring
+       > main.c:3: error: expected expression
+       For full logs, run:
+         nix log /nix/store/c02rgcpzbm140j499byss0kk82zaiavm-flake-update-fixture-1.0.drv

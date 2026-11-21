@@ -500,7 +500,7 @@ class Built:
     passed: bool
     table: str
     machines: tuple[Machine, ...]
-    # the end of each failed machine's job log
+    # each failed machine's job log
     logs: tuple[tuple[str, str], ...]
 
 
@@ -522,6 +522,35 @@ def parse_coeus_summary(markdown: str) -> tuple[str, tuple[Machine, ...]]:
         job = ATTACH.search(cells[4])
         machines.append(Machine(cells[0], MARKS.get(mark), outcome.replace("\\|", "|"), job and job["job"]))
     return "\n".join(rows), tuple(machines)
+
+
+# nix's error for a derivation that failed only because one it depends on did
+DEPENDENCY_FAILED = re.compile(r"^\s*Reason: \d+ dependenc(?:y|ies) failed")
+DRV = re.compile(r"'/nix/store/[0-9a-z]{32}-(?P<name>[^']+)\.drv'")
+
+
+def build_failures(log: str) -> tuple[str, ...]:
+    """the errors that broke a build, each with the lines nix indents under it. nix also
+    reports every dependent of a failed derivation as failed, up to the system itself,
+    and those errors end the log while saying nothing about the cause"""
+    blocks: list[list[str]] = []
+    in_block = False
+    for line in ANSI.sub("", log).splitlines():
+        if line.startswith("error:"):
+            blocks.append([line])
+            in_block = True
+        elif in_block and line[:1].isspace() and line.strip():
+            blocks[-1].append(line)
+        else:
+            in_block = False
+    causes = ["\n".join(block) for block in blocks if not any(DEPENDENCY_FAILED.match(line) for line in block)]
+    return tuple(dict.fromkeys(causes))
+
+
+def failed_derivation(cause: str) -> str | None:
+    """the name of the derivation one of build_failures' errors is about"""
+    found = DRV.search(cause.partition("\n")[0])
+    return found["name"] if found else None
 
 
 # --- plan --------------------------------------------------------------------
@@ -658,8 +687,10 @@ def code(text: str) -> str:
     return f"`{text}`"
 
 
-def fenced(text: str, lines: int) -> str:
-    kept = text.splitlines()[-lines:]
+def fenced(text: str, lines: int, *, head: bool = False) -> str:
+    """at most `lines` lines of text, from its end, or from its start with head"""
+    kept = text.splitlines()
+    kept = kept[:lines] if head else kept[-lines:]
     return "````text\n" + "\n".join(kept) + "\n````"
 
 
@@ -754,10 +785,20 @@ def render_verification(evals: tuple[HostEval, ...], fleet: Fleet) -> list[str]:
             parts.append(f"{build_description(fleet)}.\n")
             if table:
                 parts.append(table + "\n")
-            for host, log in logs:
-                parts.append(
-                    f"<details><summary>{host}: the end of its log</summary>\n\n{fenced(log, 40)}\n\n</details>\n"
-                )
+            failures = [(host, log, build_failures(log)) for host, log in logs]
+            broken = [
+                f"- {code(host)} could not build {names(code(name) for name in drvs)}."
+                for host, _, causes in failures
+                if (drvs := [name for cause in causes if (name := failed_derivation(cause))])
+            ]
+            if broken:
+                parts += [*broken, ""]
+            for host, log, causes in failures:
+                if causes:
+                    label, excerpt = "what broke", fenced("\n\n".join(causes), 40, head=True)
+                else:
+                    label, excerpt = "the end of its log", fenced(log, 40)
+                parts.append(f"<details><summary>{host}: {label}</summary>\n\n{excerpt}\n\n</details>\n")
     return parts
 
 
