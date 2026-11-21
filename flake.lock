@@ -1169,16 +1169,15 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1794703173,
+        "lastModified": 1795298887,
         "narHash": "sha256-7IMwyaBQUdUk5wAiitP4c/jDI2qQqNoGzMOZuIqSh6Q=",
         "owner": "GustavoWidman",
         "repo": "heimdall",
-        "rev": "e5a4151c789abd248598a960c6cc1568b19797d8",
+        "rev": "c85da75d794bcecedf7daab6ce443b999751f09f",
         "type": "github"
       },
       "original": {
         "owner": "GustavoWidman",
-        "ref": "feat/upstreamer",
         "repo": "heimdall",
         "type": "github"
       }
@@ -2040,7 +2039,6 @@
       },
       "original": {
         "owner": "GustavoWidman",
-        "ref": "feat/upstreamer",
         "repo": "portfolio",
         "type": "github"
       }
