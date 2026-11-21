@@ -6,7 +6,10 @@ updated as `nix flake update <name>` did it. fixtures/*.err are nix's stderr:
 oracle-2 evaluated with a broken, an unsupported and a removed package added,
 desktop-nixos with a renamed one, and `nix flake update copyparty` failing on
 copyparty's registry lookup. coeus-summary.md has the shape coeus' step
-summary table takes. the release tests rewrite the committed flake.nix.
+summary table takes. build-hash-mismatch.log is the end of a darwin machine's
+coeus job log, failing on a wheel whose hash nixpkgs got wrong, and
+build-builder-failed.err is nix's stderr for a builder that exits 2. the
+release tests rewrite the committed flake.nix.
 """
 
 import copy
@@ -251,6 +254,23 @@ class Render(unittest.TestCase):
         self.assertIn("| lab | ✅ succeeded |", body)
         self.assertIn("error: thoth failed", body)
 
+    def test_body_names_what_broke_a_machine_build(self):
+        table, machines = u.parse_coeus_summary(text("coeus-summary.md"))
+        built = u.Built(False, table, machines, (("oracle-1", text("build-hash-mismatch.log")),))
+        body = self.body(fleet=built)
+        self.assertIn("- `oracle-1` could not build `mitmproxy_macos-0.12.16-py3-none-any.whl`.", body)
+        self.assertIn("<summary>oracle-1: what broke</summary>", body)
+        self.assertIn("got:    sha256-ruw6Tl0NG8XJiyltwszNaXAxiOWUYlDU9n8eaxSYI+A=", body)
+        self.assertNotIn("dependency failed", body)
+
+    def test_body_falls_back_to_the_end_of_a_log_without_an_error(self):
+        table, machines = u.parse_coeus_summary(text("coeus-summary.md"))
+        built = u.Built(False, table, machines, (("oracle-1", "building thoth\nkilled"),))
+        body = self.body(fleet=built)
+        self.assertIn("<summary>oracle-1: the end of its log</summary>", body)
+        self.assertIn("killed", body)
+        self.assertNotIn("could not build", body)
+
     def test_refresh_comment_says_what_moved_and_where_main_went(self):
         plan = u.Refresh(
             open_pr("main", base_sha="0" * 40), PASSENGERS_MOVED, since=PASSENGERS_MOVED.bumps, rebased=True
@@ -342,6 +362,24 @@ class Coeus(unittest.TestCase):
         )
         self.assertIn("failed | exit 1", machines[1].outcome)
         self.assertTrue(machines[2].unreachable)
+
+
+    def test_a_build_failure_is_the_error_under_its_dependents(self):
+        causes = u.build_failures(text("build-hash-mismatch.log"))
+        self.assertEqual(len(causes), 1)
+        self.assertTrue(causes[0].startswith("error: hash mismatch in fixed-output derivation"))
+        self.assertIn("specified: sha256-7VaT+JsMvR0qjFoxuu0r16dLCq1oZy4IREwYaMOPSfg=", causes[0])
+        self.assertEqual(u.failed_derivation(causes[0]), "mitmproxy_macos-0.12.16-py3-none-any.whl")
+
+    def test_a_failed_builder_keeps_its_last_lines(self):
+        (cause,) = u.build_failures(text("build-builder-failed.err"))
+        self.assertIn("Reason: builder failed with exit code 2.", cause)
+        self.assertIn("> main.c:3: error: expected expression", cause)
+        self.assertEqual(u.failed_derivation(cause), "flake-update-fixture-1.0")
+
+    def test_a_log_without_errors_has_no_build_failure(self):
+        self.assertEqual(u.build_failures("building thoth\nkilled"), ())
+        self.assertIsNone(u.failed_derivation("error: out of disk space"))
 
 
 class Config(unittest.TestCase):
