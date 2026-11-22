@@ -18,7 +18,6 @@ cache: true
 # yields a SERVFAIL, which is not cached.
 fallback:
   - "https://1.1.1.1/dns-query"
-  - "[/lab/]100.122.90.22"
   - "[/ts.net/]100.100.100.100"
   - "[/tailnet.camelsec.com/]100.100.100.100"
   - "[/staging.camelsec.com/]100.100.100.100"
@@ -28,7 +27,6 @@ fallback:
 # dials one connection at a time and waits out a 5s handshake for each.
 upstream:
   - "tls://dns.r3dlust.com:853"
-  - "[/lab/]100.122.90.22"
   - "[/ts.net/]100.100.100.100"
   - "[/tailnet.camelsec.com/]100.100.100.100"
   - "[/staging.camelsec.com/]100.100.100.100"

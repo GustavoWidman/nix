@@ -12,7 +12,12 @@
     { config, ... }:
     {
       secrets.password.file = ./password.age;
-      users.users.r3dlust.authorizedKey = config.secrets.ssh-main-lab.path;
+      users.users.r3dlust = {
+        authorizedKey = config.secrets.ssh-main-lab.path;
+        # long jobs started over ssh, such as benchmark campaigns, run under
+        # r3dlust's user manager and outlive the session
+        linger = true;
+      };
 
       time.timeZone = "America/Sao_Paulo";
       system.stateVersion = "26.11";
