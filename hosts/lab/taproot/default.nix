@@ -77,14 +77,6 @@ in
               name = "phone-gustavo";
             }
           ];
-      # honcho's containers call taproot from the honcho bridge, outside
-      # Tailscale, and docker gives a restarted container a new address there.
-      addresses = [
-        {
-          cidr = "172.19.0.0/16";
-          note = "honcho containers";
-        }
-      ];
     };
   };
 
