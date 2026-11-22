@@ -22,7 +22,6 @@ triggers = [
   "coeus",
   "determinate",
   "heimdall",
-  "kemono-pinger",
   "nixpkgs",
   "norn",
   "oxi",
