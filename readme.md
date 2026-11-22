@@ -168,9 +168,8 @@ merging it is a push to `main`, so the usual deploy takes it from there.
   them. each refresh rebuilds the branch as main, the bot's commit, then
   yours, cherry-picked in order. if one no longer applies, the bot says so
   on the pull request once and leaves the branch alone.
-- `FLAKE_INPUTS_TOKEN`, a fine-grained token that can read thoth and
-  rocky-bot, is how the runner fetches the private inputs lab and oracle-1
-  import.
+- `FLAKE_INPUTS_TOKEN`, a fine-grained token that can read rocky-bot, is how
+  the runner fetches the private input oracle-1 imports.
 
 ## file structure
 
@@ -303,7 +302,7 @@ after. on a server, `sudo norn report` prints the plan by hand and
 ## custom flakes
 
 this repository pulls in a bunch of project and tool flakes directly from
-github, including `coeus`, `norn`, `heimdall`, `thoth`, `rocky-bot`,
+github, including `coeus`, `norn`, `heimdall`, `rocky-bot`,
 `kemono-pinger`, `portfolio`, `oxi`, `niks3`, `kache`, `taproot`, `copyparty`,
 `upstreamer`, and a custom autobuild of `zed`. each one's module is imported only
 by the machine that runs it; `lib/system.nix` lists the few every machine gets,

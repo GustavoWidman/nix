@@ -12,8 +12,8 @@
 # and coeus builds the commit on every machine that answers without
 # activating it. That takes the same inventory, coeus CLI and tailnet seat as
 # deploy.yml (.github/actions/coeus), and COEUS_KEY. FLAKE_INPUTS_TOKEN, a
-# fine-grained token that reads thoth and rocky-bot, lets nix fetch those
-# private inputs over https.
+# fine-grained token that reads rocky-bot, lets nix fetch that private input
+# over https.
 #
 # A pull request that changes the bot runs it with --dry-run: it computes the
 # plan, evaluates the hosts with the candidate lock and prints the pull
@@ -91,7 +91,7 @@ jobs:
           TOKEN: ${{ secrets.FLAKE_INPUTS_TOKEN }}
         run: |
           if [ -z "$TOKEN" ]; then
-            echo "::warning::FLAKE_INPUTS_TOKEN is empty, so lab and oracle-1, which import thoth and rocky-bot, will not evaluate"
+            echo "::warning::FLAKE_INPUTS_TOKEN is empty, so oracle-1, which imports rocky-bot, will not evaluate"
             exit 0
           fi
           git config --global url."https://x-access-token:$TOKEN@github.com/GustavoWidman/".insteadOf "ssh://git@github.com/GustavoWidman/"

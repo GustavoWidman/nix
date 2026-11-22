@@ -30,7 +30,6 @@ triggers = [
   "rift",
   "rocky-bot",
   "taproot",
-  "thoth",
   "upstreamer",
   "zed",
 ]
