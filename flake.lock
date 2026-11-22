@@ -2669,11 +2669,11 @@
         "nixpkgs-bench": "nixpkgs-bench"
       },
       "locked": {
-        "lastModified": 1795283395,
-        "narHash": "sha256-fI8JH1OASG2M83nR+pLozXsJzKNlW6rqL+TDVpF2x6M=",
+        "lastModified": 1795338856,
+        "narHash": "sha256-r+d7XI6x33yoWyie5rC7WSHtbmezGYs4pcuHg1QdYe8=",
         "owner": "GustavoWidman",
         "repo": "upstreamer",
-        "rev": "be86be6d5b2b3386bc0652b4268d12284d094b56",
+        "rev": "036d45299874bddb9b7051d1e8297f9f67e51684",
         "type": "github"
       },
       "original": {
