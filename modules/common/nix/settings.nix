@@ -72,6 +72,33 @@ mkMerge [
         };
 
         environment.etc."nix/nix.custom.conf".text = mkAfter includeGithubToken;
+
+        # The daemon reads its settings only when it starts, and Determinate never
+        # restarts it on a switch: a changed setting, a post-build hook among them,
+        # waits for a reboot, and a hook named by an old store path fails every local
+        # build once a garbage collection deletes it. The stamp holds the settings the
+        # daemon was last started with, so a switch restarts it when they changed, and
+        # the first switch with this restarts it once. The restart waits until the
+        # daemon answers, since later activation steps may use it.
+        system.activationScripts.postActivation.text = mkAfter ''
+          stamp=/var/db/nix-daemon-settings.sha256
+          settings=$(
+            { /bin/cat /etc/nix/nix.conf /etc/nix/nix.custom.conf /etc/determinate/config.json 2>/dev/null || true; } |
+              /usr/bin/shasum -a 256 | /usr/bin/cut -d ' ' -f 1
+          )
+          if [ "$(/bin/cat "$stamp" 2>/dev/null)" != "$settings" ]; then
+            echo "restarting the Nix daemon for its changed settings..." >&2
+            if /bin/launchctl kickstart -k system/systems.determinate.nix-daemon; then
+              for _ in $(/usr/bin/seq 1 50); do
+                /nix/var/nix/profiles/default/bin/nix store info --store daemon >/dev/null 2>&1 && break
+                /bin/sleep 0.2
+              done
+              echo "$settings" > "$stamp"
+            else
+              echo "warning: restarting the Nix daemon failed; it keeps its old settings" >&2
+            fi
+          fi
+        '';
       }
     else
       {
