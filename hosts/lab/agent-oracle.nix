@@ -59,34 +59,9 @@ in
     )
   ];
 
-  environment.systemPackages = with pkgs; [
-    xvfb
-    openbox
-    dbus
-    at-spi2-core
-    xmessage
-    xrandr
-    libx11
-    libxi
-    libxtst
-    libxext
-    pipewire
-    libei
-    libxkbcommon
-    x11vnc
-    novnc
-    python3Packages.websockify
-    xorg-server
-  ];
-
-  programs.nix-ld = {
-    enable = true;
-    libraries = with pkgs; [
-      libx11
-      libxi
-      libxkbcommon
-    ];
-  };
+  # prebuilt binaries in users' homes, such as T3's server and kittylitter,
+  # run through nix-ld
+  programs.nix-ld.enable = true;
 
   systemd.user.services.kache.serviceConfig = {
     ReadWritePaths = [ "/mnt/encrypted" ];
