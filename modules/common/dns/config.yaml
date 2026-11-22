@@ -11,8 +11,18 @@ ratelimit-subnet-len-ipv6: 64
 udp-buf-size: 0
 http3: true
 cache: true
+# each private zone falls back to its own resolver, as listed under upstream.
+# 1.1.1.1 answers that a private name does not exist, and that answer stays
+# cached for 5 minutes after the private resolver is back, which it is within
+# seconds of a tailscaled restart. a private resolver that does not answer
+# yields a SERVFAIL, which is not cached.
 fallback:
   - "https://1.1.1.1/dns-query"
+  - "[/lab/]100.122.90.22"
+  - "[/ts.net/]100.100.100.100"
+  - "[/tailnet.camelsec.com/]100.100.100.100"
+  - "[/staging.camelsec.com/]100.100.100.100"
+  - "[/internal.camelsec.com/]100.100.100.100"
 # dns.r3dlust.com is preferred and the fallback answers while it is down.
 # tls, not quic: a closed port refuses a tcp connection at once, while quic
 # dials one connection at a time and waits out a 5s handshake for each.
