@@ -20,5 +20,12 @@
       services.upstreamer.enable = true;
 
       tailscale.exit-node = true;
+
+      # The subnet advertises an IPv6 router but the VNIC has no IPv6 address, so a default
+      # route through it only makes IPv6 connections time out.
+      networking.dhcpcd.extraConfig = ''
+        interface enp0s6
+        ipv4only
+      '';
     };
 }
