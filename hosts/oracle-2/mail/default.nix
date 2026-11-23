@@ -56,16 +56,16 @@ in
     fqdn = "mail.r3dlust.com";
     domains = [ "r3dlust.com" ];
 
-    localDnsResolver = false;
-
     accounts = { };
 
-    enableImap = true; # port 143
-    enableImapSsl = true; # port 993
-    enablePop3 = true; # port 110
-    enablePop3Ssl = true; # port 995
-    enableSubmission = true; # port 587
-    enableSubmissionSsl = true; # port 465
+    listeners = {
+      imap = enabled; # port 143
+      imaps = enabled; # port 993
+      pop3 = enabled; # port 110
+      pop3s = enabled; # port 995
+      submission = enabled; # port 587
+      submissions = enabled; # port 465
+    };
 
     x509 = {
       certificateFile = config.networking.certificates."mail.r3dlust.com".paths.cert;
