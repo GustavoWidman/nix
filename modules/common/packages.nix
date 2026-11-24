@@ -19,6 +19,7 @@ in
         # coreutils
         curl
         dig
+        dua
         dosfstools
         e2fsprogs
         eza
