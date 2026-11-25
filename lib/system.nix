@@ -91,7 +91,11 @@ in
         host.module
         {
           inherit metadata;
-          imports = collectNix ../hosts/${name} |> remove ../hosts/${name}/flake.nix;
+          # a service's phoebe.nix is data for lib/phoebe.nix, not a module
+          imports =
+            collectNix ../hosts/${name}
+            |> remove ../hosts/${name}/flake.nix
+            |> filter (path: baseNameOf path != "phoebe.nix");
           networking.hostName = metadata.hostname;
           nixpkgs.hostPlatform = metadata.architecture;
         }
