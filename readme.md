@@ -333,7 +333,8 @@ never from another machine's configuration:
 
 phoebe comes pinned to a release tag with its own nixpkgs, since every machine
 installs it: the release already pushed that exact build to the cache, so
-nobody compiles it. alerts have nowhere to go yet (`alerting.webhook` is
+nobody compiles it. each node keeps 90 days of metrics, up to 10 GB, and 30
+days of logs. alerts have nowhere to go yet (`alerting.webhook` is
 unset), so they wait in each node's alertmanager. the tailnet policy has to let
 every machine reach every node on 3100 (loki) and every node reach every
 machine on 9100 and 9598 (node exporter and vector), and the nodes reach each
