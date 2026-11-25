@@ -120,7 +120,9 @@
     # cache.r3dlust.com, so no machine compiles it
     phoebe.url = "github:GustavoWidman/phoebe/v0.6.4";
 
-    zed.url = "github:GustavoWidman/zed-autobuild";
+    # zed-autobuild moves `cached` only once every system's build is in
+    # cache.r3dlust.com, so no machine compiles zed
+    zed.url = "github:GustavoWidman/zed-autobuild/cached";
     portfolio.url = "github:GustavoWidman/portfolio";
     heimdall.url = "github:GustavoWidman/heimdall";
     upstreamer.url = "github:GustavoWidman/upstreamer";

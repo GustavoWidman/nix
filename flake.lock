@@ -2550,6 +2550,7 @@
       },
       "original": {
         "owner": "GustavoWidman",
+        "ref": "cached",
         "repo": "zed-autobuild",
         "type": "github"
       }
