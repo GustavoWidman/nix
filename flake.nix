@@ -31,7 +31,6 @@
     # for every path, and a download that stops moving fails within seconds
     fallback = true;
     stalled-download-timeout = 20;
-    keep-outputs = true;
     flake-registry = "";
     http-connections = 50;
     max-substitution-jobs = 50;
