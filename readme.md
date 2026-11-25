@@ -306,7 +306,7 @@ after. on a server, `sudo norn report` prints the plan by hand and
 machine ships its metrics and logs, and the four always-on machines that serve
 the coeus dashboard (oracle-1, oracle-2, lab and altar) each keep a full copy
 of everything, probe every service and alert, so any one of them can be off.
-`modules/common/phoebe.nix` turns it on everywhere with one registry,
+`modules/common/phoebe/` turns it on everywhere with one registry,
 `lib.phoebeFleet`, which every machine builds the same way from files alone,
 never from another machine's configuration:
 
@@ -334,11 +334,43 @@ never from another machine's configuration:
 phoebe comes pinned to a release tag with its own nixpkgs, since every machine
 installs it: the release already pushed that exact build to the cache, so
 nobody compiles it. each node keeps 90 days of metrics, up to 10 GB, and 30
-days of logs. alerts have nowhere to go yet (`alerting.webhook` is
-unset), so they wait in each node's alertmanager. the tailnet policy has to let
-every machine reach every node on 3100 (loki) and every node reach every
-machine on 9100 and 9598 (node exporter and vector), and the nodes reach each
-other on 9090, 9093, 9094 (tcp and udp) and 9115.
+days of logs. the tailnet policy has to let every machine reach every node on
+3100 (loki) and every node reach every machine on 9100 and 9598 (node exporter
+and vector), and the nodes reach each other on 9090, 9093, 9094 (tcp and udp)
+and 9115.
+
+every node also serves the app, `phoebe.r3dlust.com`: every machine and
+service with its metrics, logs and alerts, installable on a phone's home
+screen. like the coeus dashboard, it's public through a cloudflare tunnel every
+node connects to while its own stores are ready, so any one node up is enough,
+and signing in happens on the tailnet alone, at
+`https://<node>.tail4a3ea.ts.net:45731`, for a device the tailnet policy grants
+`r3dlust.com/cap/phoebe`.
+
+with no node connected, the offline worker norn puts in front of the tunnel
+answers with phoebe's own offline page, which lists the nodes and reloads once
+one is back.
+
+each node's alertmanager posts to its own app, which pushes every page alert to
+the devices on the list. the secrets live in `modules/server/phoebe/`, which
+the nodes and the admins open:
+
+- `session-key.age`: the fleet's session keys, 64 hex digits a line
+  (`openssl rand -hex 32`). the first signs, all of them check.
+- `vapid.age`: the private key pushes are signed with, from
+  `coeus push keygen`. the app works out the public half itself.
+- `subscriptions.age`: the devices to notify, a JSON array.
+- `tunnel-credentials.age`: the credentials `cloudflared tunnel create`
+  wrote for the tunnel.
+
+a device subscribes on the app's "this device" screen (on an iphone, from the
+home screen app), which shows the entry to add:
+
+```bash
+agenix -e modules/server/phoebe/subscriptions.age   # paste the entry into the array
+```
+
+commit it and deploy, and the screen says notifications are on.
 
 ## custom flakes
 
