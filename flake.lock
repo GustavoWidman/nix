@@ -1967,16 +1967,16 @@
         "nixpkgs": "nixpkgs_12"
       },
       "locked": {
-        "lastModified": 1795643735,
-        "narHash": "sha256-VlcWTtSN/7+fKGfd9akoWvdqTybsmoJQ9wS0Gjul9Qw=",
+        "lastModified": 1795646084,
+        "narHash": "sha256-rQEZvoaE7F99xaVbRN6oPJSMQqfYmQP+WDbyPNlCoYk=",
         "owner": "GustavoWidman",
         "repo": "phoebe",
-        "rev": "7c38105af38f68149367f0f8ba1a13770143318c",
+        "rev": "130e7aea0c38f27be8008843300ae10f7d330437",
         "type": "github"
       },
       "original": {
         "owner": "GustavoWidman",
-        "ref": "v0.6.2",
+        "ref": "v0.6.3",
         "repo": "phoebe",
         "type": "github"
       }
