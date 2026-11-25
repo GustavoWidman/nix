@@ -5,6 +5,7 @@
     type = "dev-server";
     architecture = "aarch64-darwin";
     admin = true;
+    address = "100.114.89.75";
     build-architectures = [ "aarch64-darwin" ];
   };
 

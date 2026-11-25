@@ -5,6 +5,7 @@
     type = "desktop";
     architecture = "x86_64-linux";
     admin = true;
+    address = "100.89.162.115";
     build-architectures = [ ]; # no builds, not always on
   };
 

@@ -4,6 +4,7 @@
     class = "nixos";
     type = "server";
     architecture = "aarch64-linux";
+    address = "100.119.88.94";
     build-architectures = [ "aarch64-linux" ];
   };
 

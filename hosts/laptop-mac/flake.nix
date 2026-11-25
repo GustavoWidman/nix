@@ -5,6 +5,7 @@
     type = "desktop";
     architecture = "aarch64-darwin";
     admin = true;
+    address = "100.119.141.104";
     build-architectures = [
       "aarch64-darwin"
       "x86_64-darwin"
