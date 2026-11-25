@@ -287,7 +287,6 @@ in
               "move"
               "--to"
               "@-"
-              "--from"
             ];
             aliases.t = [ "tug" ];
 
