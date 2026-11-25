@@ -25,6 +25,7 @@ triggers = [
   "nixpkgs",
   "norn",
   "oxi",
+  "phoebe",
   "portfolio",
   "rift",
   "rocky-bot",
@@ -49,4 +50,7 @@ passengers = [
   "nixos-mailserver",
 ]
 
-releases = [{ input = "taproot", tag = 'taproot-v\d+\.\d+\.\d+' }]
+releases = [
+  "phoebe",
+  { input = "taproot", tag = 'taproot-v\d+\.\d+\.\d+' },
+]

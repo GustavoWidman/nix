@@ -18,6 +18,7 @@ let
     "kache"
     "nix-homebrew"
     "norn"
+    "phoebe"
     "rift"
   ];
 
