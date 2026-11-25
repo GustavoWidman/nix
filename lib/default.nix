@@ -6,5 +6,6 @@ let
   values = import ./values.nix inputs self super;
   fleet = import ./fleet.nix inputs self super;
   coeus = import ./coeus.nix inputs self super;
+  phoebe = import ./phoebe.nix inputs self super;
 in
-filesystem // option // system // values // fleet // coeus
+filesystem // option // system // values // fleet // coeus // phoebe
