@@ -28,6 +28,9 @@
 
       services.netbird.enable = true;
 
+      # prebuilt binaries in users' homes, such as T3's server, run through nix-ld
+      programs.nix-ld.enable = true;
+
       tailscale = {
         exit-node = true;
         advertise-routes = [
