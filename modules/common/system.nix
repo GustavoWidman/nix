@@ -61,6 +61,12 @@ in
           type = types.bool;
           default = false;
         };
+        # its tailnet IPv4 address, `tailscale ip -4`. a machine without one
+        # is left out of phoebe's registry, and runs no phoebe, until it has one
+        options.address = mkOption {
+          type = types.nullOr types.str;
+          default = null;
+        };
       };
     };
 

@@ -23,8 +23,8 @@ in
 
   services.taproot = {
     enable = true;
-    # lab's address from `tailscale ip -4`; taproot listens only there.
-    tailscale.address = "100.122.90.22";
+    # taproot listens only on lab's tailnet address
+    tailscale.address = config.metadata.address;
     openFirewall = true;
     inherit (config.time) timeZone;
 

@@ -5,6 +5,7 @@
     type = "dev-server";
     architecture = "x86_64-linux";
     admin = true;
+    address = "100.122.90.22";
     build-architectures = [ "x86_64-linux" ];
   };
 
