@@ -92,8 +92,20 @@ in
     }
     (lib.optionalAttrs isDarwin {
       # Determinate manages Nix, so nix-darwin's nix.package is unavailable.
-      launchd.daemons.niks3-auto-upload.serviceConfig.EnvironmentVariables = lib.mkForce {
-        PATH = "/nix/var/nix/profiles/default/bin:/usr/bin:/bin";
+      launchd.daemons.niks3-auto-upload.serviceConfig = {
+        EnvironmentVariables = lib.mkForce {
+          PATH = "/nix/var/nix/profiles/default/bin:/usr/bin:/bin";
+        };
+        # niks3's module starts the hook's store path directly. At boot launchd
+        # can run it before the Nix volume mounts, and a job whose program is
+        # missing is never retried. Prepending a shell that waits for the store
+        # keeps the upstream arguments as they are: they become its "$@".
+        ProgramArguments = lib.mkBefore [
+          "/bin/sh"
+          "-c"
+          ''/bin/wait4path /nix/store && exec "$@"''
+          "niks3-hook"
+        ];
       };
 
       # Determinate writes the daemon's settings on Darwin; nix.settings never reaches it.
