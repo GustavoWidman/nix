@@ -118,7 +118,7 @@
     norn.url = "github:GustavoWidman/norn";
     # a release tag with phoebe's own nixpkgs, which phoebe's release pushes to
     # cache.r3dlust.com, so no machine compiles it
-    phoebe.url = "github:GustavoWidman/phoebe/v0.6.3";
+    phoebe.url = "github:GustavoWidman/phoebe/v0.6.4";
 
     zed.url = "github:GustavoWidman/zed-autobuild";
     portfolio.url = "github:GustavoWidman/portfolio";
