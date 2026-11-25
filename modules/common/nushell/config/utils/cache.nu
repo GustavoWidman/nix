@@ -41,13 +41,19 @@ def --env save_to_cache [key: string, value: any] {
 export def --env true_home [] {
 	let cache = get_cache
 
-	match ($cache.true_home == null) {
+	# on darwin a home outside /Users belongs to a daemon's account, never to
+	# the user's, so a cached one is looked up again
+	let stale = $env.OS == "Darwin" and $cache.true_home != null and not ($cache.true_home | str starts-with "/Users/")
+
+	match ($cache.true_home == null or $stale) {
 		true => {
     		let true_home = match ($env.OS == "Darwin") {
     			# may god have mercy on my soul what the fuck is this :sob:
+    			# daemons' accounts start with an underscore, and some, like
+    			# _prometheus-node-exporter, get a uid above 500 too
     			true => {
      			dscl . -list /Users UniqueID
-        				| ^awk '$2 >= 501 { print $1 }'
+        				| ^awk '$2 >= 501 && $1 !~ /^_/ { print $1 }'
         				| ^head -n 1
         				| ^dscl . -read /Users/($in) NFSHomeDirectory
         				| ^awk '{ print $2 }'
