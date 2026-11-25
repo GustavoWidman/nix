@@ -27,8 +27,6 @@
       # i686-linux and the x86_64 microarchitecture levels
       nix.settings.extra-platforms = [ ];
 
-      services.netbird.enable = true;
-
       # prebuilt binaries in users' homes, such as T3's server, run through nix-ld
       programs.nix-ld.enable = true;
 
