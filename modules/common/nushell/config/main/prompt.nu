@@ -28,26 +28,16 @@ def superscript []: string -> string {
 
 def get_branch [commit_list: list] {
     let branches = $commit_list
-        | each { get branches }
-        | flatten
-    # let current_branch = $branches
-    #     | where remote == "origin"
+        | get branches
+        | where {|branches| $branches | is-not-empty}
+        | get -o 0
+        | default []
 
-    match ($branches | is-empty) {
-        # try to get any remote (not just origin)
-        true => {
-            if ($branches | is-not-empty) {
-                return ($branches
-                    | first
-                    | get name)
-            }
-        },
-        false => {
-            return ($branches
-                | first
-                | get name)
-        }
-    }
+    let trunk_branch = $branches
+        | where {|branch| $branch.name in ["main", "master", "trunk"]}
+        | get -o 0
+
+    ($trunk_branch | default ($branches | get -o 0)) | get -o name
 }
 
 def get_status [commit_list: list] {
