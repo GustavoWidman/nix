@@ -213,8 +213,9 @@ rgbcube/ncc's `lib` module. instead of copy-pasting massive configurations for
 each host, `lib/system.nix` exports one builder, `mkSystem`.
 
 a host is a folder: `hosts/my-host/flake.nix` holds its `metadata` (hostname,
-class, type, architecture) and its top-level `module`, and every other file in
-the folder is imported. `mkSystem` reads the class and type from the metadata,
+class, type, architecture, tailnet address) and its top-level `module`, and
+every other file in the folder is imported, except the `phoebe.nix` files (see
+[phoebe](#phoebe)). `mkSystem` reads the class and type from the metadata,
 scoops up the shared modules, adds the relevant linux/darwin and
 desktop/server/dev pieces, injects overlays, and spits out a nixos or darwin
 configuration.
@@ -299,10 +300,49 @@ updates and deletes as well. norn runs on every switch and every 15 minutes
 after. on a server, `sudo norn report` prints the plan by hand and
 `sudo norn status` says how the last run went.
 
+## phoebe
+
+[phoebe](https://github.com/GustavoWidman/phoebe) watches the fleet: every
+machine ships its metrics and logs, and the four always-on machines that serve
+the coeus dashboard (oracle-1, oracle-2, lab and altar) each keep a full copy
+of everything, probe every service and alert, so any one of them can be off.
+`modules/common/phoebe.nix` turns it on everywhere with one registry,
+`lib.phoebeFleet`, which every machine builds the same way from files alone,
+never from another machine's configuration:
+
+- **machines** come from each host's metadata. `address` is its tailnet IPv4
+  (`tailscale ip -4`), which the others reach it at, and a desktop is never
+  expected to be on. a machine without an `address` runs no phoebe until it
+  gets one.
+- **services** come from `hosts/<host>/<service>/phoebe.nix`, a plain
+  attribute set next to the service's module. the directory names the
+  service, which has to be unique across the fleet:
+
+  ```nix
+  # hosts/oracle-2/copyparty/phoebe.nix
+  {
+    unit = "copyparty.service";
+    probes = [ { kind = "http"; target = "https://files.r3dlust.com"; } ];
+  }
+  ```
+
+  `unit` pages when it fails, `probes` page when two nodes see them fail, and
+  `metrics = { port; path; }` gets scraped, if the service has any. a unit
+  that isn't in the registry still shows up when it fails, just without
+  waking anyone.
+
+phoebe comes pinned to a release tag with its own nixpkgs, since every machine
+installs it: the release already pushed that exact build to the cache, so
+nobody compiles it. alerts have nowhere to go yet (`alerting.webhook` is
+unset), so they wait in each node's alertmanager. the tailnet policy has to let
+every machine reach every node on 3100 (loki) and every node reach every
+machine on 9100 and 9598 (node exporter and vector), and the nodes reach each
+other on 9090, 9093, 9094 (tcp and udp) and 9115.
+
 ## custom flakes
 
 this repository pulls in a bunch of project and tool flakes directly from
-github, including `coeus`, `norn`, `heimdall`, `rocky-bot`, `portfolio`,
+github, including `coeus`, `norn`, `phoebe`, `heimdall`, `rocky-bot`, `portfolio`,
 `oxi`, `niks3`, `kache`, `taproot`, `copyparty`, `upstreamer`, and a custom
 autobuild of `zed`. each one's module is imported only
 by the machine that runs it; `lib/system.nix` lists the few every machine gets,
