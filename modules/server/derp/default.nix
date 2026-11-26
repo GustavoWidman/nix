@@ -4,15 +4,20 @@
 # because the machines share an Oracle availability domain: regions that close
 # tie on latency, and clients keep moving their home between them, while inside
 # one region a client dials the nodes in the policy's order and only moves on
-# when one fails.
+# when one fails. Tailscale documents one server per region for servers of
+# your own; several meshed nodes per region is how its own regions run, and
+# what derper's -mesh-with is for.
 #
-# the region is the only one the tailnet uses, so that a machine on a network
-# that blocks Tailscale's own relays can still reach every peer's home. the
-# tailnet policy carries it, with the nodes in this order:
+# every machine homes here, so that one on a network that blocks Tailscale's
+# own relays still reaches every peer's home. the tailnet policy drops
+# Tailscale's São Paulo region, which ties with this one on latency, and keeps
+# the rest: the nearest, Miami, is over 100 ms away, so no machine picks it
+# while this region answers, and every machine moves to it when both nodes are
+# down. the policy carries the region with the nodes in this order:
 #
 #   "derpMap": {
-#     "OmitDefaultRegions": true,
 #     "Regions": {
+#       "11": null,
 #       "900": {
 #         "RegionID": 900,
 #         "RegionCode": "r3dlust",
