@@ -90,11 +90,11 @@ up (see `/var/log/tailscale-autoconnect.log`). a mac already signed in is left
 alone. the Tailscale app runs a tailscale of its own, so a mac running
 `tailscaled` must not have the app installed too.
 
-the fleet also pushes notifications to my phone and desktop, through the
+deploys also push notifications to my phone and desktop, through the
 dashboard at `coeus.r3dlust.com`: one summary per deploy, from the terminal or
-from CI, a note whenever a machine catches up or gives up catching up, and
-norn's word when a server's dns runs stay troubled for half an hour and when
-they recover. the key that signs them and the list of devices are
+from CI, and a note whenever a machine catches up or gives up catching up.
+that's all this channel carries; outages and every other alert come from
+[phoebe](#phoebe). the key that signs them and the list of devices are
 `modules/common/coeus/push/vapid.age` and `subscriptions.age`; every machine
 opens both, and CI opens them in memory with `COEUS_PUSH_IDENTITY`, the private
 half of `.github/ci.pub`. a device subscribes on the dashboard's "this device"

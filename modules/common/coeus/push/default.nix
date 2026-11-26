@@ -1,7 +1,6 @@
 { config, lib, ... }:
 let
   origin = "https://coeus.r3dlust.com";
-  norn = config.services.norn;
   web = config.services.coeus.web;
   # coeus web reads the list as its own user on every request, and one owner
   # cannot serve it and the main user's CLI both
@@ -10,7 +9,7 @@ in
 {
   # the key that signs every push and the devices it goes to. the main user's
   # CLI reads both for the deploys it follows from a terminal; root's coeusd
-  # and norn's credentials read them whoever owns them
+  # reads them whoever owns them
   secrets = {
     coeus-push-vapid = {
       file = ./vapid.age;
@@ -42,15 +41,5 @@ in
     publicKey = "BEo8q3NTLApTnGv2AJ8drkW3PlEqyhDxPJFe7uDv4S_mdlfyCUeCiPlPooZpjGP71JwVNl3R0WDfZg9eETjeaos";
     subscriptionsFile = config.secrets.coeus-push-subscriptions-web.path;
     edit = "agenix -e modules/common/coeus/push/subscriptions.age";
-  };
-
-  # a notice once this machine's norn runs have stayed troubled, and one when
-  # they recover
-  services.norn.push = lib.mkIf norn.enable {
-    enable = true;
-    vapidKeyFile = config.secrets.coeus-push-vapid.path;
-    subscriptionsFile = config.secrets.coeus-push-subscriptions.path;
-    subject = origin;
-    navigate = "${origin}/machines/{host}";
   };
 }
