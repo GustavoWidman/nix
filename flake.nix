@@ -118,7 +118,7 @@
     norn.url = "github:GustavoWidman/norn";
     # a release tag with phoebe's own nixpkgs, which phoebe's release pushes to
     # cache.r3dlust.com, so no machine compiles it
-    phoebe.url = "github:GustavoWidman/phoebe/v0.6.4";
+    phoebe.url = "github:GustavoWidman/phoebe/v0.7.0";
 
     # zed-autobuild moves `cached` only once every system's build is in
     # cache.r3dlust.com, so no machine compiles zed
