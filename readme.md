@@ -298,7 +298,9 @@ only logs what it would change, `adopt` also claims the records that already
 match by writing norn's mark into their comment, and `enforce` creates,
 updates and deletes as well. norn runs on every switch and every 15 minutes
 after. on a server, `sudo norn report` prints the plan by hand and
-`sudo norn status` says how the last run went.
+`sudo norn status` says how the last run went. norn tells nobody itself:
+[phoebe](#phoebe) pages once a server's runs have stayed troubled, or
+stopped, for half an hour (`hosts/<host>/norn-<n>/phoebe.nix`).
 
 ## phoebe
 
@@ -326,10 +328,14 @@ never from another machine's configuration:
   }
   ```
 
-  `unit` pages when it fails, `probes` page when two nodes see them fail, and
-  `metrics = { port; path; }` gets scraped, if the service has any. a unit
-  that isn't in the registry still shows up when it fails, just without
-  waking anyone.
+  `unit` pages when it fails, `probes` page when two nodes see them fail,
+  `metrics = { port; path; }` gets scraped, if the service has any, and
+  `heartbeat = { metric; within; }` pages when a gauge holding the last time
+  the service was healthy falls more than `within` seconds behind, or goes
+  missing. that's how a job that serves nothing and never fails its unit
+  gets watched, like norn, whose gauge sits in a textfile listed in
+  `services.phoebe.textfileDirectories`. a unit that isn't in the registry
+  still shows up when it fails, just without waking anyone.
 
 phoebe comes pinned to a release tag with its own nixpkgs, since every machine
 installs it: the release already pushed that exact build to the cache, so
