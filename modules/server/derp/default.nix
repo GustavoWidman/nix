@@ -18,12 +18,28 @@
 #         "RegionCode": "r3dlust",
 #         "RegionName": "r3dlust",
 #         "Nodes": [
-#           { "Name": "900a", "RegionID": 900, "HostName": "derp-2.r3dlust.com" },
-#           { "Name": "900b", "RegionID": 900, "HostName": "derp-1.r3dlust.com" }
+#           {
+#             "Name": "900a",
+#             "RegionID": 900,
+#             "HostName": "derp-2.r3dlust.com",
+#             "IPv4": "144.22.211.110",
+#             "IPv6": "none"
+#           },
+#           {
+#             "Name": "900b",
+#             "RegionID": 900,
+#             "HostName": "derp-1.r3dlust.com",
+#             "IPv4": "144.22.180.239",
+#             "IPv6": "none"
+#           }
 #         ]
 #       }
 #     }
 #   }
+#
+# with each node's address in the map, clients dial it without a DNS lookup,
+# which a network that blocks Tailscale may also filter; the certificate is
+# still checked against the name. the oracles have no IPv6.
 {
   config,
   lib,
@@ -31,19 +47,35 @@
 }:
 let
   inherit (lib)
-    attrValues
     concatStringsSep
+    filterAttrs
     getExe'
+    mapAttrsToList
     mkForce
     mkIf
     ;
 
   nodes = {
-    oracle-1 = "derp-1.r3dlust.com";
-    oracle-2 = "derp-2.r3dlust.com";
+    oracle-1 = {
+      domain = "derp-1.r3dlust.com";
+      address = "144.22.180.239";
+    };
+    oracle-2 = {
+      domain = "derp-2.r3dlust.com";
+      address = "144.22.211.110";
+    };
   };
 
-  domain = nodes.${config.networking.hostName} or null;
+  host = config.networking.hostName;
+  domain = nodes.${host}.domain or null;
+
+  # every other node, as derper's name/address pairs: the mesh dials the
+  # address and checks the name's certificate, so it needs no DNS either
+  peers =
+    nodes
+    |> filterAttrs (name: _: name != host)
+    |> mapAttrsToList (_: node: "${node.domain}/${node.address}");
+
   cfg = config.services.tailscale.derper;
 in
 {
@@ -76,7 +108,7 @@ in
           "-stun-port ${toString cfg.stunPort}"
           "-verify-clients"
           "-mesh-psk-file=%d/mesh-key"
-          "-mesh-with=${concatStringsSep "," (attrValues nodes)}"
+          "-mesh-with=${concatStringsSep "," peers}"
         ]
       );
     };
