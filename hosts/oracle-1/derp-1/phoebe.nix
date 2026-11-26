@@ -3,7 +3,7 @@
   probes = [
     {
       kind = "http";
-      target = "https://derp.r3dlust.com";
+      target = "https://derp-1.r3dlust.com";
     }
   ];
 }
