@@ -68,6 +68,15 @@ in
           "none";
     };
 
+    # nixpkgs runs `tailscale set` once when tailscaled starts and then exits, so
+    # a switch never reruns it and changed settings would wait for a reboot.
+    # staying active lets a switch restart it when its flags change, and the
+    # target pulls it in on the first switch after it stopped
+    systemd.services.tailscaled-set = {
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig.RemainAfterExit = true;
+    };
+
     networking.firewall.allowedUDPPorts = optional (relay.port != null) relay.port;
   };
 }
