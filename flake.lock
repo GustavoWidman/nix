@@ -1912,11 +1912,11 @@
         "nixpkgs": "nixpkgs_10"
       },
       "locked": {
-        "lastModified": 1795053487,
-        "narHash": "sha256-eOshHBqVO9wgjDvW8vvaL2nS0IzkpArsIksUcFsBuY8=",
+        "lastModified": 1795713174,
+        "narHash": "sha256-Jw7Rj6351FH+q25drB4/yKD9XSE/X2GtdQFDKQXLM9g=",
         "owner": "GustavoWidman",
         "repo": "norn",
-        "rev": "98072dda8da0793d07d71f190f08d3c5323fa613",
+        "rev": "82ba1fd68d94559d9c2cd19f183a6ca1e1be9c54",
         "type": "github"
       },
       "original": {
