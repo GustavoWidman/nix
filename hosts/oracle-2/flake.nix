@@ -22,6 +22,13 @@
 
       tailscale.exit-node = true;
 
+      # a peer relay; oracle's 1:1 NAT keeps the public address off the VNIC, and
+      # the subnet's security list must let UDP 41642 in
+      tailscale.relay = {
+        port = 41642;
+        address = config.cloudflare.address.ipv4;
+      };
+
       # The subnet advertises an IPv6 router but the VNIC has no IPv6 address, so a default
       # route through it only makes IPv6 connections time out.
       networking.dhcpcd.extraConfig = ''
