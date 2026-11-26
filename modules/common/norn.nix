@@ -27,4 +27,10 @@
     # is deleted only after the whole fleet stopped declaring it
     rollout.file = config.services.coeus.follow.stateFile;
   };
+
+  # every run's health, as a textfile node exporter serves. phoebe pages on it
+  # through each server's hosts/<host>/norn-<n>/phoebe.nix
+  services.phoebe.textfileDirectories = lib.mkIf config.services.norn.enable [
+    config.services.norn.metrics.directory
+  ];
 }
